@@ -1,0 +1,55 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+const posts = await getCollection('posts', ({ data }) => {
+  return data.draft !== true;
+});
+
+posts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+---
+
+<Layout title="Posts - Djaygo">
+  <h1>Posts</h1>
+  <ul>
+    {posts.map((post) => (
+      <li>
+        <a href={`/posts/${post.id}`}>
+          <span class="date">{post.data.date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</span>
+          <span class="title">{post.data.title}</span>
+        </a>
+      </li>
+    ))}
+  </ul>
+</Layout>
+
+<style>
+  ul {
+    list-style: none;
+    padding: 0;
+  }
+  li {
+    margin-bottom: 1rem;
+  }
+  a {
+    text-decoration: none;
+    display: block;
+    padding: 1rem;
+    border: 1px solid rgb(229, 233, 240);
+    border-radius: 8px;
+    transition: border-color 0.2s;
+  }
+  a:hover {
+    border-color: #2337ff;
+  }
+  .date {
+    color: rgb(96, 115, 159);
+    font-size: 0.875rem;
+    display: block;
+    margin-bottom: 0.25rem;
+  }
+  .title {
+    color: rgb(15, 18, 25);
+    font-weight: 600;
+  }
+</style>

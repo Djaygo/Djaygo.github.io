@@ -1,0 +1,78 @@
+---
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+  </head>
+  <body>
+    <header>
+      <nav>
+        <a href="/">Djaygo</a>
+      </nav>
+    </header>
+    <main>
+      <slot />
+    </main>
+    <footer>
+      <p>&copy; {new Date().getFullYear()} Djaygo</p>
+    </footer>
+  </body>
+</html>
+
+<style>
+  :root {
+    --accent: #2337ff;
+    --accent-dark: #000d8a;
+    --black: 15, 18, 25;
+    --gray: 96, 115, 159;
+    --gray-light: 229, 233, 240;
+    --gray-dark: 34, 41, 57;
+  }
+  html {
+    font-family: system-ui, sans-serif;
+    background: #fff;
+    color: rgb(var(--gray-dark));
+  }
+  body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  header {
+    padding: 1rem 2rem;
+    border-bottom: 1px solid rgb(var(--gray-light));
+  }
+  nav a {
+    color: rgb(var(--black));
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1.25rem;
+  }
+  main {
+    flex: 1;
+    padding: 2rem;
+    max-width: 800px;
+    margin: 0 auto;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  footer {
+    padding: 1rem 2rem;
+    border-top: 1px solid rgb(var(--gray-light));
+    text-align: center;
+    color: rgb(var(--gray));
+  }
+</style>
