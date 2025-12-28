@@ -1,78 +1,48 @@
 ---
-interface Props {
-  title: string;
+import '~/assets/styles/tailwind.css';
+
+import { I18N } from 'astrowind:config';
+
+import CommonMeta from '~/components/common/CommonMeta.astro';
+import Favicons from '~/components/Favicons.astro';
+import CustomStyles from '~/components/CustomStyles.astro';
+import ApplyColorMode from '~/components/common/ApplyColorMode.astro';
+import Metadata from '~/components/common/Metadata.astro';
+import SiteVerification from '~/components/common/SiteVerification.astro';
+import Analytics from '~/components/common/Analytics.astro';
+import BasicScripts from '~/components/common/BasicScripts.astro';
+
+// Comment the line below to disable View Transitions
+import { ClientRouter } from 'astro:transitions';
+
+import type { MetaData as MetaDataType } from '~/types';
+
+export interface Props {
+  metadata?: MetaDataType;
 }
 
-const { title } = Astro.props;
+const { metadata = {} } = Astro.props;
+const { language, textDirection } = I18N;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={language} dir={textDirection} class="2xl:text-[20px]">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="generator" content={Astro.generator} />
-    <title>{title}</title>
+    <CommonMeta />
+    <Favicons />
+    <CustomStyles />
+    <ApplyColorMode />
+    <Metadata {...metadata} />
+    <SiteVerification />
+    <Analytics />
+
+    <!-- Comment the line below to disable View Transitions -->
+    <ClientRouter fallback="swap" />
   </head>
-  <body>
-    <header>
-      <nav>
-        <a href="/">Djaygo</a>
-      </nav>
-    </header>
-    <main>
-      <slot />
-    </main>
-    <footer>
-      <p>&copy; {new Date().getFullYear()} Djaygo</p>
-    </footer>
+
+  <body class="antialiased text-default bg-page tracking-tight">
+    <slot />
+
+    <BasicScripts />
   </body>
 </html>
-
-<style>
-  :root {
-    --accent: #2337ff;
-    --accent-dark: #000d8a;
-    --black: 15, 18, 25;
-    --gray: 96, 115, 159;
-    --gray-light: 229, 233, 240;
-    --gray-dark: 34, 41, 57;
-  }
-  html {
-    font-family: system-ui, sans-serif;
-    background: #fff;
-    color: rgb(var(--gray-dark));
-  }
-  body {
-    margin: 0;
-    padding: 0;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-  }
-  header {
-    padding: 1rem 2rem;
-    border-bottom: 1px solid rgb(var(--gray-light));
-  }
-  nav a {
-    color: rgb(var(--black));
-    text-decoration: none;
-    font-weight: bold;
-    font-size: 1.25rem;
-  }
-  main {
-    flex: 1;
-    padding: 2rem;
-    max-width: 800px;
-    margin: 0 auto;
-    width: 100%;
-    box-sizing: border-box;
-  }
-  footer {
-    padding: 1rem 2rem;
-    border-top: 1px solid rgb(var(--gray-light));
-    text-align: center;
-    color: rgb(var(--gray));
-  }
-</style>
