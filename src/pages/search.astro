@@ -1,0 +1,111 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import Hero from '~/components/widgets/Hero.astro';
+import { Icon } from 'astro-icon/components';
+import { fetchPosts } from '~/utils/blog';
+import { getPermalink } from '~/utils/permalinks';
+
+const metadata = {
+  title: 'Search',
+};
+
+const posts = await fetchPosts();
+
+// Prepare posts data for client-side search
+const searchData = posts.map((post) => ({
+  slug: post.slug,
+  title: post.title,
+  excerpt: post.excerpt || '',
+  tags: post.tags?.map((t) => t.title || t).join(' ') || '',
+  url: getPermalink(post.slug, 'post'),
+}));
+---
+
+<Layout metadata={metadata}>
+  <Hero tagline="Search">
+    <Fragment slot="title">
+      Find <span class="text-accent dark:text-white">Notes</span>
+    </Fragment>
+
+    <Fragment slot="subtitle">
+      Search through all notes in the garden.
+    </Fragment>
+  </Hero>
+
+  <section class="px-4 sm:px-6 py-8 mx-auto max-w-3xl">
+    <div class="relative mb-8">
+      <Icon name="tabler:search" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted" />
+      <input
+        type="text"
+        id="search-input"
+        placeholder="Type to search..."
+        class="w-full pl-12 pr-4 py-3 rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
+        autofocus
+      />
+    </div>
+
+    <div id="search-results" class="space-y-4">
+      <p class="text-muted text-center" id="initial-message">Start typing to search...</p>
+    </div>
+  </section>
+</Layout>
+
+<script define:vars={{ searchData }}>
+  const input = document.getElementById('search-input');
+  const resultsContainer = document.getElementById('search-results');
+  const initialMessage = document.getElementById('initial-message');
+
+  function search(query) {
+    if (!query.trim()) {
+      resultsContainer.innerHTML = '<p class="text-muted text-center">Start typing to search...</p>';
+      return;
+    }
+
+    const lowerQuery = query.toLowerCase();
+    const results = searchData.filter((post) => {
+      return (
+        post.title.toLowerCase().includes(lowerQuery) ||
+        post.excerpt.toLowerCase().includes(lowerQuery) ||
+        post.tags.toLowerCase().includes(lowerQuery)
+      );
+    });
+
+    if (results.length === 0) {
+      resultsContainer.innerHTML = '<p class="text-muted text-center">No notes found. Try a different search term.</p>';
+      return;
+    }
+
+    resultsContainer.innerHTML = results
+      .map(
+        (post) => `
+        <a href="${post.url}" class="block p-4 rounded-lg border border-gray-200 dark:border-slate-700 hover:border-primary dark:hover:border-primary transition-colors">
+          <h3 class="font-semibold text-lg mb-1">${highlightMatch(post.title, query)}</h3>
+          <p class="text-muted text-sm">${highlightMatch(post.excerpt, query)}</p>
+        </a>
+      `
+      )
+      .join('');
+  }
+
+  function highlightMatch(text, query) {
+    if (!query.trim()) return text;
+    const regex = new RegExp(`(${escapeRegex(query)})`, 'gi');
+    return text.replace(regex, '<mark class="bg-yellow-200 dark:bg-yellow-800 rounded px-0.5">$1</mark>');
+  }
+
+  function escapeRegex(string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
+
+  input.addEventListener('input', (e) => {
+    search(e.target.value);
+  });
+
+  // Handle URL query params
+  const urlParams = new URLSearchParams(window.location.search);
+  const queryParam = urlParams.get('q');
+  if (queryParam) {
+    input.value = queryParam;
+    search(queryParam);
+  }
+</script>

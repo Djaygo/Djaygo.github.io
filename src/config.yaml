@@ -11,7 +11,7 @@ metadata:
   title:
     default: Djaygo
     template: '%s — Djaygo'
-  description: "Personal website and blog"
+  description: "Djaygo's digital garden — a collection of interconnected notes on technology, learning, and ideas."
   robots:
     index: true
     follow: true
@@ -44,7 +44,7 @@ apps:
 
     list:
       isEnabled: true
-      pathname: 'blog' # Blog main path, you can change this to "articles" (/articles)
+      pathname: 'notes' # Blog main path, you can change this to "articles" (/articles)
       robots:
         index: true
 

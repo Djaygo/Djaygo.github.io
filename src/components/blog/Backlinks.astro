@@ -1,0 +1,59 @@
+---
+import { Icon } from 'astro-icon/components';
+import { getPermalink } from '~/utils/permalinks';
+
+interface Props {
+  currentSlug: string;
+  allPosts: Array<{
+    slug: string;
+    title: string;
+    Content?: string;
+    body?: string;
+  }>;
+}
+
+const { currentSlug, allPosts } = Astro.props;
+
+// Find posts that link to this post
+const backlinks = allPosts.filter((post) => {
+  if (post.slug === currentSlug) return false;
+  const content = post.body || '';
+  // Check if the content contains a link to this post
+  return content.includes(currentSlug) || content.toLowerCase().includes(currentSlug.toLowerCase());
+});
+---
+
+{
+  backlinks.length > 0 && (
+    <div class="mt-12 pt-8 border-t dark:border-slate-700">
+      <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+        <Icon name="tabler:link" class="w-5 h-5" />
+        Linked from
+      </h3>
+      <ul class="space-y-2">
+        {backlinks.map((post) => (
+          <li>
+            <a
+              href={getPermalink(post.slug, 'post')}
+              class="text-primary dark:text-blue-400 hover:underline flex items-center gap-2"
+            >
+              <Icon name="tabler:file-text" class="w-4 h-4" />
+              {post.title}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
+{
+  backlinks.length === 0 && (
+    <div class="mt-12 pt-8 border-t dark:border-slate-700">
+      <p class="text-muted text-sm flex items-center gap-2">
+        <Icon name="tabler:plant-2" class="w-4 h-4" />
+        This note is a seedling — no other notes link here yet.
+      </p>
+    </div>
+  )
+}

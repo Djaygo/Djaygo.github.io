@@ -1,0 +1,64 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import Hero from '~/components/widgets/Hero.astro';
+import { Icon } from 'astro-icon/components';
+import { getPermalink } from '~/utils/permalinks';
+import { fetchPosts } from '~/utils/blog';
+
+const metadata = {
+  title: 'Tags',
+};
+
+const posts = await fetchPosts();
+
+// Extract all tags and count them
+const tagCounts: Record<string, number> = {};
+posts.forEach((post) => {
+  post.tags?.forEach((tag) => {
+    const tagSlug = tag.slug || tag;
+    const tagTitle = tag.title || tag;
+    if (!tagCounts[tagSlug]) {
+      tagCounts[tagSlug] = 0;
+    }
+    tagCounts[tagSlug]++;
+  });
+});
+
+// Sort tags by count
+const sortedTags = Object.entries(tagCounts).sort((a, b) => b[1] - a[1]);
+---
+
+<Layout metadata={metadata}>
+  <Hero tagline="Explore">
+    <Fragment slot="title">
+      Browse by <span class="text-accent dark:text-white">Tags</span>
+    </Fragment>
+
+    <Fragment slot="subtitle">
+      Tags help connect related notes. Click any tag to explore that topic.
+    </Fragment>
+  </Hero>
+
+  <section class="px-4 sm:px-6 py-12 mx-auto max-w-4xl">
+    <div class="flex flex-wrap gap-3 justify-center">
+      {
+        sortedTags.map(([tag, count]) => (
+          <a
+            href={getPermalink(tag, 'tag')}
+            class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gray-100 dark:bg-slate-800 hover:bg-primary hover:text-white dark:hover:bg-primary transition-colors duration-200"
+          >
+            <Icon name="tabler:hash" class="w-4 h-4" />
+            <span>{tag}</span>
+            <span class="text-xs bg-gray-200 dark:bg-slate-700 px-2 py-0.5 rounded-full">{count}</span>
+          </a>
+        ))
+      }
+    </div>
+
+    {
+      sortedTags.length === 0 && (
+        <p class="text-center text-muted">No tags yet. Start adding notes with tags!</p>
+      )
+    }
+  </section>
+</Layout>
