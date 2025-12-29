@@ -1,8 +1,6 @@
 ---
 import Layout from '~/layouts/PageLayout.astro';
-import Hero from '~/components/widgets/Hero.astro';
-import Content from '~/components/widgets/Content.astro';
-import Features2 from '~/components/widgets/Features2.astro';
+import { Icon } from 'astro-icon/components';
 
 const metadata = {
   title: 'About',
@@ -10,101 +8,75 @@ const metadata = {
 ---
 
 <Layout metadata={metadata}>
-  <Hero tagline="About">
-    <Fragment slot="title">
-      Hi, I'm <span class="text-accent dark:text-white">Djaygo</span>
-    </Fragment>
+  <div class="prose dark:prose-invert max-w-none">
+    <h2 class="text-2xl font-bold mb-6">About Me</h2>
 
-    <Fragment slot="subtitle">
+    <p class="text-lg text-muted mb-8">
       Welcome to my digital garden — a place where I cultivate ideas, document my learning journey,
       and share thoughts on technology, programming, and life.
-    </Fragment>
-  </Hero>
+    </p>
 
-  <Content
-    isReversed
-    items={[
-      {
-        title: 'Digital Garden',
-        description: 'This site is my public notebook. Notes here range from polished essays to rough drafts and half-formed ideas.',
-      },
-      {
-        title: 'Learning in Public',
-        description: 'I believe in sharing what I learn. Teaching is the best way to solidify knowledge.',
-      },
-      {
-        title: 'Interconnected Notes',
-        description: 'Ideas grow when they connect. This garden uses backlinks and tags to help you explore related concepts.',
-      },
-    ]}
-  >
-    <Fragment slot="content">
-      <h3 class="text-2xl font-bold tracking-tight dark:text-white sm:text-3xl mb-2">
-        What is a Digital Garden?
-      </h3>
-      <p>
+    <div class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-lg p-6 mb-8">
+      <h3 class="text-xl font-semibold mb-4">What is a Digital Garden?</h3>
+      <p class="text-muted mb-4">
         Unlike a traditional blog with polished, timestamped posts, a digital garden is a collection of
         evolving ideas. Notes here grow and change over time, branching into new thoughts and connecting
         with existing ones.
       </p>
-    </Fragment>
+      <ul class="space-y-2 text-muted">
+        <li class="flex items-start gap-2">
+          <Icon name="tabler:plant" class="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+          <span><strong>Digital Garden:</strong> This site is my public notebook. Notes here range from polished essays to rough drafts and half-formed ideas.</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <Icon name="tabler:school" class="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+          <span><strong>Learning in Public:</strong> I believe in sharing what I learn. Teaching is the best way to solidify knowledge.</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <Icon name="tabler:link" class="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+          <span><strong>Interconnected Notes:</strong> Ideas grow when they connect. This garden uses backlinks and tags to help you explore related concepts.</span>
+        </li>
+      </ul>
+    </div>
 
-    <Fragment slot="bg">
-      <div class="absolute inset-0 bg-blue-50 dark:bg-transparent"></div>
-    </Fragment>
-  </Content>
+    <div class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-lg p-6 mb-8">
+      <h3 class="text-xl font-semibold mb-4">Interests</h3>
+      <div class="grid md:grid-cols-3 gap-4">
+        <div class="text-center p-4">
+          <Icon name="tabler:code" class="w-8 h-8 mx-auto text-primary mb-2" />
+          <h4 class="font-semibold">Software Development</h4>
+          <p class="text-sm text-muted">Building things with code. Always learning new tools and techniques.</p>
+        </div>
+        <div class="text-center p-4">
+          <Icon name="tabler:brain" class="w-8 h-8 mx-auto text-primary mb-2" />
+          <h4 class="font-semibold">Knowledge Management</h4>
+          <p class="text-sm text-muted">How we organize, connect, and retrieve information. PKM systems and note-taking.</p>
+        </div>
+        <div class="text-center p-4">
+          <Icon name="tabler:brand-open-source" class="w-8 h-8 mx-auto text-primary mb-2" />
+          <h4 class="font-semibold">Open Source</h4>
+          <p class="text-sm text-muted">Contributing to and learning from the open source community.</p>
+        </div>
+      </div>
+    </div>
 
-  <Features2
-    title="Interests"
-    tagline="What I'm exploring"
-    columns={3}
-    items={[
-      {
-        title: 'Software Development',
-        description: 'Building things with code. Always learning new tools and techniques.',
-        icon: 'tabler:code',
-      },
-      {
-        title: 'Knowledge Management',
-        description: 'How we organize, connect, and retrieve information. PKM systems and note-taking.',
-        icon: 'tabler:brain',
-      },
-      {
-        title: 'Open Source',
-        description: 'Contributing to and learning from the open source community.',
-        icon: 'tabler:brand-open-source',
-      },
-    ]}
-  />
-
-  <Content
-    isAfterContent
-    items={[
-      {
-        title: 'Obsidian',
-        description: 'My primary tool for thinking and note-taking.',
-      },
-      {
-        title: 'Astro',
-        description: 'Powers this site. Fast, flexible, and great for content.',
-      },
-      {
-        title: 'GitHub',
-        description: 'Where the code lives and collaboration happens.',
-      },
-    ]}
-  >
-    <Fragment slot="content">
-      <h3 class="text-2xl font-bold tracking-tight dark:text-white sm:text-3xl mb-2">
-        Tools I Use
-      </h3>
-      <p>
-        The right tools help ideas flow. Here's what powers my workflow and this garden.
-      </p>
-    </Fragment>
-
-    <Fragment slot="bg">
-      <div class="absolute inset-0 bg-blue-50 dark:bg-transparent"></div>
-    </Fragment>
-  </Content>
+    <div class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-lg p-6">
+      <h3 class="text-xl font-semibold mb-4">Tools I Use</h3>
+      <p class="text-muted mb-4">The right tools help ideas flow. Here's what powers my workflow and this garden.</p>
+      <div class="flex flex-wrap gap-3">
+        <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gray-200 dark:bg-slate-700 text-sm">
+          <Icon name="tabler:notes" class="w-4 h-4" />
+          Obsidian
+        </span>
+        <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gray-200 dark:bg-slate-700 text-sm">
+          <Icon name="tabler:rocket" class="w-4 h-4" />
+          Astro
+        </span>
+        <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gray-200 dark:bg-slate-700 text-sm">
+          <Icon name="tabler:brand-github" class="w-4 h-4" />
+          GitHub
+        </span>
+      </div>
+    </div>
+  </div>
 </Layout>

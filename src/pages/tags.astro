@@ -1,6 +1,5 @@
 ---
 import Layout from '~/layouts/PageLayout.astro';
-import Hero from '~/components/widgets/Hero.astro';
 import { Icon } from 'astro-icon/components';
 import { getPermalink } from '~/utils/permalinks';
 import { fetchPosts } from '~/utils/blog';
@@ -16,7 +15,6 @@ const tagCounts: Record<string, number> = {};
 posts.forEach((post) => {
   post.tags?.forEach((tag) => {
     const tagSlug = tag.slug || tag;
-    const tagTitle = tag.title || tag;
     if (!tagCounts[tagSlug]) {
       tagCounts[tagSlug] = 0;
     }
@@ -29,23 +27,16 @@ const sortedTags = Object.entries(tagCounts).sort((a, b) => b[1] - a[1]);
 ---
 
 <Layout metadata={metadata}>
-  <Hero tagline="Explore">
-    <Fragment slot="title">
-      Browse by <span class="text-accent dark:text-white">Tags</span>
-    </Fragment>
+  <div>
+    <h2 class="text-2xl font-bold mb-2">Browse by Tags</h2>
+    <p class="text-muted mb-8">Tags help connect related notes. Click any tag to explore that topic.</p>
 
-    <Fragment slot="subtitle">
-      Tags help connect related notes. Click any tag to explore that topic.
-    </Fragment>
-  </Hero>
-
-  <section class="px-4 sm:px-6 py-12 mx-auto max-w-4xl">
-    <div class="flex flex-wrap gap-3 justify-center">
+    <div class="flex flex-wrap gap-3">
       {
         sortedTags.map(([tag, count]) => (
           <a
             href={getPermalink(tag, 'tag')}
-            class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gray-100 dark:bg-slate-800 hover:bg-primary hover:text-white dark:hover:bg-primary transition-colors duration-200"
+            class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm hover:bg-primary hover:text-white dark:hover:bg-primary transition-colors duration-200 shadow-sm"
           >
             <Icon name="tabler:hash" class="w-4 h-4" />
             <span>{tag}</span>
@@ -57,8 +48,8 @@ const sortedTags = Object.entries(tagCounts).sort((a, b) => b[1] - a[1]);
 
     {
       sortedTags.length === 0 && (
-        <p class="text-center text-muted">No tags yet. Start adding notes with tags!</p>
+        <p class="text-center text-muted py-8">No tags yet. Start adding notes with tags!</p>
       )
     }
-  </section>
+  </div>
 </Layout>

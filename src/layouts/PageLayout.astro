@@ -1,9 +1,6 @@
 ---
 import Layout from '~/layouts/Layout.astro';
-import Header from '~/components/widgets/Header.astro';
-import Footer from '~/components/widgets/Footer.astro';
-
-import { headerData, footerData } from '~/navigation';
+import SiteHeader from '~/components/SiteHeader.astro';
 
 import type { MetaData } from '~/types';
 
@@ -15,13 +12,10 @@ const { metadata } = Astro.props;
 ---
 
 <Layout metadata={metadata}>
-  <slot name="header">
-    <Header {...headerData} isSticky showRssFeed showToggleTheme />
-  </slot>
   <main>
-    <slot />
+    <section class="px-4 sm:px-6 py-12 sm:py-16 lg:py-20 mx-auto max-w-3xl">
+      <SiteHeader />
+      <slot />
+    </section>
   </main>
-  <slot name="footer">
-    <Footer {...footerData} />
-  </slot>
 </Layout>

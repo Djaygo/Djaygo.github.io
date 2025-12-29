@@ -7,83 +7,110 @@
   <div class="absolute inset-0 bg-gradient-to-b from-transparent via-white/50 to-white dark:via-slate-900/50 dark:to-slate-900"></div>
 </div>
 
+<!-- Theme transition overlay -->
+<div id="theme-transition" class="theme-transition-overlay"></div>
+
+<!-- Floating Settings Button -->
+<button
+  id="open-network-config"
+  class="fixed bottom-4 right-4 z-40 w-10 h-10 rounded-full bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border border-gray-200 dark:border-slate-700 shadow-lg flex items-center justify-center text-muted hover:text-primary hover:scale-110 hover:shadow-xl transition-all duration-300 group"
+  title="Settings (Ctrl+Shift+G)"
+>
+  <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 transition-transform duration-500 group-hover:rotate-90" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="3"/>
+    <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+  </svg>
+</button>
 
 <!-- Hidden Config Panel -->
-<div id="network-config" class="fixed top-4 right-4 z-50 hidden">
-  <div class="bg-white/95 dark:bg-slate-800/95 backdrop-blur-md rounded-xl shadow-2xl p-6 w-80 border border-gray-200 dark:border-slate-700">
-    <div class="flex justify-between items-center mb-4">
-      <h3 class="font-bold text-lg">Network Settings</h3>
-      <button id="close-config" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 text-xl">&times;</button>
+<div id="network-config" class="fixed top-4 right-4 z-50 opacity-0 pointer-events-none translate-x-4 transition-all duration-300 ease-out">
+  <div class="bg-white/95 dark:bg-slate-800/95 backdrop-blur-md rounded-xl shadow-2xl p-4 w-72 border border-gray-200 dark:border-slate-700 max-h-[85vh] flex flex-col">
+    <div class="flex justify-between items-center mb-3 flex-shrink-0">
+      <h3 class="font-bold text-base">Settings</h3>
+      <button id="close-config" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 text-xl leading-none">&times;</button>
     </div>
 
-    <div class="space-y-4 text-sm">
+    <div class="space-y-3 text-xs overflow-y-auto flex-grow pr-1">
+      <!-- Theme Mode -->
+      <div class="border-b border-gray-200 dark:border-slate-700 pb-3">
+        <h4 class="font-semibold mb-2 text-muted text-xs uppercase tracking-wide">Theme</h4>
+        <div class="flex gap-1 bg-gray-200 dark:bg-slate-700 rounded-lg p-0.5">
+          <button id="theme-light" class="flex-1 px-2 py-1 rounded-md transition-colors text-center" title="Light">☀️</button>
+          <button id="theme-dark" class="flex-1 px-2 py-1 rounded-md transition-colors text-center" title="Dark">🌙</button>
+          <button id="theme-system" class="flex-1 px-2 py-1 rounded-md transition-colors text-center" title="System">💻</button>
+        </div>
+      </div>
+
       <!-- Physics -->
-      <div class="border-b border-gray-200 dark:border-slate-700 pb-4">
-        <h4 class="font-semibold mb-3 text-muted">Physics</h4>
+      <div class="border-b border-gray-200 dark:border-slate-700 pb-3">
+        <h4 class="font-semibold mb-2 text-muted text-xs uppercase tracking-wide">Physics</h4>
 
-        <label class="block mb-2">
-          <span class="text-muted">Nodes: <span id="nodeCount-value">60</span></span>
-          <input type="range" id="nodeCount" min="10" max="150" value="60" class="w-full accent-primary">
+        <label class="block mb-1.5">
+          <span class="text-muted flex justify-between"><span>Nodes</span><span id="nodeCount-value">60</span></span>
+          <input type="range" id="nodeCount" min="10" max="150" value="60" class="w-full accent-primary h-1.5">
         </label>
 
-        <label class="block mb-2">
-          <span class="text-muted">Speed: <span id="nodeSpeed-value">0.3</span></span>
-          <input type="range" id="nodeSpeed" min="0.1" max="2" step="0.1" value="0.3" class="w-full accent-primary">
+        <label class="block mb-1.5">
+          <span class="text-muted flex justify-between"><span>Speed</span><span id="nodeSpeed-value">0.3</span></span>
+          <input type="range" id="nodeSpeed" min="0.1" max="2" step="0.1" value="0.3" class="w-full accent-primary h-1.5">
         </label>
 
-        <label class="block mb-2">
-          <span class="text-muted">Connection Distance: <span id="connectionDistance-value">150</span></span>
-          <input type="range" id="connectionDistance" min="50" max="300" value="150" class="w-full accent-primary">
+        <label class="block mb-1.5">
+          <span class="text-muted flex justify-between"><span>Connection</span><span id="connectionDistance-value">150</span></span>
+          <input type="range" id="connectionDistance" min="50" max="300" value="150" class="w-full accent-primary h-1.5">
         </label>
 
-        <label class="block mb-2">
-          <span class="text-muted">Mouse Radius: <span id="mouseRadius-value">200</span></span>
-          <input type="range" id="mouseRadius" min="50" max="400" value="200" class="w-full accent-primary">
+        <label class="block mb-1.5">
+          <span class="text-muted flex justify-between"><span>Mouse Radius</span><span id="mouseRadius-value">200</span></span>
+          <input type="range" id="mouseRadius" min="50" max="400" value="200" class="w-full accent-primary h-1.5">
         </label>
 
         <label class="block">
-          <span class="text-muted">Node Size: <span id="nodeSize-value">2</span></span>
-          <input type="range" id="nodeSize" min="1" max="6" step="0.5" value="2" class="w-full accent-primary">
+          <span class="text-muted flex justify-between"><span>Node Size</span><span id="nodeSize-value">2</span></span>
+          <input type="range" id="nodeSize" min="1" max="6" step="0.5" value="2" class="w-full accent-primary h-1.5">
         </label>
       </div>
 
       <!-- Colors -->
-      <div class="pb-4">
-        <h4 class="font-semibold mb-3 text-muted">Colors</h4>
+      <div class="border-b border-gray-200 dark:border-slate-700 pb-3">
+        <h4 class="font-semibold mb-2 text-muted text-xs uppercase tracking-wide">Colors</h4>
 
-        <label class="flex items-center justify-between mb-2">
-          <span class="text-muted">Node Color</span>
-          <input type="color" id="nodeColor" value="#6366f1" class="w-10 h-8 rounded cursor-pointer">
-        </label>
+        <div class="grid grid-cols-3 gap-2 mb-2">
+          <label class="flex flex-col items-center gap-1">
+            <input type="color" id="nodeColor" value="#6366f1" class="w-8 h-6 rounded cursor-pointer">
+            <span class="text-muted text-[10px]">Node</span>
+          </label>
+          <label class="flex flex-col items-center gap-1">
+            <input type="color" id="lineColor" value="#6366f1" class="w-8 h-6 rounded cursor-pointer">
+            <span class="text-muted text-[10px]">Line</span>
+          </label>
+          <label class="flex flex-col items-center gap-1">
+            <input type="color" id="mouseLineColor" value="#6366f1" class="w-8 h-6 rounded cursor-pointer">
+            <span class="text-muted text-[10px]">Mouse</span>
+          </label>
+        </div>
 
-        <label class="flex items-center justify-between mb-2">
-          <span class="text-muted">Line Color</span>
-          <input type="color" id="lineColor" value="#6366f1" class="w-10 h-8 rounded cursor-pointer">
-        </label>
-
-        <label class="flex items-center justify-between mb-2">
-          <span class="text-muted">Mouse Line Color</span>
-          <input type="color" id="mouseLineColor" value="#6366f1" class="w-10 h-8 rounded cursor-pointer">
-        </label>
-
-        <label class="block mb-2">
-          <span class="text-muted">Node Opacity: <span id="nodeOpacity-value">0.6</span></span>
-          <input type="range" id="nodeOpacity" min="0.1" max="1" step="0.1" value="0.6" class="w-full accent-primary">
+        <label class="block mb-1.5">
+          <span class="text-muted flex justify-between"><span>Node Opacity</span><span id="nodeOpacity-value">0.6</span></span>
+          <input type="range" id="nodeOpacity" min="0.1" max="1" step="0.1" value="0.6" class="w-full accent-primary h-1.5">
         </label>
 
         <label class="block">
-          <span class="text-muted">Line Opacity: <span id="lineOpacity-value">0.15</span></span>
-          <input type="range" id="lineOpacity" min="0.05" max="0.5" step="0.05" value="0.15" class="w-full accent-primary">
+          <span class="text-muted flex justify-between"><span>Line Opacity</span><span id="lineOpacity-value">0.15</span></span>
+          <input type="range" id="lineOpacity" min="0.05" max="0.5" step="0.05" value="0.15" class="w-full accent-primary h-1.5">
         </label>
       </div>
 
       <!-- Presets -->
-      <div class="flex gap-2 flex-wrap">
-        <button data-preset="default" class="px-3 py-1 text-xs rounded-full bg-gray-200 dark:bg-slate-700 hover:bg-primary hover:text-white transition-colors">Default</button>
-        <button data-preset="dense" class="px-3 py-1 text-xs rounded-full bg-gray-200 dark:bg-slate-700 hover:bg-primary hover:text-white transition-colors">Dense</button>
-        <button data-preset="minimal" class="px-3 py-1 text-xs rounded-full bg-gray-200 dark:bg-slate-700 hover:bg-primary hover:text-white transition-colors">Minimal</button>
-        <button data-preset="rainbow" class="px-3 py-1 text-xs rounded-full bg-gray-200 dark:bg-slate-700 hover:bg-primary hover:text-white transition-colors">Rainbow</button>
-        <button data-preset="matrix" class="px-3 py-1 text-xs rounded-full bg-gray-200 dark:bg-slate-700 hover:bg-primary hover:text-white transition-colors">Matrix</button>
+      <div class="flex-shrink-0">
+        <h4 class="font-semibold mb-2 text-muted text-xs uppercase tracking-wide">Presets</h4>
+        <div class="flex gap-1.5 flex-wrap">
+          <button data-preset="default" class="px-2 py-0.5 text-[10px] rounded-full bg-gray-200 dark:bg-slate-700 hover:bg-primary hover:text-white transition-colors">Default</button>
+          <button data-preset="dense" class="px-2 py-0.5 text-[10px] rounded-full bg-gray-200 dark:bg-slate-700 hover:bg-primary hover:text-white transition-colors">Dense</button>
+          <button data-preset="minimal" class="px-2 py-0.5 text-[10px] rounded-full bg-gray-200 dark:bg-slate-700 hover:bg-primary hover:text-white transition-colors">Minimal</button>
+          <button data-preset="rainbow" class="px-2 py-0.5 text-[10px] rounded-full bg-gray-200 dark:bg-slate-700 hover:bg-primary hover:text-white transition-colors">Rainbow</button>
+          <button data-preset="matrix" class="px-2 py-0.5 text-[10px] rounded-full bg-gray-200 dark:bg-slate-700 hover:bg-primary hover:text-white transition-colors">Matrix</button>
+        </div>
       </div>
     </div>
   </div>
@@ -93,7 +120,8 @@
   function initNetwork() {
     const canvas = document.getElementById('network-canvas') as HTMLCanvasElement;
     const configPanel = document.getElementById('network-config');
-    const openBtn = document.getElementById('open-network-config');
+    const openBtnFloat = document.getElementById('open-network-config');
+    const openBtnHeader = document.getElementById('open-network-config-header');
     const closeBtn = document.getElementById('close-config');
 
     if (!canvas || !configPanel) return;
@@ -105,6 +133,7 @@
     let height: number;
     let nodes: Array<{x: number; y: number; vx: number; vy: number; radius: number; hue?: number}> = [];
     let mouse = { x: 0, y: 0 };
+    let headerCenter = { x: 0, y: 0, width: 0, height: 0 };
     let animationId: number;
 
     // Default config
@@ -185,6 +214,20 @@
     function resize() {
       width = canvas.width = window.innerWidth;
       height = canvas.height = window.innerHeight;
+      updateHeaderPosition();
+    }
+
+    function updateHeaderPosition() {
+      const header = document.querySelector('h1');
+      if (header) {
+        const rect = header.getBoundingClientRect();
+        headerCenter = {
+          x: rect.left + rect.width / 2,
+          y: rect.top + rect.height / 2,
+          width: rect.width,
+          height: rect.height
+        };
+      }
     }
 
     function animate() {
@@ -249,6 +292,29 @@
           ctx.lineWidth = 1;
           ctx.stroke();
         }
+
+        // Connect to header
+        if (headerCenter.x > 0) {
+          const headerRadius = config.mouseRadius * 1.5;
+          // Calculate distance to nearest point on header rectangle
+          const closestX = Math.max(headerCenter.x - headerCenter.width / 2, Math.min(node.x, headerCenter.x + headerCenter.width / 2));
+          const closestY = Math.max(headerCenter.y - headerCenter.height / 2, Math.min(node.y, headerCenter.y + headerCenter.height / 2));
+          const hdx = node.x - closestX;
+          const hdy = node.y - closestY;
+          const hdist = Math.sqrt(hdx * hdx + hdy * hdy);
+
+          if (hdist < headerRadius && hdist > 0) {
+            ctx.beginPath();
+            ctx.moveTo(node.x, node.y);
+            ctx.lineTo(closestX, closestY);
+            const opacity = 0.25 * (1 - hdist / headerRadius);
+            ctx.strokeStyle = config.rainbowMode
+              ? hslToRgba(node.hue!, 0.7, 0.5, opacity)
+              : hexToRgba(config.nodeColor, opacity);
+            ctx.lineWidth = 1;
+            ctx.stroke();
+          }
+        }
       });
 
       animationId = requestAnimationFrame(animate);
@@ -309,21 +375,146 @@
       });
     }
 
-    // Open config panel from button
-    openBtn?.addEventListener('click', () => {
-      configPanel.classList.toggle('hidden');
-    });
+    // Theme toggle functionality
+    const themeLightBtn = document.getElementById('theme-light');
+    const themeDarkBtn = document.getElementById('theme-dark');
+    const themeSystemBtn = document.getElementById('theme-system');
 
-    // Also allow keyboard shortcut: Ctrl+Shift+G
-    document.addEventListener('keydown', (e) => {
-      if (e.ctrlKey && e.shiftKey && e.key === 'G') {
-        e.preventDefault();
-        configPanel.classList.toggle('hidden');
+    function getThemePreference(): 'light' | 'dark' | 'system' {
+      try {
+        return (localStorage.getItem('theme') as 'light' | 'dark' | 'system') || 'system';
+      } catch (e) {
+        return 'system';
+      }
+    }
+
+    function applyTheme(theme: 'light' | 'dark' | 'system', animate = true) {
+      const wasDark = document.documentElement.classList.contains('dark');
+      const isDark = theme === 'dark' ||
+        (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+      // Only animate if theme actually changes
+      if (animate && wasDark !== isDark) {
+        const overlay = document.getElementById('theme-transition');
+        if (overlay) {
+          // Get button position for radial origin
+          const btn = isDark ? themeDarkBtn : themeLightBtn;
+          if (btn) {
+            const rect = btn.getBoundingClientRect();
+            overlay.style.setProperty('--x', `${rect.left + rect.width / 2}px`);
+            overlay.style.setProperty('--y', `${rect.top + rect.height / 2}px`);
+          }
+
+          overlay.classList.remove('to-dark', 'to-light', 'active');
+          overlay.classList.add(isDark ? 'to-dark' : 'to-light');
+
+          // Force reflow
+          void overlay.offsetWidth;
+
+          overlay.classList.add('active');
+
+          // Remove classes after animation
+          setTimeout(() => {
+            overlay.classList.remove('active', 'to-dark', 'to-light');
+          }, 400);
+        }
+      }
+
+      document.documentElement.classList.toggle('dark', isDark);
+
+      try {
+        localStorage.setItem('theme', theme);
+      } catch (e) {}
+
+      updateThemeButtons(theme);
+    }
+
+    function updateThemeButtons(theme: 'light' | 'dark' | 'system') {
+      const activeClass = 'bg-primary text-white';
+      const inactiveClass = 'hover:bg-gray-300 dark:hover:bg-slate-600';
+
+      [themeLightBtn, themeDarkBtn, themeSystemBtn].forEach(btn => {
+        btn?.classList.remove('bg-primary', 'text-white', 'hover:bg-gray-300', 'dark:hover:bg-slate-600');
+      });
+
+      if (theme === 'light') {
+        themeLightBtn?.classList.add('bg-primary', 'text-white');
+        themeDarkBtn?.classList.add('hover:bg-gray-300', 'dark:hover:bg-slate-600');
+        themeSystemBtn?.classList.add('hover:bg-gray-300', 'dark:hover:bg-slate-600');
+      } else if (theme === 'dark') {
+        themeDarkBtn?.classList.add('bg-primary', 'text-white');
+        themeLightBtn?.classList.add('hover:bg-gray-300', 'dark:hover:bg-slate-600');
+        themeSystemBtn?.classList.add('hover:bg-gray-300', 'dark:hover:bg-slate-600');
+      } else {
+        themeSystemBtn?.classList.add('bg-primary', 'text-white');
+        themeLightBtn?.classList.add('hover:bg-gray-300', 'dark:hover:bg-slate-600');
+        themeDarkBtn?.classList.add('hover:bg-gray-300', 'dark:hover:bg-slate-600');
+      }
+    }
+
+    // Initialize theme buttons state
+    updateThemeButtons(getThemePreference());
+
+    themeLightBtn?.addEventListener('click', () => applyTheme('light'));
+    themeDarkBtn?.addEventListener('click', () => applyTheme('dark'));
+    themeSystemBtn?.addEventListener('click', () => applyTheme('system'));
+
+    // Listen for system theme changes when in system mode
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+      if (getThemePreference() === 'system') {
+        applyTheme('system');
       }
     });
 
-    closeBtn?.addEventListener('click', () => {
-      configPanel.classList.add('hidden');
+    function openConfigPanel() {
+      configPanel.classList.remove('opacity-0', 'pointer-events-none', 'translate-x-4');
+      configPanel.classList.add('opacity-100', 'pointer-events-auto', 'translate-x-0');
+    }
+
+    function closeConfigPanel() {
+      configPanel.classList.add('opacity-0', 'pointer-events-none', 'translate-x-4');
+      configPanel.classList.remove('opacity-100', 'pointer-events-auto', 'translate-x-0');
+    }
+
+    function toggleConfigPanel() {
+      if (configPanel.classList.contains('opacity-0')) {
+        openConfigPanel();
+      } else {
+        closeConfigPanel();
+      }
+    }
+
+    // Open config panel from buttons
+    openBtnFloat?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleConfigPanel();
+    });
+    openBtnHeader?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleConfigPanel();
+    });
+
+    // Keyboard shortcut: Ctrl+Shift+G
+    document.addEventListener('keydown', (e) => {
+      if (e.ctrlKey && e.shiftKey && e.key === 'G') {
+        e.preventDefault();
+        toggleConfigPanel();
+      }
+    });
+
+    closeBtn?.addEventListener('click', closeConfigPanel);
+
+    // Close on click outside
+    document.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement;
+      if (!configPanel.contains(target) &&
+          target !== openBtnFloat &&
+          target !== openBtnHeader &&
+          !openBtnFloat?.contains(target) &&
+          !openBtnHeader?.contains(target) &&
+          !configPanel.classList.contains('opacity-0')) {
+        closeConfigPanel();
+      }
     });
 
     function handleMouseMove(e: MouseEvent) {
@@ -343,6 +534,7 @@
       window.removeEventListener('resize', handleResize);
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('touchmove', handleTouchMove);
+      window.removeEventListener('scroll', updateHeaderPosition);
     }
 
     function handleResize() {
@@ -360,6 +552,7 @@
     window.addEventListener('resize', handleResize);
     window.addEventListener('mousemove', handleMouseMove);
     window.addEventListener('touchmove', handleTouchMove);
+    window.addEventListener('scroll', updateHeaderPosition, { passive: true });
 
     // Cleanup on page navigation
     document.addEventListener('astro:before-swap', cleanup, { once: true });

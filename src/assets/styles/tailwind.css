@@ -2,6 +2,108 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Theme transition overlay */
+.theme-transition-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.theme-transition-overlay.active {
+  animation: theme-flash 0.4s ease-out forwards;
+}
+
+.theme-transition-overlay.to-dark {
+  background: radial-gradient(circle at var(--x, 50%) var(--y, 50%), #0f172a 0%, transparent 70%);
+}
+
+.theme-transition-overlay.to-light {
+  background: radial-gradient(circle at var(--x, 50%) var(--y, 50%), #ffffff 0%, transparent 70%);
+}
+
+@keyframes theme-flash {
+  0% {
+    opacity: 0;
+    transform: scale(0);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(2.5);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(3);
+  }
+}
+
+/* Modern micro-interactions */
+@layer utilities {
+  /* Smooth hover lift effect */
+  .hover-lift {
+    @apply transition-all duration-300 ease-out;
+  }
+  .hover-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  }
+
+  /* Magnetic button effect */
+  .magnetic-hover {
+    @apply transition-transform duration-200 ease-out;
+  }
+
+  /* Glow effect on hover */
+  .glow-hover {
+    @apply transition-all duration-300;
+  }
+  .glow-hover:hover {
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
+  }
+
+  /* Stagger animation for lists */
+  .stagger-fade-in > * {
+    opacity: 0;
+    animation: stagger-in 0.5s ease-out forwards;
+  }
+  .stagger-fade-in > *:nth-child(1) { animation-delay: 0.05s; }
+  .stagger-fade-in > *:nth-child(2) { animation-delay: 0.1s; }
+  .stagger-fade-in > *:nth-child(3) { animation-delay: 0.15s; }
+  .stagger-fade-in > *:nth-child(4) { animation-delay: 0.2s; }
+  .stagger-fade-in > *:nth-child(5) { animation-delay: 0.25s; }
+  .stagger-fade-in > *:nth-child(6) { animation-delay: 0.3s; }
+  .stagger-fade-in > *:nth-child(7) { animation-delay: 0.35s; }
+  .stagger-fade-in > *:nth-child(8) { animation-delay: 0.4s; }
+  .stagger-fade-in > *:nth-child(9) { animation-delay: 0.45s; }
+  .stagger-fade-in > *:nth-child(10) { animation-delay: 0.5s; }
+
+  @keyframes stagger-in {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Pulse glow for interactive elements */
+  .pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% {
+      box-shadow: 0 0 5px rgba(99, 102, 241, 0.3);
+    }
+    50% {
+      box-shadow: 0 0 20px rgba(99, 102, 241, 0.6);
+    }
+  }
+}
+
 @layer utilities {
   .bg-page {
     background-color: var(--aw-color-bg-page);

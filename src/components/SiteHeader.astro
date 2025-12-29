@@ -1,0 +1,106 @@
+---
+import { Icon } from 'astro-icon/components';
+---
+
+<div class="text-center mb-12 animate-fade-in">
+  <a href="/" id="site-header-link" class="inline-block group">
+    <h1 class="text-4xl md:text-5xl font-bold leading-tighter tracking-tighter mb-4 transition-all duration-300 group-hover:tracking-tight">
+      <span class="text-accent dark:text-white bg-gradient-to-r from-accent to-primary bg-clip-text group-hover:text-transparent transition-all duration-500">Djaygo</span>'s Digital Garden
+    </h1>
+  </a>
+  <p class="text-xl text-muted max-w-xl mx-auto">
+    A space for thoughts, notes, and ideas to grow.
+  </p>
+  <nav class="flex justify-center gap-4 mt-6 flex-wrap">
+    <a href="/about" class="nav-link inline-flex items-center gap-2 text-sm text-muted hover:text-primary transition-all duration-300 hover:scale-105">
+      <Icon name="tabler:user" class="w-4 h-4" />
+      About
+    </a>
+    <a href="/tags" class="nav-link inline-flex items-center gap-2 text-sm text-muted hover:text-primary transition-all duration-300 hover:scale-105">
+      <Icon name="tabler:hash" class="w-4 h-4" />
+      Tags
+    </a>
+    <a href="/search" class="nav-link inline-flex items-center gap-2 text-sm text-muted hover:text-primary transition-all duration-300 hover:scale-105">
+      <Icon name="tabler:search" class="w-4 h-4" />
+      Search
+    </a>
+    <a href="https://github.com/Djaygo" target="_blank" class="nav-link inline-flex items-center gap-2 text-sm text-muted hover:text-primary transition-all duration-300 hover:scale-105">
+      <Icon name="tabler:brand-github" class="w-4 h-4" />
+      GitHub
+    </a>
+    <button id="open-network-config-header" class="nav-link inline-flex items-center gap-2 text-sm text-muted hover:text-primary transition-all duration-300 hover:scale-105">
+      <Icon name="tabler:palette" class="w-4 h-4" />
+      Theme
+    </button>
+  </nav>
+</div>
+
+<style>
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in {
+    animation: fade-in 0.6s ease-out forwards;
+  }
+
+  .nav-link {
+    position: relative;
+  }
+
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--aw-color-primary), var(--aw-color-accent));
+    transition: all 0.3s ease-out;
+    transform: translateX(-50%);
+    border-radius: 1px;
+  }
+
+  .nav-link:hover::after {
+    width: 100%;
+  }
+</style>
+
+<script>
+  function initHeaderLink() {
+    const headerLink = document.getElementById('site-header-link');
+    if (!headerLink) return;
+
+    let isNavigating = false;
+
+    headerLink.addEventListener('click', (e) => {
+      // Prevent navigation if already on home page
+      if (window.location.pathname === '/' || window.location.pathname === '/index.html') {
+        e.preventDefault();
+        return;
+      }
+
+      // Debounce rapid clicks
+      if (isNavigating) {
+        e.preventDefault();
+        return;
+      }
+
+      isNavigating = true;
+      setTimeout(() => {
+        isNavigating = false;
+      }, 1000);
+    });
+  }
+
+  // Run on load and after view transitions
+  initHeaderLink();
+  document.addEventListener('astro:after-swap', initHeaderLink);
+</script>
