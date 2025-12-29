@@ -1,5 +1,5 @@
 ---
-// Interactive network background component
+// Interactive network background component with hidden config
 ---
 
 <div class="fixed inset-0 z-0 pointer-events-none" id="network-container">
@@ -7,29 +7,165 @@
   <div class="absolute inset-0 bg-gradient-to-b from-transparent via-white/50 to-white dark:via-slate-900/50 dark:to-slate-900"></div>
 </div>
 
+
+<!-- Hidden Config Panel -->
+<div id="network-config" class="fixed top-4 right-4 z-50 hidden">
+  <div class="bg-white/95 dark:bg-slate-800/95 backdrop-blur-md rounded-xl shadow-2xl p-6 w-80 border border-gray-200 dark:border-slate-700">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="font-bold text-lg">Network Settings</h3>
+      <button id="close-config" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 text-xl">&times;</button>
+    </div>
+
+    <div class="space-y-4 text-sm">
+      <!-- Physics -->
+      <div class="border-b border-gray-200 dark:border-slate-700 pb-4">
+        <h4 class="font-semibold mb-3 text-muted">Physics</h4>
+
+        <label class="block mb-2">
+          <span class="text-muted">Nodes: <span id="nodeCount-value">60</span></span>
+          <input type="range" id="nodeCount" min="10" max="150" value="60" class="w-full accent-primary">
+        </label>
+
+        <label class="block mb-2">
+          <span class="text-muted">Speed: <span id="nodeSpeed-value">0.3</span></span>
+          <input type="range" id="nodeSpeed" min="0.1" max="2" step="0.1" value="0.3" class="w-full accent-primary">
+        </label>
+
+        <label class="block mb-2">
+          <span class="text-muted">Connection Distance: <span id="connectionDistance-value">150</span></span>
+          <input type="range" id="connectionDistance" min="50" max="300" value="150" class="w-full accent-primary">
+        </label>
+
+        <label class="block mb-2">
+          <span class="text-muted">Mouse Radius: <span id="mouseRadius-value">200</span></span>
+          <input type="range" id="mouseRadius" min="50" max="400" value="200" class="w-full accent-primary">
+        </label>
+
+        <label class="block">
+          <span class="text-muted">Node Size: <span id="nodeSize-value">2</span></span>
+          <input type="range" id="nodeSize" min="1" max="6" step="0.5" value="2" class="w-full accent-primary">
+        </label>
+      </div>
+
+      <!-- Colors -->
+      <div class="pb-4">
+        <h4 class="font-semibold mb-3 text-muted">Colors</h4>
+
+        <label class="flex items-center justify-between mb-2">
+          <span class="text-muted">Node Color</span>
+          <input type="color" id="nodeColor" value="#6366f1" class="w-10 h-8 rounded cursor-pointer">
+        </label>
+
+        <label class="flex items-center justify-between mb-2">
+          <span class="text-muted">Line Color</span>
+          <input type="color" id="lineColor" value="#6366f1" class="w-10 h-8 rounded cursor-pointer">
+        </label>
+
+        <label class="flex items-center justify-between mb-2">
+          <span class="text-muted">Mouse Line Color</span>
+          <input type="color" id="mouseLineColor" value="#6366f1" class="w-10 h-8 rounded cursor-pointer">
+        </label>
+
+        <label class="block mb-2">
+          <span class="text-muted">Node Opacity: <span id="nodeOpacity-value">0.6</span></span>
+          <input type="range" id="nodeOpacity" min="0.1" max="1" step="0.1" value="0.6" class="w-full accent-primary">
+        </label>
+
+        <label class="block">
+          <span class="text-muted">Line Opacity: <span id="lineOpacity-value">0.15</span></span>
+          <input type="range" id="lineOpacity" min="0.05" max="0.5" step="0.05" value="0.15" class="w-full accent-primary">
+        </label>
+      </div>
+
+      <!-- Presets -->
+      <div class="flex gap-2 flex-wrap">
+        <button data-preset="default" class="px-3 py-1 text-xs rounded-full bg-gray-200 dark:bg-slate-700 hover:bg-primary hover:text-white transition-colors">Default</button>
+        <button data-preset="dense" class="px-3 py-1 text-xs rounded-full bg-gray-200 dark:bg-slate-700 hover:bg-primary hover:text-white transition-colors">Dense</button>
+        <button data-preset="minimal" class="px-3 py-1 text-xs rounded-full bg-gray-200 dark:bg-slate-700 hover:bg-primary hover:text-white transition-colors">Minimal</button>
+        <button data-preset="rainbow" class="px-3 py-1 text-xs rounded-full bg-gray-200 dark:bg-slate-700 hover:bg-primary hover:text-white transition-colors">Rainbow</button>
+        <button data-preset="matrix" class="px-3 py-1 text-xs rounded-full bg-gray-200 dark:bg-slate-700 hover:bg-primary hover:text-white transition-colors">Matrix</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
   function initNetwork() {
     const canvas = document.getElementById('network-canvas') as HTMLCanvasElement;
-    if (!canvas) return;
+    const configPanel = document.getElementById('network-config');
+    const openBtn = document.getElementById('open-network-config');
+    const closeBtn = document.getElementById('close-config');
+
+    if (!canvas || !configPanel) return;
 
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
     let width: number;
     let height: number;
-    let nodes: Array<{x: number; y: number; vx: number; vy: number; radius: number}> = [];
+    let nodes: Array<{x: number; y: number; vx: number; vy: number; radius: number; hue?: number}> = [];
     let mouse = { x: 0, y: 0 };
     let animationId: number;
 
-    const config = {
+    // Default config
+    const defaultConfig = {
       nodeCount: 60,
       connectionDistance: 150,
       nodeSpeed: 0.3,
       mouseRadius: 200,
-      nodeColor: 'rgba(99, 102, 241, 0.6)',
-      lineColor: 'rgba(99, 102, 241, 0.15)',
-      mouseLineColor: 'rgba(99, 102, 241, 0.3)',
+      nodeSize: 2,
+      nodeColor: '#6366f1',
+      lineColor: '#6366f1',
+      mouseLineColor: '#6366f1',
+      nodeOpacity: 0.6,
+      lineOpacity: 0.15,
+      rainbowMode: false,
     };
+
+    // Presets
+    const presets: Record<string, Partial<typeof defaultConfig>> = {
+      default: { ...defaultConfig },
+      dense: { nodeCount: 120, connectionDistance: 100, nodeSpeed: 0.2, nodeSize: 1.5 },
+      minimal: { nodeCount: 25, connectionDistance: 200, nodeSpeed: 0.15, nodeSize: 3, lineOpacity: 0.1 },
+      rainbow: { rainbowMode: true, nodeCount: 80, nodeOpacity: 0.8, lineOpacity: 0.25 },
+      matrix: { nodeColor: '#00ff00', lineColor: '#00ff00', mouseLineColor: '#00ff00', nodeCount: 100, nodeSpeed: 0.5, lineOpacity: 0.2 },
+    };
+
+    // Load saved config or use defaults
+    let config = { ...defaultConfig };
+    try {
+      const saved = localStorage.getItem('networkConfig');
+      if (saved) {
+        config = { ...defaultConfig, ...JSON.parse(saved) };
+      }
+    } catch (e) {}
+
+    function saveConfig() {
+      try {
+        localStorage.setItem('networkConfig', JSON.stringify(config));
+      } catch (e) {}
+    }
+
+    function hexToRgba(hex: string, alpha: number): string {
+      const r = parseInt(hex.slice(1, 3), 16);
+      const g = parseInt(hex.slice(3, 5), 16);
+      const b = parseInt(hex.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+    }
+
+    function hslToRgba(h: number, s: number, l: number, a: number): string {
+      const c = (1 - Math.abs(2 * l - 1)) * s;
+      const x = c * (1 - Math.abs((h / 60) % 2 - 1));
+      const m = l - c / 2;
+      let r = 0, g = 0, b = 0;
+      if (h < 60) { r = c; g = x; }
+      else if (h < 120) { r = x; g = c; }
+      else if (h < 180) { g = c; b = x; }
+      else if (h < 240) { g = x; b = c; }
+      else if (h < 300) { r = x; b = c; }
+      else { r = c; b = x; }
+      return `rgba(${Math.round((r + m) * 255)}, ${Math.round((g + m) * 255)}, ${Math.round((b + m) * 255)}, ${a})`;
+    }
 
     function init() {
       resize();
@@ -40,7 +176,8 @@
           y: Math.random() * height,
           vx: (Math.random() - 0.5) * config.nodeSpeed,
           vy: (Math.random() - 0.5) * config.nodeSpeed,
-          radius: Math.random() * 2 + 1,
+          radius: Math.random() * config.nodeSize + 1,
+          hue: Math.random() * 360,
         });
       }
     }
@@ -63,11 +200,20 @@
         node.x = Math.max(0, Math.min(width, node.x));
         node.y = Math.max(0, Math.min(height, node.y));
 
+        // Update hue for rainbow mode
+        if (config.rainbowMode && node.hue !== undefined) {
+          node.hue = (node.hue + 0.5) % 360;
+        }
+
+        // Draw node
         ctx.beginPath();
         ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
-        ctx.fillStyle = config.nodeColor;
+        ctx.fillStyle = config.rainbowMode
+          ? hslToRgba(node.hue!, 0.7, 0.5, config.nodeOpacity)
+          : hexToRgba(config.nodeColor, config.nodeOpacity);
         ctx.fill();
 
+        // Connect to nearby nodes
         for (let j = i + 1; j < nodes.length; j++) {
           const other = nodes[j];
           const dx = node.x - other.x;
@@ -78,12 +224,16 @@
             ctx.beginPath();
             ctx.moveTo(node.x, node.y);
             ctx.lineTo(other.x, other.y);
-            ctx.strokeStyle = config.lineColor;
-            ctx.lineWidth = 1 - dist / config.connectionDistance;
+            const opacity = config.lineOpacity * (1 - dist / config.connectionDistance);
+            ctx.strokeStyle = config.rainbowMode
+              ? hslToRgba((node.hue! + other.hue!) / 2, 0.7, 0.5, opacity)
+              : hexToRgba(config.lineColor, opacity);
+            ctx.lineWidth = 1;
             ctx.stroke();
           }
         }
 
+        // Connect to mouse
         const dx = node.x - mouse.x;
         const dy = node.y - mouse.y;
         const dist = Math.sqrt(dx * dx + dy * dy);
@@ -92,14 +242,89 @@
           ctx.beginPath();
           ctx.moveTo(node.x, node.y);
           ctx.lineTo(mouse.x, mouse.y);
-          ctx.strokeStyle = config.mouseLineColor;
-          ctx.lineWidth = 1 - dist / config.mouseRadius;
+          const opacity = 0.3 * (1 - dist / config.mouseRadius);
+          ctx.strokeStyle = config.rainbowMode
+            ? hslToRgba(node.hue!, 0.7, 0.5, opacity)
+            : hexToRgba(config.mouseLineColor, opacity);
+          ctx.lineWidth = 1;
           ctx.stroke();
         }
       });
 
       animationId = requestAnimationFrame(animate);
     }
+
+    function updateConfigUI() {
+      const elements: Record<string, HTMLInputElement> = {};
+      ['nodeCount', 'nodeSpeed', 'connectionDistance', 'mouseRadius', 'nodeSize',
+       'nodeColor', 'lineColor', 'mouseLineColor', 'nodeOpacity', 'lineOpacity'].forEach(id => {
+        elements[id] = document.getElementById(id) as HTMLInputElement;
+        const valueEl = document.getElementById(`${id}-value`);
+        if (elements[id]) {
+          elements[id].value = String(config[id as keyof typeof config]);
+          if (valueEl) valueEl.textContent = String(config[id as keyof typeof config]);
+        }
+      });
+    }
+
+    function setupConfigListeners() {
+      ['nodeCount', 'nodeSpeed', 'connectionDistance', 'mouseRadius', 'nodeSize',
+       'nodeOpacity', 'lineOpacity'].forEach(id => {
+        const el = document.getElementById(id) as HTMLInputElement;
+        const valueEl = document.getElementById(`${id}-value`);
+        if (el) {
+          el.addEventListener('input', () => {
+            const val = parseFloat(el.value);
+            (config as any)[id] = val;
+            if (valueEl) valueEl.textContent = String(val);
+            if (id === 'nodeCount' || id === 'nodeSize') init();
+            saveConfig();
+          });
+        }
+      });
+
+      ['nodeColor', 'lineColor', 'mouseLineColor'].forEach(id => {
+        const el = document.getElementById(id) as HTMLInputElement;
+        if (el) {
+          el.addEventListener('input', () => {
+            (config as any)[id] = el.value;
+            config.rainbowMode = false;
+            saveConfig();
+          });
+        }
+      });
+
+      // Presets
+      document.querySelectorAll('[data-preset]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const presetName = (btn as HTMLElement).dataset.preset!;
+          const preset = presets[presetName];
+          if (preset) {
+            Object.assign(config, { ...defaultConfig, ...preset });
+            updateConfigUI();
+            init();
+            saveConfig();
+          }
+        });
+      });
+    }
+
+    // Open config panel from button
+    openBtn?.addEventListener('click', () => {
+      configPanel.classList.toggle('hidden');
+    });
+
+    // Also allow keyboard shortcut: Ctrl+Shift+G
+    document.addEventListener('keydown', (e) => {
+      if (e.ctrlKey && e.shiftKey && e.key === 'G') {
+        e.preventDefault();
+        configPanel.classList.toggle('hidden');
+      }
+    });
+
+    closeBtn?.addEventListener('click', () => {
+      configPanel.classList.add('hidden');
+    });
 
     function handleMouseMove(e: MouseEvent) {
       mouse.x = e.clientX;
@@ -126,6 +351,8 @@
     }
 
     // Initialize
+    updateConfigUI();
+    setupConfigListeners();
     init();
     animate();
 
@@ -134,13 +361,13 @@
     window.addEventListener('mousemove', handleMouseMove);
     window.addEventListener('touchmove', handleTouchMove);
 
-    // Cleanup on page navigation (View Transitions)
+    // Cleanup on page navigation
     document.addEventListener('astro:before-swap', cleanup, { once: true });
   }
 
   // Run on initial load
   initNetwork();
 
-  // Re-run after View Transitions navigation
+  // Re-run after View Transitions
   document.addEventListener('astro:after-swap', initNetwork);
 </script>
