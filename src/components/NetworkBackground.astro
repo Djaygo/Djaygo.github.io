@@ -1,0 +1,146 @@
+---
+// Interactive network background component
+---
+
+<div class="fixed inset-0 z-0 pointer-events-none" id="network-container">
+  <canvas id="network-canvas" class="w-full h-full pointer-events-auto"></canvas>
+  <div class="absolute inset-0 bg-gradient-to-b from-transparent via-white/50 to-white dark:via-slate-900/50 dark:to-slate-900"></div>
+</div>
+
+<script>
+  function initNetwork() {
+    const canvas = document.getElementById('network-canvas') as HTMLCanvasElement;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    let width: number;
+    let height: number;
+    let nodes: Array<{x: number; y: number; vx: number; vy: number; radius: number}> = [];
+    let mouse = { x: 0, y: 0 };
+    let animationId: number;
+
+    const config = {
+      nodeCount: 60,
+      connectionDistance: 150,
+      nodeSpeed: 0.3,
+      mouseRadius: 200,
+      nodeColor: 'rgba(99, 102, 241, 0.6)',
+      lineColor: 'rgba(99, 102, 241, 0.15)',
+      mouseLineColor: 'rgba(99, 102, 241, 0.3)',
+    };
+
+    function init() {
+      resize();
+      nodes = [];
+      for (let i = 0; i < config.nodeCount; i++) {
+        nodes.push({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          vx: (Math.random() - 0.5) * config.nodeSpeed,
+          vy: (Math.random() - 0.5) * config.nodeSpeed,
+          radius: Math.random() * 2 + 1,
+        });
+      }
+    }
+
+    function resize() {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, width, height);
+
+      nodes.forEach((node, i) => {
+        node.x += node.vx;
+        node.y += node.vy;
+
+        if (node.x < 0 || node.x > width) node.vx *= -1;
+        if (node.y < 0 || node.y > height) node.vy *= -1;
+
+        node.x = Math.max(0, Math.min(width, node.x));
+        node.y = Math.max(0, Math.min(height, node.y));
+
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
+        ctx.fillStyle = config.nodeColor;
+        ctx.fill();
+
+        for (let j = i + 1; j < nodes.length; j++) {
+          const other = nodes[j];
+          const dx = node.x - other.x;
+          const dy = node.y - other.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+
+          if (dist < config.connectionDistance) {
+            ctx.beginPath();
+            ctx.moveTo(node.x, node.y);
+            ctx.lineTo(other.x, other.y);
+            ctx.strokeStyle = config.lineColor;
+            ctx.lineWidth = 1 - dist / config.connectionDistance;
+            ctx.stroke();
+          }
+        }
+
+        const dx = node.x - mouse.x;
+        const dy = node.y - mouse.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+
+        if (dist < config.mouseRadius) {
+          ctx.beginPath();
+          ctx.moveTo(node.x, node.y);
+          ctx.lineTo(mouse.x, mouse.y);
+          ctx.strokeStyle = config.mouseLineColor;
+          ctx.lineWidth = 1 - dist / config.mouseRadius;
+          ctx.stroke();
+        }
+      });
+
+      animationId = requestAnimationFrame(animate);
+    }
+
+    function handleMouseMove(e: MouseEvent) {
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+    }
+
+    function handleTouchMove(e: TouchEvent) {
+      if (e.touches.length > 0) {
+        mouse.x = e.touches[0].clientX;
+        mouse.y = e.touches[0].clientY;
+      }
+    }
+
+    function cleanup() {
+      cancelAnimationFrame(animationId);
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('touchmove', handleTouchMove);
+    }
+
+    function handleResize() {
+      resize();
+      init();
+    }
+
+    // Initialize
+    init();
+    animate();
+
+    // Event listeners
+    window.addEventListener('resize', handleResize);
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('touchmove', handleTouchMove);
+
+    // Cleanup on page navigation (View Transitions)
+    document.addEventListener('astro:before-swap', cleanup, { once: true });
+  }
+
+  // Run on initial load
+  initNetwork();
+
+  // Re-run after View Transitions navigation
+  document.addEventListener('astro:after-swap', initNetwork);
+</script>
