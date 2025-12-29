@@ -1,79 +1,94 @@
 ---
 import Layout from '~/layouts/PageLayout.astro';
-import Hero from '~/components/widgets/Hero.astro';
-import BlogLatestPosts from '~/components/widgets/BlogLatestPosts.astro';
-import Features from '~/components/widgets/Features.astro';
+import { Icon } from 'astro-icon/components';
+import { fetchPosts } from '~/utils/blog';
+import { getPermalink } from '~/utils/permalinks';
+import { getFormattedDate } from '~/utils/utils';
 
 const metadata = {
   title: 'Djaygo - Digital Garden',
   ignoreTitleTemplate: true,
 };
+
+const posts = await fetchPosts();
 ---
 
 <Layout metadata={metadata}>
-  <Hero
-    tagline="Welcome to my corner of the internet"
-    actions={[
-      {
-        variant: 'primary',
-        text: 'Explore Notes',
-        href: '/notes',
-        icon: 'tabler:notebook',
-      },
-      {
-        text: 'About Me',
-        href: '/about',
-        icon: 'tabler:user',
-      },
-    ]}
-  >
-    <Fragment slot="title">
-      <span class="text-accent dark:text-white">Djaygo</span>'s Digital Garden
-    </Fragment>
-
-    <Fragment slot="subtitle">
-      <span class="hidden sm:inline">
+  <section class="px-4 sm:px-6 py-12 sm:py-16 lg:py-20 mx-auto max-w-3xl">
+    <!-- Header -->
+    <div class="text-center mb-12">
+      <h1 class="text-4xl md:text-5xl font-bold leading-tighter tracking-tighter mb-4">
+        <span class="text-accent dark:text-white">Djaygo</span>'s Digital Garden
+      </h1>
+      <p class="text-xl text-muted max-w-xl mx-auto">
         A space for thoughts, notes, and ideas to grow.
-      </span>
-      <span class="block sm:hidden">Thoughts, notes, and ideas.</span>
-      <br />
-      <span class="text-sm text-muted">
-        This is my personal wiki — a collection of interconnected notes on topics I'm learning and exploring.
-      </span>
-    </Fragment>
-  </Hero>
+      </p>
+      <div class="flex justify-center gap-4 mt-6">
+        <a href="/about" class="inline-flex items-center gap-2 text-sm text-muted hover:text-primary transition-colors">
+          <Icon name="tabler:user" class="w-4 h-4" />
+          About
+        </a>
+        <a href="/tags" class="inline-flex items-center gap-2 text-sm text-muted hover:text-primary transition-colors">
+          <Icon name="tabler:hash" class="w-4 h-4" />
+          Tags
+        </a>
+        <a href="/search" class="inline-flex items-center gap-2 text-sm text-muted hover:text-primary transition-colors">
+          <Icon name="tabler:search" class="w-4 h-4" />
+          Search
+        </a>
+        <a href="https://github.com/Djaygo" target="_blank" class="inline-flex items-center gap-2 text-sm text-muted hover:text-primary transition-colors">
+          <Icon name="tabler:brand-github" class="w-4 h-4" />
+          GitHub
+        </a>
+      </div>
+    </div>
 
-  <Features
-    id="explore"
-    tagline="Explore"
-    title="What you'll find here"
-    subtitle="A living collection of notes, ideas, and resources"
-    items={[
-      {
-        title: 'Notes & Ideas',
-        description: 'Thoughts on technology, programming, and things I find interesting.',
-        icon: 'tabler:bulb',
-      },
-      {
-        title: 'Learning in Public',
-        description: 'Documenting my learning journey — the successes and the struggles.',
-        icon: 'tabler:school',
-      },
-      {
-        title: 'Connected Thinking',
-        description: 'Ideas are linked together, growing like a garden over time.',
-        icon: 'tabler:vector',
-      },
-      {
-        title: 'Work in Progress',
-        description: 'Some notes are seeds, some are evergreen. All are evolving.',
-        icon: 'tabler:plant-2',
-      },
-    ]}
-  />
+    <!-- Timeline -->
+    <div class="relative">
+      <!-- Timeline line -->
+      <div class="absolute left-4 top-0 bottom-0 w-px bg-gray-200 dark:bg-slate-700"></div>
 
-  <BlogLatestPosts
-    title="Recent Notes"
-    information="The latest additions to the garden. Click through to explore and discover connections."
-  />
+      {posts.map((post, index) => (
+        <a
+          href={getPermalink(post.slug, 'post')}
+          class="group block relative pl-12 pb-8 last:pb-0"
+        >
+          <!-- Timeline dot -->
+          <div class="absolute left-0 w-8 h-8 rounded-full bg-white dark:bg-slate-900 border-2 border-gray-200 dark:border-slate-700 group-hover:border-primary dark:group-hover:border-primary flex items-center justify-center transition-colors">
+            <Icon name="tabler:note" class="w-4 h-4 text-muted group-hover:text-primary transition-colors" />
+          </div>
+
+          <!-- Content -->
+          <div class="bg-gray-50 dark:bg-slate-800/50 rounded-lg p-4 group-hover:bg-gray-100 dark:group-hover:bg-slate-800 transition-colors">
+            <time class="text-xs text-muted" datetime={String(post.publishDate)}>
+              {getFormattedDate(post.publishDate)}
+            </time>
+            <h2 class="text-lg font-semibold mt-1 group-hover:text-primary transition-colors">
+              {post.title}
+            </h2>
+            {post.excerpt && (
+              <p class="text-sm text-muted mt-2 line-clamp-2">
+                {post.excerpt}
+              </p>
+            )}
+            {post.tags && post.tags.length > 0 && (
+              <div class="flex flex-wrap gap-2 mt-3">
+                {post.tags.slice(0, 3).map((tag) => (
+                  <span class="text-xs px-2 py-0.5 rounded-full bg-gray-200 dark:bg-slate-700 text-muted">
+                    #{tag.slug || tag}
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
+        </a>
+      ))}
+
+      {posts.length === 0 && (
+        <p class="text-center text-muted py-8">
+          No notes yet. The garden is just getting started.
+        </p>
+      )}
+    </div>
+  </section>
 </Layout>
