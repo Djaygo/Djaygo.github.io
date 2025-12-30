@@ -23,7 +23,7 @@
         <ul class="text-gray-200 space-y-2 text-sm">
           <li class="flex items-center gap-2">
             <span class="text-green-400">→</span>
-            Use <kbd class="px-2 py-0.5 bg-white/20 rounded text-xs">WASD</kbd> or <kbd class="px-2 py-0.5 bg-white/20 rounded text-xs">Arrow Keys</kbd> to move
+            Use <kbd class="px-2 py-0.5 bg-white/20 rounded text-xs">WASD</kbd>, <kbd class="px-2 py-0.5 bg-white/20 rounded text-xs">Arrow Keys</kbd>, swipe gestures, or on-screen controls
           </li>
           <li class="flex items-center gap-2">
             <span class="text-green-400">→</span>
@@ -35,7 +35,7 @@
           </li>
           <li class="flex items-center gap-2">
             <span class="text-green-400">→</span>
-            Press <kbd class="px-2 py-0.5 bg-white/20 rounded text-xs">ESC</kbd> to quit
+            Press <kbd class="px-2 py-0.5 bg-white/20 rounded text-xs">ESC</kbd> or tap quit to exit
           </li>
         </ul>
       </div>
@@ -68,6 +68,30 @@
     <button id="snake-hud-quit" class="text-xs text-gray-400 hover:text-red-400 transition-colors">
       ESC to quit
     </button>
+  </div>
+</div>
+
+<!-- Mobile Controls (D-Pad) -->
+<div id="snake-mobile-controls" class="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 opacity-0 pointer-events-none transition-opacity duration-300">
+  <div class="relative w-40 h-40">
+    <!-- Up -->
+    <button id="snake-btn-up" class="absolute top-0 left-1/2 -translate-x-1/2 w-12 h-12 bg-green-500/80 hover:bg-green-400 active:bg-green-600 backdrop-blur-sm rounded-lg shadow-lg flex items-center justify-center text-white text-2xl font-bold transition-all active:scale-95">
+      ▲
+    </button>
+    <!-- Left -->
+    <button id="snake-btn-left" class="absolute top-1/2 -translate-y-1/2 left-0 w-12 h-12 bg-green-500/80 hover:bg-green-400 active:bg-green-600 backdrop-blur-sm rounded-lg shadow-lg flex items-center justify-center text-white text-2xl font-bold transition-all active:scale-95">
+      ◀
+    </button>
+    <!-- Right -->
+    <button id="snake-btn-right" class="absolute top-1/2 -translate-y-1/2 right-0 w-12 h-12 bg-green-500/80 hover:bg-green-400 active:bg-green-600 backdrop-blur-sm rounded-lg shadow-lg flex items-center justify-center text-white text-2xl font-bold transition-all active:scale-95">
+      ▶
+    </button>
+    <!-- Down -->
+    <button id="snake-btn-down" class="absolute bottom-0 left-1/2 -translate-x-1/2 w-12 h-12 bg-green-500/80 hover:bg-green-400 active:bg-green-600 backdrop-blur-sm rounded-lg shadow-lg flex items-center justify-center text-white text-2xl font-bold transition-all active:scale-95">
+      ▼
+    </button>
+    <!-- Center (just for visual balance) -->
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-black/30 backdrop-blur-sm rounded-full"></div>
   </div>
 </div>
 
@@ -349,6 +373,13 @@
     let snakeSegmentSize = 15;
     let snakeGameOver = false;
     let gameOverTime = 0;
+
+    // Touch/swipe tracking for mobile controls
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchEndX = 0;
+    let touchEndY = 0;
+    const minSwipeDistance = 30; // minimum distance for a swipe
 
     // Load high score
     try {
@@ -729,6 +760,64 @@
       showSnakeIntro();
     }
 
+    function handleTouchStart(e: TouchEvent) {
+      if (!snakeActive || snakeGameOver) return;
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    }
+
+    function handleTouchEnd(e: TouchEvent) {
+      if (!snakeActive || snakeGameOver) return;
+      touchEndX = e.changedTouches[0].clientX;
+      touchEndY = e.changedTouches[0].clientY;
+      handleSwipe();
+    }
+
+    function handleSwipe() {
+      const deltaX = touchEndX - touchStartX;
+      const deltaY = touchEndY - touchStartY;
+      const absDeltaX = Math.abs(deltaX);
+      const absDeltaY = Math.abs(deltaY);
+
+      // Check if swipe is long enough
+      if (absDeltaX < minSwipeDistance && absDeltaY < minSwipeDistance) {
+        return;
+      }
+
+      // Determine swipe direction (horizontal or vertical)
+      if (absDeltaX > absDeltaY) {
+        // Horizontal swipe
+        if (deltaX > 0 && snakeDirection.x !== -1) {
+          // Swipe right
+          snakeNextDirection = { x: 1, y: 0 };
+        } else if (deltaX < 0 && snakeDirection.x !== 1) {
+          // Swipe left
+          snakeNextDirection = { x: -1, y: 0 };
+        }
+      } else {
+        // Vertical swipe
+        if (deltaY > 0 && snakeDirection.y !== -1) {
+          // Swipe down
+          snakeNextDirection = { x: 0, y: 1 };
+        } else if (deltaY < 0 && snakeDirection.y !== 1) {
+          // Swipe up
+          snakeNextDirection = { x: 0, y: -1 };
+        }
+      }
+    }
+
+    function setSnakeDirection(x: number, y: number) {
+      if (snakeActive && !snakeGameOver) {
+        // Check if direction is allowed (no 180-degree turns)
+        if ((x === 1 && snakeDirection.x !== -1) ||
+            (x === -1 && snakeDirection.x !== 1) ||
+            (y === 1 && snakeDirection.y !== -1) ||
+            (y === -1 && snakeDirection.y !== 1)) {
+          snakeNextDirection = { x, y };
+        }
+      }
+    }
+
     function startSnake() {
       snakeActive = true;
       snakeGameOver = false;
@@ -747,6 +836,13 @@
         hud.classList.add('opacity-100', 'pointer-events-auto');
       }
       if (hudHigh) hudHigh.textContent = String(snakeHighScore);
+
+      // Show mobile controls on touch devices
+      const mobileControls = document.getElementById('snake-mobile-controls');
+      if (mobileControls && ('ontouchstart' in window || navigator.maxTouchPoints > 0)) {
+        mobileControls.classList.remove('opacity-0', 'pointer-events-none');
+        mobileControls.classList.add('opacity-100', 'pointer-events-auto');
+      }
 
       // Start snake in center of screen
       const startX = Math.floor(width / 2 / snakeSegmentSize) * snakeSegmentSize;
@@ -777,6 +873,13 @@
       if (hud) {
         hud.classList.add('opacity-0', 'pointer-events-none');
         hud.classList.remove('opacity-100', 'pointer-events-auto');
+      }
+
+      // Hide mobile controls
+      const mobileControls = document.getElementById('snake-mobile-controls');
+      if (mobileControls) {
+        mobileControls.classList.add('opacity-0', 'pointer-events-none');
+        mobileControls.classList.remove('opacity-100', 'pointer-events-auto');
       }
     }
 
@@ -1320,6 +1423,57 @@
           stopSnake();
         });
       }
+
+      // Mobile control buttons
+      const btnUp = document.getElementById('snake-btn-up');
+      const btnDown = document.getElementById('snake-btn-down');
+      const btnLeft = document.getElementById('snake-btn-left');
+      const btnRight = document.getElementById('snake-btn-right');
+
+      if (btnUp) {
+        btnUp.addEventListener('click', (e) => {
+          e.preventDefault();
+          setSnakeDirection(0, -1);
+        });
+        btnUp.addEventListener('touchstart', (e) => {
+          e.preventDefault();
+          setSnakeDirection(0, -1);
+        });
+      }
+      if (btnDown) {
+        btnDown.addEventListener('click', (e) => {
+          e.preventDefault();
+          setSnakeDirection(0, 1);
+        });
+        btnDown.addEventListener('touchstart', (e) => {
+          e.preventDefault();
+          setSnakeDirection(0, 1);
+        });
+      }
+      if (btnLeft) {
+        btnLeft.addEventListener('click', (e) => {
+          e.preventDefault();
+          setSnakeDirection(-1, 0);
+        });
+        btnLeft.addEventListener('touchstart', (e) => {
+          e.preventDefault();
+          setSnakeDirection(-1, 0);
+        });
+      }
+      if (btnRight) {
+        btnRight.addEventListener('click', (e) => {
+          e.preventDefault();
+          setSnakeDirection(1, 0);
+        });
+        btnRight.addEventListener('touchstart', (e) => {
+          e.preventDefault();
+          setSnakeDirection(1, 0);
+        });
+      }
+
+      // Touch/swipe event listeners for gesture controls
+      canvas.addEventListener('touchstart', handleTouchStart, { passive: true });
+      canvas.addEventListener('touchend', handleTouchEnd, { passive: true });
 
       // Also trigger pulse on canvas click
       canvas.addEventListener('click', (e) => {
