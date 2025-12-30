@@ -1,0 +1,97 @@
+---
+publishDate: 2025-12-30
+title: Visualizing Code Evolution with Gource
+excerpt: How turning git history into an animated story creates emotional connection and understanding of your codebase journey.
+tags:
+  - tools
+  - devex
+  - storytelling
+category: notes
+---
+
+## The Story Your Code Tells
+
+Every repository has a story. Not in the documentation or the README—but in the living, breathing history of commits, branches, and contributions. **Gource** transforms that invisible narrative into something visceral: an animated tree of files blooming, shifting, and evolving as contributors shape the codebase over time.
+
+<video controls width="100%" style="max-width: 800px; margin: 2rem auto; display: block; border-radius: 8px;">
+  <source src="/gource-visualization.mp4" type="video/mp4">
+  Your browser does not support video playback.
+</video>
+
+## Why This Matters
+
+From a user experience perspective, visualization isn't just eye candy—it's **empathy infrastructure**. When you watch your commit history unfold:
+
+- **You see patterns** you never noticed in `git log`
+- **You feel the rhythm** of your development—sprints, quiet periods, bursts of refactoring
+- **You understand the architecture** as an organic structure, not just folder hierarchies
+
+This is what good UX does: it makes the invisible visible, and the abstract tangible.
+
+## How I Created This
+
+The command I used to generate this visualization:
+
+```bash
+gource -1920x1080 \
+  --seconds-per-day 0.5 \
+  --auto-skip-seconds 0.5 \
+  --title "Djaygo Digital Garden" \
+  --key \
+  --highlight-users \
+  --file-idle-time 0 \
+  --background-colour 0d1117 \
+  --font-colour 58a6ff \
+  --hide mouse,filenames \
+  --stop-at-end \
+  -o - | \
+ffmpeg -y -r 60 -f image2pipe -vcodec ppm -i - \
+  -vcodec libx264 -preset medium -pix_fmt yuv420p -crf 18 \
+  ./src/assets/gource-visualization.mp4
+```
+
+### Breaking Down the Experience Decisions
+
+| Option | UX Rationale |
+|--------|--------------|
+| `--seconds-per-day 0.5` | Compress time so the viewer stays engaged—nobody wants to watch paint dry |
+| `--hide mouse,filenames` | Reduce visual noise; focus on the forest, not individual leaves |
+| `--background-colour 0d1117` | GitHub dark theme—feels familiar, reduces eye strain |
+| `--highlight-users` | Contributors are heroes; make them visible |
+| `--key` | Always provide orientation; users should never feel lost |
+
+## The Experience-First Principle
+
+When I approach any tool or feature, I ask: **"How will this make someone feel?"**
+
+Watching a Gource visualization of your own project evokes something unexpected—*pride*. You see the work accumulate. You remember that late-night refactor. You notice how the `components/` folder grew over time.
+
+This emotional connection matters. It's the difference between "I maintain this code" and "I built this."
+
+## Practical Applications
+
+- **Onboarding new contributors**: Show them the project's history in 30 seconds
+- **Retrospectives**: Visualize a sprint's impact on the codebase
+- **Documentation**: Embed in READMEs for living project context
+- **Personal motivation**: Remind yourself how far you've come
+
+## What's Next
+
+Consider pairing Gource with:
+- **Audio**: Add a soundtrack that matches your project's energy
+- **Captions**: Annotate major milestones as they appear
+- **Comparisons**: Generate visualizations for different time periods
+
+The command-line is a portal to your project's memory. Gource just makes that memory watchable.
+
+---
+
+## Tools Used
+
+This post was created with the help of:
+
+- **[Gource](https://gource.io/)** — Software version control visualization. Transforms git history into an animated tree showing files and contributors evolving over time.
+- **[FFmpeg](https://ffmpeg.org/)** — The multimedia Swiss Army knife. Encoded the raw PPM stream from Gource into a compressed H.264 MP4.
+- **[Claude Code](https://claude.ai/code)** — Anthropic's AI coding assistant. Helped orchestrate the pipeline, craft the command, and write this post from an experience-first perspective.
+- **[Astro](https://astro.build/)** — The static site framework powering this digital garden. Ships zero JavaScript by default, perfect for content-focused sites.
+- **[Git](https://git-scm.com/)** — The version control system whose history makes all of this possible. Every commit is a frame in the story.

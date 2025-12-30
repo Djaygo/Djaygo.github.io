@@ -10,17 +10,90 @@
 <!-- Theme transition overlay -->
 <div id="theme-transition" class="theme-transition-overlay"></div>
 
-<!-- Floating Settings Button -->
-<button
-  id="open-network-config"
-  class="fixed bottom-4 right-4 z-40 w-10 h-10 rounded-full bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border border-gray-200 dark:border-slate-700 shadow-lg flex items-center justify-center text-muted hover:text-primary hover:scale-110 hover:shadow-xl transition-all duration-300 group"
-  title="Settings (Ctrl+Shift+G)"
->
-  <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 transition-transform duration-500 group-hover:rotate-90" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <circle cx="12" cy="12" r="3"/>
-    <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
-  </svg>
-</button>
+<!-- Snake Game Intro Overlay -->
+<div id="snake-intro" class="fixed inset-0 z-[60] flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300">
+  <div class="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
+  <div class="relative z-10 text-center px-6 max-w-md">
+    <!-- Intro Screen -->
+    <div id="snake-intro-content" class="transform scale-95 opacity-0 transition-all duration-300">
+      <div class="text-6xl mb-4">🐍</div>
+      <h2 class="text-4xl font-bold text-white mb-4">Snake</h2>
+      <div class="bg-white/10 backdrop-blur rounded-xl p-6 mb-6 text-left">
+        <h3 class="text-lg font-semibold text-white mb-3">How to Play</h3>
+        <ul class="text-gray-200 space-y-2 text-sm">
+          <li class="flex items-center gap-2">
+            <span class="text-green-400">→</span>
+            Use <kbd class="px-2 py-0.5 bg-white/20 rounded text-xs">WASD</kbd> or <kbd class="px-2 py-0.5 bg-white/20 rounded text-xs">Arrow Keys</kbd> to move
+          </li>
+          <li class="flex items-center gap-2">
+            <span class="text-green-400">→</span>
+            Eat the floating nodes to grow
+          </li>
+          <li class="flex items-center gap-2">
+            <span class="text-green-400">→</span>
+            Avoid walls and yourself
+          </li>
+          <li class="flex items-center gap-2">
+            <span class="text-green-400">→</span>
+            Press <kbd class="px-2 py-0.5 bg-white/20 rounded text-xs">ESC</kbd> to quit
+          </li>
+        </ul>
+      </div>
+      <button id="snake-ready-btn" class="px-8 py-3 bg-green-500 hover:bg-green-400 text-white font-bold text-lg rounded-full transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-green-500/30">
+        Ready!
+      </button>
+    </div>
+
+    <!-- Countdown -->
+    <div id="snake-countdown" class="hidden">
+      <div id="snake-countdown-number" class="text-9xl font-bold text-white animate-pulse"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Snake Game HUD -->
+<div id="snake-hud" class="fixed top-4 left-1/2 -translate-x-1/2 z-50 opacity-0 pointer-events-none transition-opacity duration-300">
+  <div class="bg-black/50 backdrop-blur-sm rounded-full px-6 py-2 flex items-center gap-6 text-white">
+    <div class="flex items-center gap-2">
+      <span class="text-lg">🐍</span>
+      <span class="text-sm text-gray-300">Score:</span>
+      <span id="snake-hud-score" class="font-bold text-green-400 text-lg">0</span>
+    </div>
+    <div class="w-px h-4 bg-white/20"></div>
+    <div class="flex items-center gap-2">
+      <span class="text-sm text-gray-300">Best:</span>
+      <span id="snake-hud-high" class="font-bold text-yellow-400">0</span>
+    </div>
+    <div class="w-px h-4 bg-white/20"></div>
+    <button id="snake-hud-quit" class="text-xs text-gray-400 hover:text-red-400 transition-colors">
+      ESC to quit
+    </button>
+  </div>
+</div>
+
+<!-- Floating Buttons -->
+<div class="fixed bottom-4 right-4 z-40 flex gap-2">
+  <!-- Snake Button -->
+  <button
+    id="play-snake-float"
+    class="w-10 h-10 rounded-full bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border border-gray-200 dark:border-slate-700 shadow-lg flex items-center justify-center hover:bg-green-500 hover:text-white hover:border-green-500 hover:scale-110 hover:shadow-xl transition-all duration-300 group"
+    title="Play Snake"
+  >
+    <span class="text-lg group-hover:animate-bounce">🐍</span>
+  </button>
+
+  <!-- Settings Button -->
+  <button
+    id="open-network-config"
+    class="w-10 h-10 rounded-full bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border border-gray-200 dark:border-slate-700 shadow-lg flex items-center justify-center text-muted hover:text-primary hover:scale-110 hover:shadow-xl transition-all duration-300 group"
+    title="Settings (Ctrl+Shift+G)"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 transition-transform duration-500 group-hover:rotate-90" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="3"/>
+      <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+    </svg>
+  </button>
+</div>
 
 <!-- Hidden Config Panel -->
 <div id="network-config" class="fixed top-4 right-4 z-50 opacity-0 pointer-events-none translate-x-4 transition-all duration-300 ease-out">
@@ -192,13 +265,13 @@
         </div>
 
         <label class="block mb-1.5">
-          <span class="text-muted flex justify-between"><span>Speed</span><span id="pulseSpeed-value">50</span></span>
-          <input type="range" id="pulseSpeed" min="0" max="100" step="5" value="50" class="w-full accent-primary h-1.5">
+          <span class="text-muted flex justify-between"><span>Speed</span><span id="pulseSpeed-value">10</span></span>
+          <input type="range" id="pulseSpeed" min="0" max="100" step="5" value="10" class="w-full accent-primary h-1.5">
         </label>
 
         <label class="block mb-1.5">
-          <span class="text-muted flex justify-between"><span>Width</span><span id="pulseWidth-value">80</span></span>
-          <input type="range" id="pulseWidth" min="20" max="200" step="10" value="80" class="w-full accent-primary h-1.5">
+          <span class="text-muted flex justify-between"><span>Width</span><span id="pulseWidth-value">40</span></span>
+          <input type="range" id="pulseWidth" min="20" max="200" step="10" value="40" class="w-full accent-primary h-1.5">
         </label>
 
         <label class="block mb-1.5">
@@ -207,8 +280,8 @@
         </label>
 
         <label class="block mb-1.5">
-          <span class="text-muted flex justify-between"><span>Interval</span><span id="pulseInterval-value">2</span>s</span>
-          <input type="range" id="pulseInterval" min="0.5" max="5" step="0.5" value="2" class="w-full accent-primary h-1.5">
+          <span class="text-muted flex justify-between"><span>Interval</span><span id="pulseInterval-value">4</span>s</span>
+          <input type="range" id="pulseInterval" min="0.5" max="5" step="0.5" value="4" class="w-full accent-primary h-1.5">
         </label>
 
         <div class="flex items-center gap-2">
@@ -264,6 +337,25 @@
     let pulseWaves: Array<{x: number; y: number; radius: number; startTime: number; maxRadius: number}> = [];
     let lastPulseTime = 0;
 
+    // Snake game state
+    let snakeActive = false;
+    let snake: Array<{x: number; y: number}> = [];
+    let snakeDirection = { x: 1, y: 0 };
+    let snakeNextDirection = { x: 1, y: 0 };
+    let snakeSpeed = 100; // ms between moves
+    let lastSnakeMove = 0;
+    let snakeScore = 0;
+    let snakeHighScore = 0;
+    let snakeSegmentSize = 15;
+    let snakeGameOver = false;
+    let gameOverTime = 0;
+
+    // Load high score
+    try {
+      const savedHighScore = localStorage.getItem('snakeHighScore');
+      if (savedHighScore) snakeHighScore = parseInt(savedHighScore, 10);
+    } catch (e) {}
+
     // Default config
     const defaultConfig = {
       // Nodes
@@ -294,10 +386,10 @@
       // Pulse effect
       pulseEnabled: true,
       pulseAuto: true,
-      pulseSpeed: 50,
-      pulseWidth: 80,
+      pulseSpeed: 10,
+      pulseWidth: 40,
       pulseIntensity: 1,
-      pulseInterval: 2,
+      pulseInterval: 4,
       pulseColor: '#ff6b6b',
       pulseShake: false,
       // Mode
@@ -496,6 +588,378 @@
       } else {
         // Normal edge rendering
         drawLine(x1, y1, x2, y2, hexToRgba(baseColor, baseOpacity));
+      }
+    }
+
+    // Snake game functions
+    function showSnakeIntro() {
+      const intro = document.getElementById('snake-intro');
+      const introContent = document.getElementById('snake-intro-content');
+      const countdown = document.getElementById('snake-countdown');
+
+      if (!intro || !introContent || !countdown) return;
+
+      // Show overlay
+      intro.classList.remove('opacity-0', 'pointer-events-none');
+      intro.classList.add('opacity-100', 'pointer-events-auto');
+
+      // Show intro content, hide countdown
+      introContent.classList.remove('hidden');
+      countdown.classList.add('hidden');
+
+      // Animate intro content in
+      setTimeout(() => {
+        introContent.classList.remove('scale-95', 'opacity-0');
+        introContent.classList.add('scale-100', 'opacity-100');
+      }, 50);
+    }
+
+    function hideSnakeIntro() {
+      const intro = document.getElementById('snake-intro');
+      const introContent = document.getElementById('snake-intro-content');
+
+      if (!intro || !introContent) return;
+
+      introContent.classList.add('scale-95', 'opacity-0');
+      introContent.classList.remove('scale-100', 'opacity-100');
+
+      setTimeout(() => {
+        intro.classList.add('opacity-0', 'pointer-events-none');
+        intro.classList.remove('opacity-100', 'pointer-events-auto');
+      }, 200);
+    }
+
+    function runCountdown(callback: () => void) {
+      const intro = document.getElementById('snake-intro');
+      const introContent = document.getElementById('snake-intro-content');
+      const countdown = document.getElementById('snake-countdown');
+      const countdownNumber = document.getElementById('snake-countdown-number');
+
+      if (!introContent || !countdown || !countdownNumber) return;
+
+      // Hide intro, show countdown
+      introContent.classList.add('hidden');
+      countdown.classList.remove('hidden');
+
+      const numbers = ['3', '2', '1', '🐍'];
+      let index = 0;
+
+      function showNext() {
+        if (index >= numbers.length) {
+          // Hide overlay and start game
+          if (intro) {
+            intro.classList.add('opacity-0', 'pointer-events-none');
+            intro.classList.remove('opacity-100', 'pointer-events-auto');
+          }
+          callback();
+          return;
+        }
+
+        countdownNumber.textContent = numbers[index];
+        countdownNumber.style.transform = 'scale(0.5)';
+        countdownNumber.style.opacity = '0';
+
+        // Animate in
+        setTimeout(() => {
+          countdownNumber.style.transition = 'all 0.3s ease-out';
+          countdownNumber.style.transform = 'scale(1)';
+          countdownNumber.style.opacity = '1';
+        }, 50);
+
+        // Animate out and show next
+        setTimeout(() => {
+          countdownNumber.style.transform = 'scale(1.5)';
+          countdownNumber.style.opacity = '0';
+          index++;
+          setTimeout(showNext, 200);
+        }, 700);
+      }
+
+      showNext();
+    }
+
+    function hidePageContent() {
+      // Hide main content areas
+      const mainContent = document.querySelector('main');
+      const header = document.querySelector('header');
+      const footer = document.querySelector('footer');
+      const siteHeader = document.querySelector('.animate-fade-in');
+
+      [mainContent, header, footer, siteHeader].forEach(el => {
+        if (el) {
+          (el as HTMLElement).style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out';
+          (el as HTMLElement).style.opacity = '0';
+          (el as HTMLElement).style.transform = 'translateY(-30px)';
+          (el as HTMLElement).style.pointerEvents = 'none';
+        }
+      });
+
+      // Hide floating buttons (snake + settings)
+      const floatingBtns = document.getElementById('open-network-config')?.parentElement;
+      if (floatingBtns) {
+        (floatingBtns as HTMLElement).style.transition = 'opacity 0.3s ease-out';
+        (floatingBtns as HTMLElement).style.opacity = '0';
+        (floatingBtns as HTMLElement).style.pointerEvents = 'none';
+      }
+    }
+
+    function showPageContent() {
+      const mainContent = document.querySelector('main');
+      const header = document.querySelector('header');
+      const footer = document.querySelector('footer');
+      const siteHeader = document.querySelector('.animate-fade-in');
+
+      [mainContent, header, footer, siteHeader].forEach(el => {
+        if (el) {
+          (el as HTMLElement).style.opacity = '1';
+          (el as HTMLElement).style.transform = 'translateY(0)';
+          (el as HTMLElement).style.pointerEvents = '';
+        }
+      });
+
+      // Show floating buttons again
+      const floatingBtns = document.getElementById('open-network-config')?.parentElement;
+      if (floatingBtns) {
+        (floatingBtns as HTMLElement).style.opacity = '1';
+        (floatingBtns as HTMLElement).style.pointerEvents = '';
+      }
+    }
+
+    function launchSnakeGame() {
+      showSnakeIntro();
+    }
+
+    function startSnake() {
+      snakeActive = true;
+      snakeGameOver = false;
+      snakeScore = 0;
+      snakeSpeed = 100; // Reset speed
+      snake = [];
+
+      // Hide page content
+      hidePageContent();
+
+      // Show HUD
+      const hud = document.getElementById('snake-hud');
+      const hudHigh = document.getElementById('snake-hud-high');
+      if (hud) {
+        hud.classList.remove('opacity-0', 'pointer-events-none');
+        hud.classList.add('opacity-100', 'pointer-events-auto');
+      }
+      if (hudHigh) hudHigh.textContent = String(snakeHighScore);
+
+      // Start snake in center of screen
+      const startX = Math.floor(width / 2 / snakeSegmentSize) * snakeSegmentSize;
+      const startY = Math.floor(height / 2 / snakeSegmentSize) * snakeSegmentSize;
+
+      // Create initial snake with 3 segments
+      for (let i = 0; i < 3; i++) {
+        snake.push({ x: startX - i * snakeSegmentSize, y: startY });
+      }
+
+      snakeDirection = { x: 1, y: 0 };
+      snakeNextDirection = { x: 1, y: 0 };
+      lastSnakeMove = performance.now();
+
+      updateSnakeScore();
+    }
+
+    function stopSnake() {
+      snakeActive = false;
+      snakeGameOver = false;
+      snake = [];
+
+      // Show page content again
+      showPageContent();
+
+      // Hide HUD
+      const hud = document.getElementById('snake-hud');
+      if (hud) {
+        hud.classList.add('opacity-0', 'pointer-events-none');
+        hud.classList.remove('opacity-100', 'pointer-events-auto');
+      }
+    }
+
+    function updateSnakeScore() {
+      // Update HUD
+      const hudScore = document.getElementById('snake-hud-score');
+      if (hudScore) hudScore.textContent = String(snakeScore);
+    }
+
+    function gameOver() {
+      snakeGameOver = true;
+      gameOverTime = performance.now();
+
+      // Update high score
+      if (snakeScore > snakeHighScore) {
+        snakeHighScore = snakeScore;
+        try {
+          localStorage.setItem('snakeHighScore', String(snakeHighScore));
+        } catch (e) {}
+        // Update HUD
+        const hudHigh = document.getElementById('snake-hud-high');
+        if (hudHigh) hudHigh.textContent = String(snakeHighScore);
+      }
+    }
+
+    function respawnNode(index: number) {
+      if (nodes[index]) {
+        nodes[index].x = Math.random() * width;
+        nodes[index].y = Math.random() * height;
+      }
+    }
+
+    function updateSnake(currentTime: number) {
+      if (!snakeActive || snakeGameOver) return;
+
+      // Check if enough time has passed for next move
+      if (currentTime - lastSnakeMove < snakeSpeed) return;
+      lastSnakeMove = currentTime;
+
+      // Apply queued direction
+      snakeDirection = { ...snakeNextDirection };
+
+      // Calculate new head position
+      const head = snake[0];
+      const newHead = {
+        x: head.x + snakeDirection.x * snakeSegmentSize,
+        y: head.y + snakeDirection.y * snakeSegmentSize
+      };
+
+      // Check wall collision (game over)
+      if (newHead.x < 0 || newHead.x >= width || newHead.y < 0 || newHead.y >= height) {
+        gameOver();
+        return;
+      }
+
+      // Check self collision
+      for (let i = 0; i < snake.length; i++) {
+        if (newHead.x === snake[i].x && newHead.y === snake[i].y) {
+          gameOver();
+          return;
+        }
+      }
+
+      // Add new head
+      snake.unshift(newHead);
+
+      // Check if eating a node
+      let ate = false;
+      for (let i = 0; i < nodes.length; i++) {
+        const node = nodes[i];
+        const dx = newHead.x + snakeSegmentSize / 2 - node.x;
+        const dy = newHead.y + snakeSegmentSize / 2 - node.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+
+        if (dist < snakeSegmentSize) {
+          // Eat the node!
+          ate = true;
+          snakeScore++;
+          updateSnakeScore();
+          respawnNode(i);
+
+          // Speed up slightly
+          snakeSpeed = Math.max(50, snakeSpeed - 1);
+
+          // Trigger a pulse from the eaten position
+          if (config.pulseEnabled) {
+            pulseWaves.push({
+              x: node.x,
+              y: node.y,
+              radius: 0,
+              startTime: currentTime,
+              maxRadius: 200
+            });
+          }
+          break;
+        }
+      }
+
+      // Remove tail if didn't eat
+      if (!ate) {
+        snake.pop();
+      }
+    }
+
+    function drawSnake() {
+      if (snake.length === 0) return;
+
+      const currentTime = performance.now();
+
+      // Game over flash effect
+      if (snakeGameOver) {
+        const elapsed = currentTime - gameOverTime;
+        if (elapsed < 1000) {
+          const flash = Math.sin(elapsed / 50) * 0.5 + 0.5;
+          ctx.fillStyle = `rgba(255, 0, 0, ${flash * 0.3})`;
+          ctx.fillRect(0, 0, width, height);
+        } else {
+          // Restart after animation
+          stopSnake();
+          return;
+        }
+      }
+
+      // Draw snake body (from tail to head for proper layering)
+      for (let i = snake.length - 1; i >= 0; i--) {
+        const segment = snake[i];
+        const isHead = i === 0;
+        const progress = i / snake.length;
+
+        // Size decreases from head to tail
+        const size = isHead ? snakeSegmentSize : snakeSegmentSize * (0.6 + 0.4 * (1 - progress));
+        const offset = (snakeSegmentSize - size) / 2;
+
+        // Glow effect
+        const glowSize = isHead ? 8 : 4;
+        ctx.beginPath();
+        ctx.roundRect(segment.x + offset - glowSize/2, segment.y + offset - glowSize/2, size + glowSize, size + glowSize, size / 3);
+        ctx.fillStyle = isHead ? 'rgba(34, 197, 94, 0.4)' : 'rgba(34, 197, 94, 0.2)';
+        ctx.fill();
+
+        // Main segment
+        ctx.beginPath();
+        ctx.roundRect(segment.x + offset, segment.y + offset, size, size, size / 3);
+        ctx.fillStyle = isHead ? '#22c55e' : `rgba(34, 197, 94, ${0.9 - progress * 0.4})`;
+        ctx.fill();
+
+        // Eye on head
+        if (isHead) {
+          const eyeSize = 3;
+          const eyeOffset = snakeSegmentSize / 3;
+
+          // Position eyes based on direction
+          let eyeX1 = segment.x + snakeSegmentSize / 2;
+          let eyeY1 = segment.y + snakeSegmentSize / 2;
+          let eyeX2 = eyeX1;
+          let eyeY2 = eyeY1;
+
+          if (snakeDirection.x === 1) { // Right
+            eyeX1 += eyeOffset / 2; eyeY1 -= eyeOffset / 2;
+            eyeX2 += eyeOffset / 2; eyeY2 += eyeOffset / 2;
+          } else if (snakeDirection.x === -1) { // Left
+            eyeX1 -= eyeOffset / 2; eyeY1 -= eyeOffset / 2;
+            eyeX2 -= eyeOffset / 2; eyeY2 += eyeOffset / 2;
+          } else if (snakeDirection.y === -1) { // Up
+            eyeX1 -= eyeOffset / 2; eyeY1 -= eyeOffset / 2;
+            eyeX2 += eyeOffset / 2; eyeY2 -= eyeOffset / 2;
+          } else { // Down
+            eyeX1 -= eyeOffset / 2; eyeY1 += eyeOffset / 2;
+            eyeX2 += eyeOffset / 2; eyeY2 += eyeOffset / 2;
+          }
+
+          ctx.beginPath();
+          ctx.arc(eyeX1, eyeY1, eyeSize, 0, Math.PI * 2);
+          ctx.arc(eyeX2, eyeY2, eyeSize, 0, Math.PI * 2);
+          ctx.fillStyle = '#fff';
+          ctx.fill();
+
+          ctx.beginPath();
+          ctx.arc(eyeX1, eyeY1, eyeSize / 2, 0, Math.PI * 2);
+          ctx.arc(eyeX2, eyeY2, eyeSize / 2, 0, Math.PI * 2);
+          ctx.fillStyle = '#000';
+          ctx.fill();
+        }
       }
     }
 
@@ -723,6 +1187,12 @@
         }
       });
 
+      // Update and draw snake
+      if (snakeActive) {
+        updateSnake(currentTime);
+        drawSnake();
+      }
+
       animationId = requestAnimationFrame(animate);
     }
 
@@ -820,6 +1290,34 @@
       if (pulseTriggerBtn) {
         pulseTriggerBtn.addEventListener('click', () => {
           triggerPulse();
+        });
+      }
+
+      // Floating snake button
+      const snakeFloatBtn = document.getElementById('play-snake-float');
+      if (snakeFloatBtn) {
+        snakeFloatBtn.addEventListener('click', () => {
+          if (!snakeActive) {
+            launchSnakeGame();
+          }
+        });
+      }
+
+      // Ready button in intro overlay
+      const snakeReadyBtn = document.getElementById('snake-ready-btn');
+      if (snakeReadyBtn) {
+        snakeReadyBtn.addEventListener('click', () => {
+          runCountdown(() => {
+            startSnake();
+          });
+        });
+      }
+
+      // HUD quit button
+      const snakeHudQuit = document.getElementById('snake-hud-quit');
+      if (snakeHudQuit) {
+        snakeHudQuit.addEventListener('click', () => {
+          stopSnake();
         });
       }
 
@@ -971,6 +1469,39 @@
       if (e.ctrlKey && e.shiftKey && e.key === 'G') {
         e.preventDefault();
         toggleConfigPanel();
+      }
+
+      // Snake controls
+      if (snakeActive && !snakeGameOver) {
+        const key = e.key.toLowerCase();
+
+        // Prevent 180-degree turns
+        if ((key === 'arrowup' || key === 'w') && snakeDirection.y !== 1) {
+          e.preventDefault();
+          snakeNextDirection = { x: 0, y: -1 };
+        } else if ((key === 'arrowdown' || key === 's') && snakeDirection.y !== -1) {
+          e.preventDefault();
+          snakeNextDirection = { x: 0, y: 1 };
+        } else if ((key === 'arrowleft' || key === 'a') && snakeDirection.x !== 1) {
+          e.preventDefault();
+          snakeNextDirection = { x: -1, y: 0 };
+        } else if ((key === 'arrowright' || key === 'd') && snakeDirection.x !== -1) {
+          e.preventDefault();
+          snakeNextDirection = { x: 1, y: 0 };
+        }
+      }
+
+      // Escape to quit snake game or close intro
+      if (e.key === 'Escape') {
+        if (snakeActive) {
+          stopSnake();
+        } else {
+          // Close intro overlay if open
+          const intro = document.getElementById('snake-intro');
+          if (intro && !intro.classList.contains('opacity-0')) {
+            hideSnakeIntro();
+          }
+        }
       }
     });
 
