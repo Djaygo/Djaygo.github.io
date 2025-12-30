@@ -6,6 +6,7 @@ import Image from '~/components/common/Image.astro';
 
 import { findImage } from '~/utils/images';
 import { getPermalink } from '~/utils/permalinks';
+import '~/assets/styles/tag-colors.css';
 
 export interface Props {
   post: Post;
@@ -20,6 +21,14 @@ const link = APP_BLOG?.post?.isEnabled ? getPermalink(post.permalink, 'post') : 
 <article
   class="card mb-6 transition intersect-once intersect-quarter motion-safe:md:opacity-0 motion-safe:md:intersect:animate-fade"
 >
+  <!-- Tag gradient stripes -->
+  {post.tags && post.tags.length > 0 && (
+    <div class="tag-stripes">
+      {post.tags.slice(0, 4).map((tag) => (
+        <div class={`tag-stripe tag-${tag.slug || tag}`}></div>
+      ))}
+    </div>
+  )}
   <div class="relative md:h-64 rounded mb-6 overflow-hidden">
     {
       image &&
@@ -81,6 +90,8 @@ const link = APP_BLOG?.post?.isEnabled ? getPermalink(post.permalink, 'post') : 
     backdrop-filter: blur(10px);
     transition: 0.3s ease;
     z-index: 2;
+    position: relative;
+    overflow: hidden;
   }
 
   .card:hover {

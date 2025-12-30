@@ -10,6 +10,7 @@ import type { Post } from '~/types';
 import { getPermalink } from '~/utils/permalinks';
 import { findImage } from '~/utils/images';
 import { getFormattedDate } from '~/utils/utils';
+import '~/assets/styles/tag-colors.css';
 
 export interface Props {
   post: Post;
@@ -24,6 +25,14 @@ const link = APP_BLOG?.post?.isEnabled ? getPermalink(post.permalink, 'post') : 
 <article
   class={`card max-w-md mx-auto md:max-w-none grid gap-6 md:gap-8 intersect-once intersect-quarter motion-safe:md:opacity-0 motion-safe:md:intersect:animate-fade ${image ? 'md:grid-cols-2' : ''}`}
 >
+  <!-- Tag gradient stripes -->
+  {post.tags && Array.isArray(post.tags) && post.tags.length > 0 && (
+    <div class="tag-stripes">
+      {post.tags.slice(0, 4).map((tag) => (
+        <div class={`tag-stripe tag-${tag.slug || tag}`}></div>
+      ))}
+    </div>
+  )}
   {
     image &&
       (link ? (
@@ -129,6 +138,8 @@ const link = APP_BLOG?.post?.isEnabled ? getPermalink(post.permalink, 'post') : 
     backdrop-filter: blur(10px);
     transition: 0.3s ease;
     z-index: 2;
+    position: relative;
+    overflow: hidden;
   }
 
   .card:hover {

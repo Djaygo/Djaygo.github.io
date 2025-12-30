@@ -5,6 +5,7 @@ import { Icon } from 'astro-icon/components';
 import { fetchPosts } from '~/utils/blog';
 import { getPermalink } from '~/utils/permalinks';
 import { getFormattedDate } from '~/utils/utils';
+import '~/assets/styles/tag-colors.css';
 
 const metadata = {
   title: 'Djaygo - Digital Garden',
@@ -35,7 +36,15 @@ const posts = await fetchPosts();
             </div>
 
             <!-- Content -->
-            <div class="card">
+            <div class="card" data-tags={post.tags?.map(t => t.slug || t).join(',')}>
+              <!-- Tag gradient stripes -->
+              {post.tags && post.tags.length > 0 && (
+                <div class="tag-stripes">
+                  {post.tags.slice(0, 4).map((tag, index) => (
+                    <div class={`tag-stripe tag-${tag.slug || tag}`} style={`--stripe-index: ${index}`}></div>
+                  ))}
+                </div>
+              )}
               <time class="text-xs text-muted" datetime={String(post.publishDate)}>
                 {getFormattedDate(post.publishDate)}
               </time>
@@ -50,7 +59,7 @@ const posts = await fetchPosts();
               {post.tags && post.tags.length > 0 && (
                 <div class="flex flex-wrap gap-2 mt-3">
                   {post.tags.slice(0, 3).map((tag) => (
-                    <span class="text-xs px-2 py-0.5 rounded-full bg-gray-200 dark:bg-slate-700 text-muted transition-colors group-hover:bg-primary/10">
+                    <span class={`tag-pill tag-${tag.slug || tag}`}>
                       #{tag.slug || tag}
                     </span>
                   ))}
@@ -81,6 +90,8 @@ const posts = await fetchPosts();
     backdrop-filter: blur(10px);
     transition: 0.3s ease;
     z-index: 2;
+    position: relative;
+    overflow: hidden;
   }
 
   .card:hover {

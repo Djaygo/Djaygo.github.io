@@ -41,13 +41,18 @@
         </div>
       </div>
 
-      <!-- Physics -->
+      <!-- Nodes -->
       <div class="border-b border-gray-200 dark:border-slate-700 pb-3">
-        <h4 class="font-semibold mb-2 text-muted text-xs uppercase tracking-wide">Physics</h4>
+        <h4 class="font-semibold mb-2 text-muted text-xs uppercase tracking-wide">Nodes</h4>
 
         <label class="block mb-1.5">
-          <span class="text-muted flex justify-between"><span>Nodes</span><span id="nodeCount-value">60</span></span>
+          <span class="text-muted flex justify-between"><span>Count</span><span id="nodeCount-value">60</span></span>
           <input type="range" id="nodeCount" min="10" max="150" value="60" class="w-full accent-primary h-1.5">
+        </label>
+
+        <label class="block mb-1.5">
+          <span class="text-muted flex justify-between"><span>Size</span><span id="nodeSize-value">2</span></span>
+          <input type="range" id="nodeSize" min="1" max="6" step="0.5" value="2" class="w-full accent-primary h-1.5">
         </label>
 
         <label class="block mb-1.5">
@@ -55,50 +60,167 @@
           <input type="range" id="nodeSpeed" min="0.1" max="2" step="0.1" value="0.3" class="w-full accent-primary h-1.5">
         </label>
 
-        <label class="block mb-1.5">
-          <span class="text-muted flex justify-between"><span>Connection</span><span id="connectionDistance-value">150</span></span>
-          <input type="range" id="connectionDistance" min="50" max="300" value="150" class="w-full accent-primary h-1.5">
-        </label>
-
-        <label class="block mb-1.5">
-          <span class="text-muted flex justify-between"><span>Mouse Radius</span><span id="mouseRadius-value">200</span></span>
-          <input type="range" id="mouseRadius" min="50" max="400" value="200" class="w-full accent-primary h-1.5">
-        </label>
-
-        <label class="block">
-          <span class="text-muted flex justify-between"><span>Node Size</span><span id="nodeSize-value">2</span></span>
-          <input type="range" id="nodeSize" min="1" max="6" step="0.5" value="2" class="w-full accent-primary h-1.5">
-        </label>
-      </div>
-
-      <!-- Colors -->
-      <div class="border-b border-gray-200 dark:border-slate-700 pb-3">
-        <h4 class="font-semibold mb-2 text-muted text-xs uppercase tracking-wide">Colors</h4>
-
-        <div class="grid grid-cols-3 gap-2 mb-2">
+        <div class="flex items-center gap-2 mb-1.5">
           <label class="flex flex-col items-center gap-1">
             <input type="color" id="nodeColor" value="#6366f1" class="w-8 h-6 rounded cursor-pointer">
-            <span class="text-muted text-[10px]">Node</span>
+            <span class="text-muted text-[10px]">Color</span>
           </label>
-          <label class="flex flex-col items-center gap-1">
-            <input type="color" id="lineColor" value="#6366f1" class="w-8 h-6 rounded cursor-pointer">
-            <span class="text-muted text-[10px]">Line</span>
+          <label class="flex-1">
+            <span class="text-muted flex justify-between"><span>Opacity</span><span id="nodeOpacity-value">0.6</span></span>
+            <input type="range" id="nodeOpacity" min="0.1" max="1" step="0.1" value="0.6" class="w-full accent-primary h-1.5">
           </label>
-          <label class="flex flex-col items-center gap-1">
-            <input type="color" id="mouseLineColor" value="#6366f1" class="w-8 h-6 rounded cursor-pointer">
-            <span class="text-muted text-[10px]">Mouse</span>
+        </div>
+      </div>
+
+      <!-- Node-to-Node Edges -->
+      <div class="border-b border-gray-200 dark:border-slate-700 pb-3">
+        <div class="flex items-center justify-between mb-2">
+          <h4 class="font-semibold text-muted text-xs uppercase tracking-wide">Node Edges</h4>
+          <label class="flex items-center gap-1 cursor-pointer">
+            <input type="checkbox" id="nodeEdgesEnabled" checked class="accent-primary w-3 h-3">
+            <span class="text-[10px] text-muted">On</span>
           </label>
         </div>
 
         <label class="block mb-1.5">
-          <span class="text-muted flex justify-between"><span>Node Opacity</span><span id="nodeOpacity-value">0.6</span></span>
-          <input type="range" id="nodeOpacity" min="0.1" max="1" step="0.1" value="0.6" class="w-full accent-primary h-1.5">
+          <span class="text-muted flex justify-between"><span>Distance</span><span id="connectionDistance-value">150</span></span>
+          <input type="range" id="connectionDistance" min="50" max="300" value="150" class="w-full accent-primary h-1.5">
+        </label>
+
+        <div class="flex items-center gap-2">
+          <label class="flex flex-col items-center gap-1">
+            <input type="color" id="lineColor" value="#6366f1" class="w-8 h-6 rounded cursor-pointer">
+            <span class="text-muted text-[10px]">Color</span>
+          </label>
+          <label class="flex-1">
+            <span class="text-muted flex justify-between"><span>Opacity</span><span id="lineOpacity-value">0.15</span></span>
+            <input type="range" id="lineOpacity" min="0.05" max="0.5" step="0.05" value="0.15" class="w-full accent-primary h-1.5">
+          </label>
+        </div>
+      </div>
+
+      <!-- Mouse Edges -->
+      <div class="border-b border-gray-200 dark:border-slate-700 pb-3">
+        <div class="flex items-center justify-between mb-2">
+          <h4 class="font-semibold text-muted text-xs uppercase tracking-wide">Mouse Edges</h4>
+          <label class="flex items-center gap-1 cursor-pointer">
+            <input type="checkbox" id="mouseEdgesEnabled" checked class="accent-primary w-3 h-3">
+            <span class="text-[10px] text-muted">On</span>
+          </label>
+        </div>
+
+        <label class="block mb-1.5">
+          <span class="text-muted flex justify-between"><span>Radius</span><span id="mouseRadius-value">200</span></span>
+          <input type="range" id="mouseRadius" min="50" max="400" value="200" class="w-full accent-primary h-1.5">
+        </label>
+
+        <div class="flex items-center gap-2 mb-1.5">
+          <label class="flex flex-col items-center gap-1">
+            <input type="color" id="mouseLineColor" value="#6366f1" class="w-8 h-6 rounded cursor-pointer">
+            <span class="text-muted text-[10px]">Color</span>
+          </label>
+          <label class="flex items-center gap-1 cursor-pointer">
+            <input type="checkbox" id="mouseLightning" checked class="accent-primary w-3 h-3">
+            <span class="text-[10px] text-muted">Lightning</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Header Edges -->
+      <div class="border-b border-gray-200 dark:border-slate-700 pb-3">
+        <div class="flex items-center justify-between mb-2">
+          <h4 class="font-semibold text-muted text-xs uppercase tracking-wide">Header Edges</h4>
+          <label class="flex items-center gap-1 cursor-pointer">
+            <input type="checkbox" id="headerEdgesEnabled" checked class="accent-primary w-3 h-3">
+            <span class="text-[10px] text-muted">On</span>
+          </label>
+        </div>
+
+        <label class="block mb-1.5">
+          <span class="text-muted flex justify-between"><span>Radius</span><span id="headerRadius-value">300</span></span>
+          <input type="range" id="headerRadius" min="100" max="500" value="300" class="w-full accent-primary h-1.5">
+        </label>
+
+        <div class="flex items-center gap-2 mb-1.5">
+          <label class="flex flex-col items-center gap-1">
+            <input type="color" id="headerLineColor" value="#6366f1" class="w-8 h-6 rounded cursor-pointer">
+            <span class="text-muted text-[10px]">Color</span>
+          </label>
+          <label class="flex items-center gap-1 cursor-pointer">
+            <input type="checkbox" id="headerLightning" checked class="accent-primary w-3 h-3">
+            <span class="text-[10px] text-muted">Lightning</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Lightning Physics -->
+      <div class="border-b border-gray-200 dark:border-slate-700 pb-3">
+        <h4 class="font-semibold mb-2 text-muted text-xs uppercase tracking-wide">Lightning</h4>
+
+        <label class="block mb-1.5">
+          <span class="text-muted flex justify-between"><span>Jitter</span><span id="lightningJitter-value">0.15</span></span>
+          <input type="range" id="lightningJitter" min="0.05" max="0.4" step="0.05" value="0.15" class="w-full accent-primary h-1.5">
+        </label>
+
+        <label class="block mb-1.5">
+          <span class="text-muted flex justify-between"><span>Segments</span><span id="lightningSegments-value">20</span></span>
+          <input type="range" id="lightningSegments" min="10" max="40" step="5" value="20" class="w-full accent-primary h-1.5">
         </label>
 
         <label class="block">
-          <span class="text-muted flex justify-between"><span>Line Opacity</span><span id="lineOpacity-value">0.15</span></span>
-          <input type="range" id="lineOpacity" min="0.05" max="0.5" step="0.05" value="0.15" class="w-full accent-primary h-1.5">
+          <span class="text-muted flex justify-between"><span>Glow</span><span id="lightningGlow-value">4</span></span>
+          <input type="range" id="lightningGlow" min="1" max="8" step="0.5" value="4" class="w-full accent-primary h-1.5">
         </label>
+      </div>
+
+      <!-- Pulse Effect -->
+      <div class="border-b border-gray-200 dark:border-slate-700 pb-3">
+        <div class="flex items-center justify-between mb-2">
+          <h4 class="font-semibold text-muted text-xs uppercase tracking-wide">Pulse</h4>
+          <label class="flex items-center gap-1 cursor-pointer">
+            <input type="checkbox" id="pulseEnabled" checked class="accent-primary w-3 h-3">
+            <span class="text-[10px] text-muted">On</span>
+          </label>
+        </div>
+
+        <div class="flex items-center gap-2 mb-1.5">
+          <label class="flex items-center gap-1 cursor-pointer">
+            <input type="checkbox" id="pulseAuto" checked class="accent-primary w-3 h-3">
+            <span class="text-[10px] text-muted">Auto</span>
+          </label>
+          <button id="pulseTrigger" class="px-2 py-0.5 text-[10px] rounded-full bg-gray-200 dark:bg-slate-700 hover:bg-primary hover:text-white transition-colors">Pulse!</button>
+        </div>
+
+        <label class="block mb-1.5">
+          <span class="text-muted flex justify-between"><span>Speed</span><span id="pulseSpeed-value">50</span></span>
+          <input type="range" id="pulseSpeed" min="0" max="100" step="5" value="50" class="w-full accent-primary h-1.5">
+        </label>
+
+        <label class="block mb-1.5">
+          <span class="text-muted flex justify-between"><span>Width</span><span id="pulseWidth-value">80</span></span>
+          <input type="range" id="pulseWidth" min="20" max="200" step="10" value="80" class="w-full accent-primary h-1.5">
+        </label>
+
+        <label class="block mb-1.5">
+          <span class="text-muted flex justify-between"><span>Intensity</span><span id="pulseIntensity-value">1</span></span>
+          <input type="range" id="pulseIntensity" min="0.3" max="2" step="0.1" value="1" class="w-full accent-primary h-1.5">
+        </label>
+
+        <label class="block mb-1.5">
+          <span class="text-muted flex justify-between"><span>Interval</span><span id="pulseInterval-value">2</span>s</span>
+          <input type="range" id="pulseInterval" min="0.5" max="5" step="0.5" value="2" class="w-full accent-primary h-1.5">
+        </label>
+
+        <div class="flex items-center gap-2">
+          <label class="flex flex-col items-center gap-1">
+            <input type="color" id="pulseColor" value="#ff6b6b" class="w-8 h-6 rounded cursor-pointer">
+            <span class="text-muted text-[10px]">Color</span>
+          </label>
+          <label class="flex items-center gap-1 cursor-pointer">
+            <input type="checkbox" id="pulseShake" class="accent-primary w-3 h-3">
+            <span class="text-[10px] text-muted">Shake nodes</span>
+          </label>
+        </div>
       </div>
 
       <!-- Presets -->
@@ -108,6 +230,8 @@
           <button data-preset="default" class="px-2 py-0.5 text-[10px] rounded-full bg-gray-200 dark:bg-slate-700 hover:bg-primary hover:text-white transition-colors">Default</button>
           <button data-preset="dense" class="px-2 py-0.5 text-[10px] rounded-full bg-gray-200 dark:bg-slate-700 hover:bg-primary hover:text-white transition-colors">Dense</button>
           <button data-preset="minimal" class="px-2 py-0.5 text-[10px] rounded-full bg-gray-200 dark:bg-slate-700 hover:bg-primary hover:text-white transition-colors">Minimal</button>
+          <button data-preset="electric" class="px-2 py-0.5 text-[10px] rounded-full bg-gray-200 dark:bg-slate-700 hover:bg-primary hover:text-white transition-colors">Electric</button>
+          <button data-preset="heartbeat" class="px-2 py-0.5 text-[10px] rounded-full bg-gray-200 dark:bg-slate-700 hover:bg-primary hover:text-white transition-colors">Heartbeat</button>
           <button data-preset="rainbow" class="px-2 py-0.5 text-[10px] rounded-full bg-gray-200 dark:bg-slate-700 hover:bg-primary hover:text-white transition-colors">Rainbow</button>
           <button data-preset="matrix" class="px-2 py-0.5 text-[10px] rounded-full bg-gray-200 dark:bg-slate-700 hover:bg-primary hover:text-white transition-colors">Matrix</button>
         </div>
@@ -131,23 +255,52 @@
 
     let width: number;
     let height: number;
-    let nodes: Array<{x: number; y: number; vx: number; vy: number; radius: number; hue?: number}> = [];
+    let nodes: Array<{x: number; y: number; vx: number; vy: number; radius: number; hue?: number; shakeX?: number; shakeY?: number}> = [];
     let mouse = { x: 0, y: 0 };
-    let headerCenter = { x: 0, y: 0, width: 0, height: 0 };
+    let headings: Array<{ x: number; y: number; width: number; height: number }> = [];
     let animationId: number;
+
+    // Pulse waves: each pulse expands outward from origin
+    let pulseWaves: Array<{x: number; y: number; radius: number; startTime: number; maxRadius: number}> = [];
+    let lastPulseTime = 0;
 
     // Default config
     const defaultConfig = {
+      // Nodes
       nodeCount: 60,
-      connectionDistance: 150,
-      nodeSpeed: 0.3,
-      mouseRadius: 200,
       nodeSize: 2,
+      nodeSpeed: 0.3,
       nodeColor: '#6366f1',
-      lineColor: '#6366f1',
-      mouseLineColor: '#6366f1',
       nodeOpacity: 0.6,
+      // Node edges
+      nodeEdgesEnabled: true,
+      connectionDistance: 150,
+      lineColor: '#6366f1',
       lineOpacity: 0.15,
+      // Mouse edges
+      mouseEdgesEnabled: true,
+      mouseRadius: 200,
+      mouseLineColor: '#6366f1',
+      mouseLightning: true,
+      // Header edges
+      headerEdgesEnabled: true,
+      headerRadius: 300,
+      headerLineColor: '#6366f1',
+      headerLightning: true,
+      // Lightning physics
+      lightningJitter: 0.15,
+      lightningSegments: 20,
+      lightningGlow: 4,
+      // Pulse effect
+      pulseEnabled: true,
+      pulseAuto: true,
+      pulseSpeed: 50,
+      pulseWidth: 80,
+      pulseIntensity: 1,
+      pulseInterval: 2,
+      pulseColor: '#ff6b6b',
+      pulseShake: false,
+      // Mode
       rainbowMode: false,
     };
 
@@ -155,9 +308,11 @@
     const presets: Record<string, Partial<typeof defaultConfig>> = {
       default: { ...defaultConfig },
       dense: { nodeCount: 120, connectionDistance: 100, nodeSpeed: 0.2, nodeSize: 1.5 },
-      minimal: { nodeCount: 25, connectionDistance: 200, nodeSpeed: 0.15, nodeSize: 3, lineOpacity: 0.1 },
-      rainbow: { rainbowMode: true, nodeCount: 80, nodeOpacity: 0.8, lineOpacity: 0.25 },
-      matrix: { nodeColor: '#00ff00', lineColor: '#00ff00', mouseLineColor: '#00ff00', nodeCount: 100, nodeSpeed: 0.5, lineOpacity: 0.2 },
+      minimal: { nodeCount: 25, connectionDistance: 200, nodeSpeed: 0.15, nodeSize: 3, lineOpacity: 0.1, mouseLightning: false, headerLightning: false, pulseEnabled: false },
+      electric: { lightningJitter: 0.3, lightningGlow: 6, mouseLightning: true, headerLightning: true, mouseLineColor: '#00d4ff', headerLineColor: '#00d4ff', pulseColor: '#00d4ff', pulseIntensity: 1.5 },
+      heartbeat: { pulseEnabled: true, pulseAuto: true, pulseInterval: 0.8, pulseSpeed: 80, pulseWidth: 60, pulseIntensity: 1.5, pulseShake: true, pulseColor: '#ff4757', mouseLightning: false, headerLightning: false },
+      rainbow: { rainbowMode: true, nodeCount: 80, nodeOpacity: 0.8, lineOpacity: 0.25, lightningJitter: 0.2 },
+      matrix: { nodeColor: '#00ff00', lineColor: '#00ff00', mouseLineColor: '#00ff00', headerLineColor: '#00ff00', nodeCount: 100, nodeSpeed: 0.5, lineOpacity: 0.2, lightningJitter: 0.25, pulseColor: '#00ff00' },
     };
 
     // Load saved config or use defaults
@@ -196,6 +351,154 @@
       return `rgba(${Math.round((r + m) * 255)}, ${Math.round((g + m) * 255)}, ${Math.round((b + m) * 255)}, ${a})`;
     }
 
+    // Draw electrified lightning bolt between two points
+    function drawLightning(x1: number, y1: number, x2: number, y2: number, color: string, glowColor: string, intensity: number) {
+      const dx = x2 - x1;
+      const dy = y2 - y1;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+
+      // Number of segments based on distance and config
+      const segments = Math.max(3, Math.floor(dist / config.lightningSegments));
+
+      // Perpendicular vector for displacement
+      const perpX = -dy / dist;
+      const perpY = dx / dist;
+
+      // Generate jagged path points
+      const points: {x: number, y: number}[] = [{x: x1, y: y1}];
+
+      for (let i = 1; i < segments; i++) {
+        const t = i / segments;
+        const baseX = x1 + dx * t;
+        const baseY = y1 + dy * t;
+
+        // Random displacement perpendicular to the line (using config jitter)
+        const displacement = (Math.random() - 0.5) * dist * config.lightningJitter * intensity;
+
+        points.push({
+          x: baseX + perpX * displacement,
+          y: baseY + perpY * displacement
+        });
+      }
+      points.push({x: x2, y: y2});
+
+      // Draw glow layer (thicker, more transparent)
+      ctx.beginPath();
+      ctx.moveTo(points[0].x, points[0].y);
+      for (let i = 1; i < points.length; i++) {
+        ctx.lineTo(points[i].x, points[i].y);
+      }
+      ctx.strokeStyle = glowColor;
+      ctx.lineWidth = config.lightningGlow;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.stroke();
+
+      // Draw main lightning bolt
+      ctx.beginPath();
+      ctx.moveTo(points[0].x, points[0].y);
+      for (let i = 1; i < points.length; i++) {
+        ctx.lineTo(points[i].x, points[i].y);
+      }
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      // Draw bright core
+      ctx.beginPath();
+      ctx.moveTo(points[0].x, points[0].y);
+      for (let i = 1; i < points.length; i++) {
+        ctx.lineTo(points[i].x, points[i].y);
+      }
+      ctx.strokeStyle = `rgba(255, 255, 255, ${intensity * 0.3})`;
+      ctx.lineWidth = 0.5;
+      ctx.stroke();
+    }
+
+    // Draw simple straight line
+    function drawLine(x1: number, y1: number, x2: number, y2: number, color: string) {
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
+
+    // Trigger a new pulse wave from mouse position
+    function triggerPulse() {
+      const maxRadius = Math.max(width, height) * 1.5;
+      pulseWaves.push({
+        x: mouse.x,
+        y: mouse.y,
+        radius: 0,
+        startTime: performance.now(),
+        maxRadius: maxRadius
+      });
+    }
+
+    // Calculate pulse intensity at a given point
+    function getPulseIntensity(x: number, y: number, time: number): number {
+      let maxIntensity = 0;
+
+      pulseWaves.forEach(pulse => {
+        const dx = x - pulse.x;
+        const dy = y - pulse.y;
+        const distFromOrigin = Math.sqrt(dx * dx + dy * dy);
+
+        // Distance from the pulse ring
+        const distFromRing = Math.abs(distFromOrigin - pulse.radius);
+
+        // Within the pulse width?
+        if (distFromRing < config.pulseWidth) {
+          // Intensity falls off with distance from ring center
+          const ringIntensity = 1 - (distFromRing / config.pulseWidth);
+
+          // Echo effect: intensity decreases as pulse expands (like fading heartbeat)
+          const echoFalloff = 1 - (pulse.radius / pulse.maxRadius);
+
+          // Combined intensity
+          const intensity = ringIntensity * echoFalloff * config.pulseIntensity;
+          maxIntensity = Math.max(maxIntensity, intensity);
+        }
+      });
+
+      return maxIntensity;
+    }
+
+    // Draw edge with pulse effect
+    function drawPulsedEdge(x1: number, y1: number, x2: number, y2: number, baseColor: string, baseOpacity: number, time: number) {
+      // Get pulse intensity at midpoint of edge
+      const midX = (x1 + x2) / 2;
+      const midY = (y1 + y2) / 2;
+      const pulseIntensity = getPulseIntensity(midX, midY, time);
+
+      if (pulseIntensity > 0.01) {
+        // Parse base color and blend with pulse color
+        const pulseOpacity = baseOpacity + pulseIntensity * 0.6;
+
+        // Draw pulse glow
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.strokeStyle = hexToRgba(config.pulseColor, pulseIntensity * 0.3);
+        ctx.lineWidth = 3 + pulseIntensity * 4;
+        ctx.lineCap = 'round';
+        ctx.stroke();
+
+        // Draw main line with pulse color blend
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.strokeStyle = hexToRgba(config.pulseColor, Math.min(pulseOpacity, 0.8));
+        ctx.lineWidth = 1 + pulseIntensity * 2;
+        ctx.stroke();
+      } else {
+        // Normal edge rendering
+        drawLine(x1, y1, x2, y2, hexToRgba(baseColor, baseOpacity));
+      }
+    }
+
     function init() {
       resize();
       nodes = [];
@@ -218,22 +521,72 @@
     }
 
     function updateHeaderPosition() {
-      const header = document.querySelector('h1');
-      if (header) {
-        const rect = header.getBoundingClientRect();
-        headerCenter = {
-          x: rect.left + rect.width / 2,
-          y: rect.top + rect.height / 2,
-          width: rect.width,
-          height: rect.height
-        };
+      headings = [];
+      // Find the site header elements (title h1 and description p)
+      const siteHeaderLink = document.getElementById('site-header-link');
+      if (siteHeaderLink) {
+        // Get the h1 title
+        const h1 = siteHeaderLink.querySelector('h1');
+        if (h1) {
+          const rect = h1.getBoundingClientRect();
+          if (rect.width > 0) {
+            headings.push({
+              x: rect.left + rect.width / 2,
+              y: rect.top + rect.height / 2,
+              width: rect.width,
+              height: rect.height
+            });
+          }
+        }
+        // Get the sibling p (description)
+        const description = siteHeaderLink.parentElement?.querySelector('p');
+        if (description) {
+          const rect = description.getBoundingClientRect();
+          if (rect.width > 0) {
+            headings.push({
+              x: rect.left + rect.width / 2,
+              y: rect.top + rect.height / 2,
+              width: rect.width,
+              height: rect.height
+            });
+          }
+        }
       }
     }
 
     function animate() {
+      const currentTime = performance.now();
       ctx.clearRect(0, 0, width, height);
 
+      // Update pulse waves
+      if (config.pulseEnabled) {
+        // Auto-trigger pulses
+        if (config.pulseAuto && currentTime - lastPulseTime > config.pulseInterval * 1000) {
+          triggerPulse();
+          lastPulseTime = currentTime;
+        }
+
+        // Expand pulse radii and remove completed ones
+        pulseWaves = pulseWaves.filter(pulse => {
+          const elapsed = currentTime - pulse.startTime;
+          pulse.radius = elapsed * (config.pulseSpeed / 1000) * 60; // 60fps normalized
+          return pulse.radius < pulse.maxRadius;
+        });
+      }
+
       nodes.forEach((node, i) => {
+        // Apply shake effect from pulses
+        let shakeX = 0;
+        let shakeY = 0;
+        if (config.pulseEnabled && config.pulseShake) {
+          const pulseIntensity = getPulseIntensity(node.x, node.y, currentTime);
+          if (pulseIntensity > 0.1) {
+            const shakeStrength = pulseIntensity * 8;
+            shakeX = (Math.random() - 0.5) * shakeStrength;
+            shakeY = (Math.random() - 0.5) * shakeStrength;
+          }
+        }
+
         node.x += node.vx;
         node.y += node.vy;
 
@@ -248,72 +601,125 @@
           node.hue = (node.hue + 0.5) % 360;
         }
 
+        // Render position with shake
+        const renderX = node.x + shakeX;
+        const renderY = node.y + shakeY;
+
+        // Get pulse intensity for node glow
+        const nodePulseIntensity = config.pulseEnabled ? getPulseIntensity(renderX, renderY, currentTime) : 0;
+
+        // Draw node with pulse glow
+        if (nodePulseIntensity > 0.1) {
+          // Pulse glow around node
+          ctx.beginPath();
+          ctx.arc(renderX, renderY, node.radius + nodePulseIntensity * 6, 0, Math.PI * 2);
+          ctx.fillStyle = hexToRgba(config.pulseColor, nodePulseIntensity * 0.4);
+          ctx.fill();
+        }
+
         // Draw node
         ctx.beginPath();
-        ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
+        ctx.arc(renderX, renderY, node.radius, 0, Math.PI * 2);
         ctx.fillStyle = config.rainbowMode
           ? hslToRgba(node.hue!, 0.7, 0.5, config.nodeOpacity)
           : hexToRgba(config.nodeColor, config.nodeOpacity);
         ctx.fill();
 
         // Connect to nearby nodes
-        for (let j = i + 1; j < nodes.length; j++) {
-          const other = nodes[j];
-          const dx = node.x - other.x;
-          const dy = node.y - other.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
+        if (config.nodeEdgesEnabled) {
+          for (let j = i + 1; j < nodes.length; j++) {
+            const other = nodes[j];
 
-          if (dist < config.connectionDistance) {
-            ctx.beginPath();
-            ctx.moveTo(node.x, node.y);
-            ctx.lineTo(other.x, other.y);
-            const opacity = config.lineOpacity * (1 - dist / config.connectionDistance);
-            ctx.strokeStyle = config.rainbowMode
-              ? hslToRgba((node.hue! + other.hue!) / 2, 0.7, 0.5, opacity)
-              : hexToRgba(config.lineColor, opacity);
-            ctx.lineWidth = 1;
-            ctx.stroke();
+            // Other node's shake
+            let otherShakeX = 0;
+            let otherShakeY = 0;
+            if (config.pulseEnabled && config.pulseShake) {
+              const otherPulseIntensity = getPulseIntensity(other.x, other.y, currentTime);
+              if (otherPulseIntensity > 0.1) {
+                const shakeStrength = otherPulseIntensity * 8;
+                otherShakeX = (Math.random() - 0.5) * shakeStrength;
+                otherShakeY = (Math.random() - 0.5) * shakeStrength;
+              }
+            }
+
+            const otherRenderX = other.x + otherShakeX;
+            const otherRenderY = other.y + otherShakeY;
+
+            const ndx = node.x - other.x;
+            const ndy = node.y - other.y;
+            const ndist = Math.sqrt(ndx * ndx + ndy * ndy);
+
+            if (ndist < config.connectionDistance) {
+              const opacity = config.lineOpacity * (1 - ndist / config.connectionDistance);
+
+              if (config.pulseEnabled) {
+                const baseColor = config.rainbowMode ? config.lineColor : config.lineColor;
+                drawPulsedEdge(renderX, renderY, otherRenderX, otherRenderY, baseColor, opacity, currentTime);
+              } else {
+                const lineColor = config.rainbowMode
+                  ? hslToRgba((node.hue! + other.hue!) / 2, 0.7, 0.5, opacity)
+                  : hexToRgba(config.lineColor, opacity);
+                drawLine(renderX, renderY, otherRenderX, otherRenderY, lineColor);
+              }
+            }
           }
         }
 
         // Connect to mouse
-        const dx = node.x - mouse.x;
-        const dy = node.y - mouse.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (config.mouseEdgesEnabled) {
+          const dx = node.x - mouse.x;
+          const dy = node.y - mouse.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
 
-        if (dist < config.mouseRadius) {
-          ctx.beginPath();
-          ctx.moveTo(node.x, node.y);
-          ctx.lineTo(mouse.x, mouse.y);
-          const opacity = 0.3 * (1 - dist / config.mouseRadius);
-          ctx.strokeStyle = config.rainbowMode
-            ? hslToRgba(node.hue!, 0.7, 0.5, opacity)
-            : hexToRgba(config.mouseLineColor, opacity);
-          ctx.lineWidth = 1;
-          ctx.stroke();
+          if (dist < config.mouseRadius) {
+            const intensity = 1 - dist / config.mouseRadius;
+
+            if (config.mouseLightning) {
+              const mainColor = config.rainbowMode
+                ? hslToRgba(node.hue!, 0.8, 0.6, intensity * 0.8)
+                : hexToRgba(config.mouseLineColor, intensity * 0.7);
+              const glowColor = config.rainbowMode
+                ? hslToRgba(node.hue!, 0.6, 0.5, intensity * 0.15)
+                : hexToRgba(config.mouseLineColor, intensity * 0.1);
+              drawLightning(node.x, node.y, mouse.x, mouse.y, mainColor, glowColor, intensity);
+            } else {
+              const lineColor = config.rainbowMode
+                ? hslToRgba(node.hue!, 0.7, 0.5, intensity * 0.5)
+                : hexToRgba(config.mouseLineColor, intensity * 0.4);
+              drawLine(node.x, node.y, mouse.x, mouse.y, lineColor);
+            }
+          }
         }
 
-        // Connect to header
-        if (headerCenter.x > 0) {
-          const headerRadius = config.mouseRadius * 1.5;
-          // Calculate distance to nearest point on header rectangle
-          const closestX = Math.max(headerCenter.x - headerCenter.width / 2, Math.min(node.x, headerCenter.x + headerCenter.width / 2));
-          const closestY = Math.max(headerCenter.y - headerCenter.height / 2, Math.min(node.y, headerCenter.y + headerCenter.height / 2));
-          const hdx = node.x - closestX;
-          const hdy = node.y - closestY;
-          const hdist = Math.sqrt(hdx * hdx + hdy * hdy);
+        // Connect to headings (h1, h2, h3)
+        if (config.headerEdgesEnabled && headings.length > 0) {
+          headings.forEach(heading => {
+            // Calculate distance to nearest point on heading rectangle
+            const closestX = Math.max(heading.x - heading.width / 2, Math.min(renderX, heading.x + heading.width / 2));
+            const closestY = Math.max(heading.y - heading.height / 2, Math.min(renderY, heading.y + heading.height / 2));
+            const hdx = renderX - closestX;
+            const hdy = renderY - closestY;
+            const hdist = Math.sqrt(hdx * hdx + hdy * hdy);
 
-          if (hdist < headerRadius && hdist > 0) {
-            ctx.beginPath();
-            ctx.moveTo(node.x, node.y);
-            ctx.lineTo(closestX, closestY);
-            const opacity = 0.25 * (1 - hdist / headerRadius);
-            ctx.strokeStyle = config.rainbowMode
-              ? hslToRgba(node.hue!, 0.7, 0.5, opacity)
-              : hexToRgba(config.nodeColor, opacity);
-            ctx.lineWidth = 1;
-            ctx.stroke();
-          }
+            if (hdist < config.headerRadius && hdist > 0) {
+              const intensity = 1 - hdist / config.headerRadius;
+
+              if (config.headerLightning) {
+                const mainColor = config.rainbowMode
+                  ? hslToRgba(node.hue!, 0.8, 0.6, intensity * 0.6)
+                  : hexToRgba(config.headerLineColor, intensity * 0.5);
+                const glowColor = config.rainbowMode
+                  ? hslToRgba(node.hue!, 0.6, 0.5, intensity * 0.12)
+                  : hexToRgba(config.headerLineColor, intensity * 0.08);
+                drawLightning(renderX, renderY, closestX, closestY, mainColor, glowColor, intensity);
+              } else {
+                const lineColor = config.rainbowMode
+                  ? hslToRgba(node.hue!, 0.7, 0.5, intensity * 0.25)
+                  : hexToRgba(config.headerLineColor, intensity * 0.25);
+                drawLine(renderX, renderY, closestX, closestY, lineColor);
+              }
+            }
+          });
         }
       });
 
@@ -321,21 +727,53 @@
     }
 
     function updateConfigUI() {
-      const elements: Record<string, HTMLInputElement> = {};
-      ['nodeCount', 'nodeSpeed', 'connectionDistance', 'mouseRadius', 'nodeSize',
-       'nodeColor', 'lineColor', 'mouseLineColor', 'nodeOpacity', 'lineOpacity'].forEach(id => {
-        elements[id] = document.getElementById(id) as HTMLInputElement;
+      // Range inputs with value display
+      const rangeInputs = [
+        'nodeCount', 'nodeSize', 'nodeSpeed', 'nodeOpacity',
+        'connectionDistance', 'lineOpacity',
+        'mouseRadius',
+        'headerRadius',
+        'lightningJitter', 'lightningSegments', 'lightningGlow',
+        'pulseSpeed', 'pulseWidth', 'pulseIntensity', 'pulseInterval'
+      ];
+      rangeInputs.forEach(id => {
+        const el = document.getElementById(id) as HTMLInputElement;
         const valueEl = document.getElementById(`${id}-value`);
-        if (elements[id]) {
-          elements[id].value = String(config[id as keyof typeof config]);
+        if (el) {
+          el.value = String(config[id as keyof typeof config]);
           if (valueEl) valueEl.textContent = String(config[id as keyof typeof config]);
         }
+      });
+
+      // Color inputs
+      ['nodeColor', 'lineColor', 'mouseLineColor', 'headerLineColor', 'pulseColor'].forEach(id => {
+        const el = document.getElementById(id) as HTMLInputElement;
+        if (el) el.value = String(config[id as keyof typeof config]);
+      });
+
+      // Checkbox inputs
+      const checkboxInputs = [
+        'nodeEdgesEnabled', 'mouseEdgesEnabled', 'headerEdgesEnabled',
+        'mouseLightning', 'headerLightning',
+        'pulseEnabled', 'pulseAuto', 'pulseShake'
+      ];
+      checkboxInputs.forEach(id => {
+        const el = document.getElementById(id) as HTMLInputElement;
+        if (el) el.checked = Boolean(config[id as keyof typeof config]);
       });
     }
 
     function setupConfigListeners() {
-      ['nodeCount', 'nodeSpeed', 'connectionDistance', 'mouseRadius', 'nodeSize',
-       'nodeOpacity', 'lineOpacity'].forEach(id => {
+      // Range inputs
+      const rangeInputs = [
+        'nodeCount', 'nodeSize', 'nodeSpeed', 'nodeOpacity',
+        'connectionDistance', 'lineOpacity',
+        'mouseRadius',
+        'headerRadius',
+        'lightningJitter', 'lightningSegments', 'lightningGlow',
+        'pulseSpeed', 'pulseWidth', 'pulseIntensity', 'pulseInterval'
+      ];
+      rangeInputs.forEach(id => {
         const el = document.getElementById(id) as HTMLInputElement;
         const valueEl = document.getElementById(`${id}-value`);
         if (el) {
@@ -349,7 +787,8 @@
         }
       });
 
-      ['nodeColor', 'lineColor', 'mouseLineColor'].forEach(id => {
+      // Color inputs
+      ['nodeColor', 'lineColor', 'mouseLineColor', 'headerLineColor', 'pulseColor'].forEach(id => {
         const el = document.getElementById(id) as HTMLInputElement;
         if (el) {
           el.addEventListener('input', () => {
@@ -357,6 +796,39 @@
             config.rainbowMode = false;
             saveConfig();
           });
+        }
+      });
+
+      // Checkbox inputs
+      const checkboxInputs = [
+        'nodeEdgesEnabled', 'mouseEdgesEnabled', 'headerEdgesEnabled',
+        'mouseLightning', 'headerLightning',
+        'pulseEnabled', 'pulseAuto', 'pulseShake'
+      ];
+      checkboxInputs.forEach(id => {
+        const el = document.getElementById(id) as HTMLInputElement;
+        if (el) {
+          el.addEventListener('change', () => {
+            (config as any)[id] = el.checked;
+            saveConfig();
+          });
+        }
+      });
+
+      // Pulse trigger button
+      const pulseTriggerBtn = document.getElementById('pulseTrigger');
+      if (pulseTriggerBtn) {
+        pulseTriggerBtn.addEventListener('click', () => {
+          triggerPulse();
+        });
+      }
+
+      // Also trigger pulse on canvas click
+      canvas.addEventListener('click', (e) => {
+        if (config.pulseEnabled) {
+          mouse.x = e.clientX;
+          mouse.y = e.clientY;
+          triggerPulse();
         }
       });
 

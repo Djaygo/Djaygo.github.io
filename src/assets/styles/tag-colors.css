@@ -1,0 +1,71 @@
+/* Shared tag color palette - Flat Sourcerer theme */
+
+/* Tag gradient stripes container */
+.tag-stripes {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  display: flex;
+  border-radius: 20px 20px 0 0;
+  overflow: hidden;
+}
+
+.tag-stripe {
+  flex: 1;
+  height: 100%;
+}
+
+/* Tag pills */
+.tag-pill {
+  font-size: 0.75rem;
+  padding: 0.125rem 0.5rem;
+  border-radius: 9999px;
+  transition: all 0.2s ease;
+}
+
+/* Obsidian - Deep purple */
+.tag-stripe.tag-obsidian { background: linear-gradient(135deg, #5a4a6e 0%, #7c5c9c 100%); }
+.tag-pill.tag-obsidian { background: rgba(90, 74, 110, 0.3); color: #b8a4d0; }
+
+/* PKM - Teal */
+.tag-stripe.tag-pkm { background: linear-gradient(135deg, #1d4a5c 0%, #2a6b7c 100%); }
+.tag-pill.tag-pkm { background: rgba(29, 74, 92, 0.3); color: #6bb8c9; }
+
+/* Tools - Amber/Bronze */
+.tag-stripe.tag-tools { background: linear-gradient(135deg, #6b4423 0%, #8b5a2b 100%); }
+.tag-pill.tag-tools { background: rgba(107, 68, 35, 0.3); color: #d4a574; }
+
+/* Productivity - Olive green */
+.tag-stripe.tag-productivity { background: linear-gradient(135deg, #4a5a3a 0%, #6b7c4a 100%); }
+.tag-pill.tag-productivity { background: rgba(74, 90, 58, 0.3); color: #a8c488; }
+
+/* Astro - Orange/Coral */
+.tag-stripe.tag-astro { background: linear-gradient(135deg, #8b3a1a 0%, #c25430 100%); }
+.tag-pill.tag-astro { background: rgba(139, 58, 26, 0.3); color: #f0956a; }
+
+/* Webdev - Blue */
+.tag-stripe.tag-webdev { background: linear-gradient(135deg, #2a4a6b 0%, #3b6a8c 100%); }
+.tag-pill.tag-webdev { background: rgba(42, 74, 107, 0.3); color: #7ab0d4; }
+
+/* Digital Garden - Green */
+.tag-stripe.tag-digital-garden { background: linear-gradient(135deg, #2d5a3e 0%, #3d7a52 100%); }
+.tag-pill.tag-digital-garden { background: rgba(45, 90, 62, 0.3); color: #7ac492; }
+
+/* Learning - Magenta/Pink */
+.tag-stripe.tag-learning { background: linear-gradient(135deg, #5a3a5a 0%, #8c4a7c 100%); }
+.tag-pill.tag-learning { background: rgba(90, 58, 90, 0.3); color: #c494b8; }
+
+/* Writing - Slate/Gray-blue */
+.tag-stripe.tag-writing { background: linear-gradient(135deg, #3a4a5a 0%, #5a6a7c 100%); }
+.tag-pill.tag-writing { background: rgba(58, 74, 90, 0.3); color: #98a8b8; }
+
+/* Default fallback for unknown tags */
+.tag-stripe:not([class*="tag-obsidian"]):not([class*="tag-pkm"]):not([class*="tag-tools"]):not([class*="tag-productivity"]):not([class*="tag-astro"]):not([class*="tag-webdev"]):not([class*="tag-digital-garden"]):not([class*="tag-learning"]):not([class*="tag-writing"]) {
+  background: linear-gradient(135deg, #4a4a5a 0%, #6a6a7c 100%);
+}
+.tag-pill:not([class*="tag-obsidian"]):not([class*="tag-pkm"]):not([class*="tag-tools"]):not([class*="tag-productivity"]):not([class*="tag-astro"]):not([class*="tag-webdev"]):not([class*="tag-digital-garden"]):not([class*="tag-learning"]):not([class*="tag-writing"]) {
+  background: rgba(74, 74, 90, 0.3);
+  color: #a8a8b8;
+}
