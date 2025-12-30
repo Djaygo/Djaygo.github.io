@@ -9,6 +9,8 @@ tags:
 category: notes
 ---
 
+import CopyCode from '~/components/ui/CopyCode.astro';
+
 ## The Story Your Code Tells
 
 Every repository has a story. Not in the documentation or the README—but in the living, breathing history of commits, branches, and contributions. **Gource** transforms that invisible narrative into something visceral: an animated tree of files blooming, shifting, and evolving as contributors shape the codebase over time.
@@ -30,25 +32,27 @@ This is what good UX does: it makes the invisible visible, and the abstract tang
 
 ## How I Created This
 
-The command I used to generate this visualization:
+Copy and paste this command to generate your own Gource visualization:
 
-```bash
-gource -1920x1080 \
-  --seconds-per-day 0.5 \
-  --auto-skip-seconds 0.5 \
-  --title "Djaygo Digital Garden" \
-  --key \
-  --highlight-users \
-  --file-idle-time 0 \
-  --background-colour 0d1117 \
-  --font-colour 58a6ff \
-  --hide mouse,filenames \
-  --stop-at-end \
-  -o - | \
-ffmpeg -y -r 60 -f image2pipe -vcodec ppm -i - \
-  -vcodec libx264 -preset medium -pix_fmt yuv420p -crf 18 \
-  ./src/assets/gource-visualization.mp4
-```
+<CopyCode
+  filename="generate-gource.sh"
+  lang="bash"
+  code={`gource -1920x1080 \\
+  --seconds-per-day 0.5 \\
+  --auto-skip-seconds 0.5 \\
+  --title "Your Project Name" \\
+  --key \\
+  --highlight-users \\
+  --file-idle-time 0 \\
+  --background-colour 0d1117 \\
+  --font-colour 58a6ff \\
+  --hide mouse,filenames \\
+  --stop-at-end \\
+  -o - | \\
+ffmpeg -y -r 60 -f image2pipe -vcodec ppm -i - \\
+  -vcodec libx264 -preset medium -pix_fmt yuv420p -crf 18 \\
+  ./gource-visualization.mp4`}
+/>
 
 ### Breaking Down the Experience Decisions
 
@@ -60,9 +64,20 @@ ffmpeg -y -r 60 -f image2pipe -vcodec ppm -i - \
 | `--highlight-users` | Contributors are heroes; make them visible |
 | `--key` | Always provide orientation; users should never feel lost |
 
-## The Experience-First Principle
+### Convert to GIF
 
-When I approach any tool or feature, I ask: **"How will this make someone feel?"**
+Want a GIF instead? Use this command after generating the MP4:
+
+<CopyCode
+  filename="convert-to-gif.sh"
+  lang="bash"
+  code={`ffmpeg -i gource-visualization.mp4 \\
+  -vf "fps=15,scale=640:-1:flags=lanczos,split[s0][s1];[s0]palettegen=max_colors=128[p];[s1][p]paletteuse=dither=bayer" \\
+  -loop 0 \\
+  gource-visualization.gif`}
+/>
+
+## The Experience-First Principle
 
 Watching a Gource visualization of your own project evokes something unexpected—*pride*. You see the work accumulate. You remember that late-night refactor. You notice how the `components/` folder grew over time.
 
