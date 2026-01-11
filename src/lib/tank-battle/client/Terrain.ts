@@ -3,8 +3,8 @@ import { TERRAIN, COLORS } from '../shared/constants';
 
 // Sand granule size - larger = fewer particles = better performance
 const SAND_GRANULE_SIZE = 3;
-const SETTLE_THRESHOLD = 5; // Frames without movement before settling
-const MAX_ACTIVE_PARTICLES = 500; // Limit active particles for performance
+const SETTLE_THRESHOLD = 10; // Frames without movement before settling
+const MAX_ACTIVE_PARTICLES = 800; // Limit active particles for performance
 
 interface SandParticle {
   x: number;
@@ -273,8 +273,8 @@ export class Terrain {
 
   private collapseUnsupportedTerrain(startX: number, endX: number, craterTopY: number, data: Uint8ClampedArray): void {
     // Expand range to catch edge collapses - check further out from crater
-    const expandedStartX = Math.max(0, startX - SAND_GRANULE_SIZE * 10);
-    const expandedEndX = Math.min(this.width - 1, endX + SAND_GRANULE_SIZE * 10);
+    const expandedStartX = Math.max(0, startX - SAND_GRANULE_SIZE * 15);
+    const expandedEndX = Math.min(this.width - 1, endX + SAND_GRANULE_SIZE * 15);
 
     // Align to granule grid
     const alignedStartX = Math.floor(expandedStartX / SAND_GRANULE_SIZE) * SAND_GRANULE_SIZE;
@@ -283,7 +283,7 @@ export class Terrain {
     // Multiple passes to handle cascading collapses
     let changed = true;
     let passes = 0;
-    const maxPasses = 20;
+    const maxPasses = 30;
 
     while (changed && passes < maxPasses) {
       changed = false;
@@ -315,38 +315,42 @@ export class Terrain {
           }
 
           if (hasSolid) {
-            // Check if this is an edge that should collapse
-            // An edge collapses if there's empty space diagonally below on either side
-            let isUnstableEdge = false;
+            // Check if this granule should collapse
+            let shouldCollapse = !hasSupport;
 
+            // Also check for unstable diagonal edges even if there's support below
             if (hasSupport) {
-              // Check diagonal support - if there's a gap diagonally below, this edge should fall
               const belowY = y + SAND_GRANULE_SIZE;
               if (belowY < this.height) {
-                // Check left diagonal
-                const leftX = x - SAND_GRANULE_SIZE;
-                if (leftX >= 0) {
-                  const leftEmpty = this.isGranuleEmpty(leftX, belowY);
-                  const leftSideEmpty = this.isGranuleEmpty(leftX, y);
-                  if (leftEmpty && leftSideEmpty) {
-                    isUnstableEdge = true;
-                  }
-                }
+                const directlyBelowEmpty = this.isGranuleEmpty(x, belowY);
 
-                // Check right diagonal
-                const rightX = x + SAND_GRANULE_SIZE;
-                if (rightX < this.width) {
-                  const rightEmpty = this.isGranuleEmpty(rightX, belowY);
+                // If nothing directly below, check if this is a diagonal overhang
+                if (directlyBelowEmpty) {
+                  // This granule is overhanging - should definitely fall
+                  shouldCollapse = true;
+                } else {
+                  // Check if this is a narrow edge that should collapse
+                  const leftX = x - SAND_GRANULE_SIZE;
+                  const rightX = x + SAND_GRANULE_SIZE;
+
+                  // Check if this is an isolated edge (empty on sides and diagonals)
+                  const leftSideEmpty = this.isGranuleEmpty(leftX, y);
                   const rightSideEmpty = this.isGranuleEmpty(rightX, y);
-                  if (rightEmpty && rightSideEmpty) {
-                    isUnstableEdge = true;
+                  const leftDiagEmpty = this.isGranuleEmpty(leftX, belowY);
+                  const rightDiagEmpty = this.isGranuleEmpty(rightX, belowY);
+
+                  // Collapse if it's a thin edge with empty space on both sides
+                  if (leftSideEmpty && leftDiagEmpty) {
+                    shouldCollapse = true;
+                  } else if (rightSideEmpty && rightDiagEmpty) {
+                    shouldCollapse = true;
                   }
                 }
               }
             }
 
-            if (!hasSupport || isUnstableEdge) {
-              // This granule has no support below or is an unstable edge - convert to sand
+            if (shouldCollapse) {
+              // This granule should fall - convert to sand
               if (!this.sandGrid.has(granuleKey)) {
                 // Limit active particles
                 const activeCount = this.sandParticles.filter(p => !p.settled).length;
@@ -458,9 +462,9 @@ export class Terrain {
           anyChanged = true;
         }
       } else if (result === 'blocked_by_sand') {
-        // Blocked by other sand - also counts toward settling
+        // Blocked by other sand - takes much longer to settle (wait for other sand to move)
         particle.stuckFrames++;
-        if (particle.stuckFrames >= SETTLE_THRESHOLD * 2) {
+        if (particle.stuckFrames >= SETTLE_THRESHOLD * 4) {
           this.settleSandParticle(particle, i);
           anyChanged = true;
         }
