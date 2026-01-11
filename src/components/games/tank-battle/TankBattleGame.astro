@@ -1,0 +1,549 @@
+---
+---
+
+<div id="tank-battle-container" class="relative w-full h-screen bg-slate-900 overflow-hidden">
+  <!-- Connecting Screen (hidden by default - free play doesn't need server) -->
+  <div id="connecting-screen" class="absolute inset-0 hidden flex items-center justify-center">
+    <div class="text-center">
+      <div class="animate-spin w-12 h-12 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4"></div>
+      <p class="text-white text-lg">Connecting to server...</p>
+      <p id="connection-error" class="text-red-400 mt-2 hidden"></p>
+    </div>
+  </div>
+
+  <!-- Lobby Screen (visible by default for free play) -->
+  <div id="lobby-screen" class="absolute inset-0 flex items-center justify-center p-4">
+    <div class="bg-slate-800/90 backdrop-blur-sm rounded-2xl p-8 w-full max-w-lg shadow-2xl border border-slate-700">
+      <h1 class="text-4xl font-bold text-white mb-2 text-center">Tank Battle</h1>
+      <p class="text-gray-400 text-center mb-6">Multiplayer Destruction</p>
+
+      <!-- Server URL -->
+      <div class="mb-6">
+        <label class="block text-sm text-gray-400 mb-1">Server URL</label>
+        <input
+          type="text"
+          id="server-url"
+          class="w-full px-4 py-2 bg-slate-700 rounded-lg text-white border border-slate-600 focus:border-primary focus:outline-none text-sm"
+          value="http://localhost:3001"
+        />
+      </div>
+
+      <!-- Player Name -->
+      <div class="mb-6">
+        <label class="block text-sm text-gray-400 mb-1">Your Name</label>
+        <input
+          type="text"
+          id="player-name"
+          class="w-full px-4 py-3 bg-slate-700 rounded-lg text-white border border-slate-600 focus:border-primary focus:outline-none"
+          placeholder="Enter your name"
+          maxlength="16"
+        />
+      </div>
+
+      <!-- Room List -->
+      <div class="mb-6">
+        <div class="flex justify-between items-center mb-2">
+          <h3 class="text-sm text-gray-400">Available Rooms</h3>
+          <button id="refresh-rooms" class="text-xs text-primary hover:text-primary/80">Refresh</button>
+        </div>
+        <div id="room-list" class="space-y-2 max-h-48 overflow-y-auto bg-slate-900/50 rounded-lg p-3">
+          <p class="text-gray-500 text-sm text-center py-4">No rooms available</p>
+        </div>
+      </div>
+
+      <!-- Create Room -->
+      <button
+        id="create-room-btn"
+        class="w-full py-3 bg-primary hover:bg-primary/80 text-white font-bold rounded-lg transition-colors"
+      >
+        Create New Room
+      </button>
+
+      <div class="relative my-4">
+        <div class="absolute inset-0 flex items-center">
+          <div class="w-full border-t border-slate-600"></div>
+        </div>
+        <div class="relative flex justify-center text-sm">
+          <span class="px-2 bg-slate-800 text-gray-400">or play solo</span>
+        </div>
+      </div>
+
+      <!-- Free Play -->
+      <button
+        id="free-play-btn"
+        class="w-full py-3 bg-green-600 hover:bg-green-500 text-white font-bold rounded-lg transition-colors"
+      >
+        Free Play (Offline)
+      </button>
+    </div>
+  </div>
+
+  <!-- Room/Waiting Screen -->
+  <div id="room-screen" class="absolute inset-0 hidden flex items-center justify-center p-4">
+    <div class="bg-slate-800/90 backdrop-blur-sm rounded-2xl p-8 w-full max-w-lg shadow-2xl border border-slate-700">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold text-white">Room: <span id="room-name" class="text-primary"></span></h2>
+        <button id="leave-room-btn" class="text-gray-400 hover:text-white text-sm">Leave</button>
+      </div>
+
+      <!-- Player List -->
+      <div class="mb-6">
+        <h3 class="text-sm text-gray-400 mb-2">Players</h3>
+        <div id="player-list" class="space-y-2">
+          <!-- Players will be added here -->
+        </div>
+      </div>
+
+      <!-- Countdown -->
+      <div id="countdown-display" class="hidden text-center py-8">
+        <p class="text-gray-400 mb-2">Game starting in</p>
+        <span id="countdown-number" class="text-6xl font-bold text-primary">3</span>
+      </div>
+
+      <!-- Ready Button -->
+      <button
+        id="ready-btn"
+        class="w-full py-3 bg-green-600 hover:bg-green-500 text-white font-bold rounded-lg transition-colors"
+      >
+        Ready
+      </button>
+
+      <p class="text-gray-500 text-sm text-center mt-4">All players must be ready to start</p>
+    </div>
+  </div>
+
+  <!-- Game Canvas -->
+  <canvas id="game-canvas" class="hidden w-full h-full"></canvas>
+
+  <!-- Game HUD -->
+  <div id="game-hud" class="hidden absolute top-0 left-0 right-0 p-4 pointer-events-none">
+    <div class="flex justify-between items-start">
+      <!-- Left HUD - Player Stats -->
+      <div class="bg-black/60 backdrop-blur-sm rounded-lg px-4 py-3 pointer-events-auto">
+        <div class="flex items-center gap-6">
+          <!-- Health -->
+          <div>
+            <span class="text-gray-400 text-xs block mb-1">Health</span>
+            <div class="w-32 h-3 bg-gray-700 rounded-full overflow-hidden">
+              <div id="health-bar" class="h-full bg-green-500 transition-all duration-200" style="width: 100%"></div>
+            </div>
+          </div>
+
+          <!-- Weapon -->
+          <div>
+            <span class="text-gray-400 text-xs block mb-1">Weapon</span>
+            <div class="flex items-center gap-2">
+              <span id="weapon-icon" class="text-xl">💥</span>
+              <div>
+                <span id="weapon-name" class="text-white text-sm font-medium block">Standard Shell</span>
+                <div class="flex items-center gap-1">
+                  <span id="weapon-ammo" class="text-white text-xs">15</span>
+                  <span class="text-gray-500 text-xs">/</span>
+                  <span id="weapon-max-ammo" class="text-gray-400 text-xs">15</span>
+                  <!-- Reload progress bar -->
+                  <div id="weapon-reload-container" class="hidden w-16 h-1.5 bg-gray-700 rounded-full overflow-hidden ml-2">
+                    <div id="weapon-reload-bar" class="h-full bg-blue-400 transition-all duration-100" style="width: 0%"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Score -->
+          <div>
+            <span class="text-gray-400 text-xs block mb-1">Score</span>
+            <span id="score-display" class="text-white text-lg font-bold">0</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right HUD - Ping & Controls -->
+      <div class="bg-black/60 backdrop-blur-sm rounded-lg px-4 py-3 text-right">
+        <div id="ping-container">
+          <span class="text-gray-400 text-xs">Ping: </span>
+          <span id="ping-display" class="text-white text-sm">--</span>
+          <span class="text-gray-400 text-xs">ms</span>
+        </div>
+        <div id="free-play-label" class="hidden text-green-400 text-xs font-bold">Free Play</div>
+        <div class="text-gray-500 text-xs mt-1">ESC: Exit | Q: Weapons | 1-8: Quick Select</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scoreboard (Tab) -->
+  <div id="scoreboard" class="hidden absolute inset-0 flex items-center justify-center bg-black/70 pointer-events-none">
+    <div class="bg-slate-800/95 backdrop-blur-sm rounded-xl p-6 w-full max-w-md">
+      <h2 class="text-xl font-bold text-white mb-4 text-center">Scoreboard</h2>
+      <div id="score-list" class="space-y-2">
+        <!-- Scores populated dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Game End Screen -->
+  <div id="end-screen" class="absolute inset-0 hidden flex items-center justify-center bg-black/80">
+    <div class="bg-slate-800/95 backdrop-blur-sm rounded-2xl p-8 w-full max-w-md text-center">
+      <h2 id="winner-text" class="text-3xl font-bold text-white mb-6">Victory!</h2>
+
+      <div id="final-scores" class="space-y-2 mb-6">
+        <!-- Final scores -->
+      </div>
+
+      <button
+        id="back-to-lobby-btn"
+        class="px-8 py-3 bg-primary hover:bg-primary/80 text-white font-bold rounded-lg transition-colors"
+      >
+        Back to Lobby
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  import { TankGame, type GameScreen, type GameCallbacks } from '~/lib/tank-battle/client/TankGame';
+  import type { RoomInfo, PlayerInfo, GameResults } from '~/lib/tank-battle/shared/types';
+  import { TANK } from '~/lib/tank-battle/shared/constants';
+  import { getServerUrl, saveServerUrl } from '~/lib/tank-battle/config';
+
+  let game: TankGame | null = null;
+
+  function init() {
+    const canvas = document.getElementById('game-canvas') as HTMLCanvasElement;
+    const serverUrlInput = document.getElementById('server-url') as HTMLInputElement;
+    const playerNameInput = document.getElementById('player-name') as HTMLInputElement;
+
+    serverUrlInput.value = getServerUrl();
+
+    const savedName = localStorage.getItem('tankBattlePlayerName') || '';
+    playerNameInput.value = savedName;
+
+    const callbacks: GameCallbacks = {
+      onScreenChange: handleScreenChange,
+      onRoomListUpdate: handleRoomListUpdate,
+      onPlayersUpdate: handlePlayersUpdate,
+      onCountdown: handleCountdown,
+      onGameEnd: handleGameEnd,
+      onError: handleError,
+      onConnectionChange: handleConnectionChange,
+    };
+
+    game = new TankGame(canvas, serverUrlInput.value, callbacks);
+
+    // Show lobby immediately (for free play option)
+    handleScreenChange('lobby');
+
+    setupEventListeners();
+    startHUDUpdate();
+
+    // Try to connect in background (optional for free play)
+    // Use setTimeout to ensure UI is ready first
+    setTimeout(() => {
+      game?.connect().catch((err) => {
+        // Connection failed, but free play is still available
+        console.log('Server connection failed, free play mode available:', err.message);
+      });
+    }, 100);
+  }
+
+  function setupEventListeners() {
+    document.getElementById('server-url')?.addEventListener('change', async (e) => {
+      const url = (e.target as HTMLInputElement).value;
+      saveServerUrl(url);
+      if (game) {
+        await game.reconnect(url);
+      }
+    });
+
+    document.getElementById('refresh-rooms')?.addEventListener('click', () => {
+      game?.refreshRooms();
+    });
+
+    document.getElementById('create-room-btn')?.addEventListener('click', () => {
+      const playerName = getPlayerName();
+      if (!playerName) {
+        handleError('Please enter your name');
+        return;
+      }
+      savePlayerName(playerName);
+      game?.createRoom(`${playerName}'s Room`, playerName);
+    });
+
+    document.getElementById('free-play-btn')?.addEventListener('click', () => {
+      const playerName = getPlayerName() || 'Player';
+      savePlayerName(playerName);
+      game?.startFreePlay(playerName);
+    });
+
+    document.getElementById('leave-room-btn')?.addEventListener('click', () => {
+      game?.leaveRoom();
+    });
+
+    document.getElementById('ready-btn')?.addEventListener('click', () => {
+      game?.setReady();
+      const btn = document.getElementById('ready-btn') as HTMLButtonElement;
+      btn.disabled = true;
+      btn.textContent = 'Ready!';
+      btn.className = 'w-full py-3 bg-gray-600 text-white font-bold rounded-lg cursor-not-allowed';
+    });
+
+    document.getElementById('back-to-lobby-btn')?.addEventListener('click', () => {
+      game?.leaveRoom();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Tab' && game?.getScreen() === 'playing') {
+        e.preventDefault();
+        document.getElementById('scoreboard')?.classList.remove('hidden');
+      }
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        // Navigate home regardless of game state
+        window.location.href = '/';
+      }
+    });
+
+    document.addEventListener('keyup', (e) => {
+      if (e.key === 'Tab') {
+        document.getElementById('scoreboard')?.classList.add('hidden');
+      }
+    });
+  }
+
+  function getPlayerName(): string {
+    return (document.getElementById('player-name') as HTMLInputElement).value.trim();
+  }
+
+  function savePlayerName(name: string) {
+    localStorage.setItem('tankBattlePlayerName', name);
+  }
+
+  function handleScreenChange(screen: GameScreen) {
+    const screens = ['connecting', 'lobby', 'room', 'playing', 'ended'];
+    screens.forEach((s) => {
+      const el = document.getElementById(`${s === 'playing' ? 'game-canvas' : s + '-screen'}`);
+      if (el) {
+        el.classList.toggle('hidden', s !== screen);
+        if (s === 'playing' && screen === 'playing') {
+          el.classList.remove('hidden');
+          document.getElementById('game-hud')?.classList.remove('hidden');
+        }
+      }
+    });
+
+    if (screen !== 'playing') {
+      document.getElementById('game-hud')?.classList.add('hidden');
+    }
+
+    if (screen === 'room') {
+      const btn = document.getElementById('ready-btn') as HTMLButtonElement;
+      btn.disabled = false;
+      btn.textContent = 'Ready';
+      btn.className =
+        'w-full py-3 bg-green-600 hover:bg-green-500 text-white font-bold rounded-lg transition-colors';
+      document.getElementById('countdown-display')?.classList.add('hidden');
+    }
+  }
+
+  function handleRoomListUpdate(rooms: RoomInfo[]) {
+    const container = document.getElementById('room-list')!;
+
+    if (rooms.length === 0) {
+      container.innerHTML = '<p class="text-gray-500 text-sm text-center py-4">No rooms available</p>';
+      return;
+    }
+
+    container.innerHTML = rooms
+      .map(
+        (room) => `
+      <button class="room-join-btn w-full flex justify-between items-center p-3 bg-slate-700 hover:bg-slate-600 rounded-lg transition-colors" data-room-id="${room.id}">
+        <span class="text-white font-medium">${room.name}</span>
+        <span class="text-gray-400 text-sm">${room.playerCount}/${room.maxPlayers}</span>
+      </button>
+    `
+      )
+      .join('');
+
+    container.querySelectorAll('.room-join-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const roomId = (btn as HTMLElement).dataset.roomId!;
+        const playerName = getPlayerName();
+        if (!playerName) {
+          handleError('Please enter your name');
+          return;
+        }
+        savePlayerName(playerName);
+        game?.joinRoom(roomId, playerName);
+      });
+    });
+  }
+
+  function handlePlayersUpdate(players: PlayerInfo[]) {
+    const container = document.getElementById('player-list')!;
+
+    container.innerHTML = players
+      .map(
+        (player) => `
+      <div class="flex justify-between items-center p-3 bg-slate-700 rounded-lg">
+        <div class="flex items-center gap-3">
+          <div class="w-4 h-4 rounded-full" style="background: ${player.color}"></div>
+          <span class="text-white">${player.name}</span>
+        </div>
+        <span class="${player.ready ? 'text-green-400' : 'text-gray-500'} text-sm">
+          ${player.ready ? 'Ready' : 'Not Ready'}
+        </span>
+      </div>
+    `
+      )
+      .join('');
+
+    updateScoreboard(players);
+  }
+
+  function handleCountdown(seconds: number) {
+    document.getElementById('countdown-display')?.classList.remove('hidden');
+    document.getElementById('countdown-number')!.textContent = seconds.toString();
+  }
+
+  function handleGameEnd(results: GameResults) {
+    const winnerText = document.getElementById('winner-text')!;
+    if (results.winnerName) {
+      winnerText.textContent = `${results.winnerName} Wins!`;
+    } else {
+      winnerText.textContent = 'Game Over';
+    }
+
+    const scoresContainer = document.getElementById('final-scores')!;
+    scoresContainer.innerHTML = results.scores
+      .sort((a, b) => b.score - a.score)
+      .map(
+        (s, i) => `
+      <div class="flex justify-between items-center p-3 ${i === 0 ? 'bg-yellow-600/30' : 'bg-slate-700'} rounded-lg">
+        <span class="text-white">${i + 1}. ${s.name}</span>
+        <span class="text-gray-300">${s.kills} kills / ${s.deaths} deaths</span>
+      </div>
+    `
+      )
+      .join('');
+  }
+
+  function handleError(message: string) {
+    const errorEl = document.getElementById('connection-error');
+    if (errorEl) {
+      errorEl.textContent = message;
+      errorEl.classList.remove('hidden');
+      setTimeout(() => errorEl.classList.add('hidden'), 5000);
+    }
+    console.error('Tank Battle Error:', message);
+  }
+
+  function handleConnectionChange(connected: boolean) {
+    if (!connected && game?.getScreen() !== 'connecting') {
+      handleError('Disconnected from server');
+    }
+  }
+
+  function updateScoreboard(players: PlayerInfo[]) {
+    const container = document.getElementById('score-list')!;
+    container.innerHTML = players
+      .map(
+        (player) => `
+      <div class="flex justify-between items-center p-2 bg-slate-700/50 rounded">
+        <div class="flex items-center gap-2">
+          <div class="w-3 h-3 rounded-full" style="background: ${player.color}"></div>
+          <span class="text-white text-sm">${player.name}</span>
+        </div>
+        <span class="text-gray-400 text-sm">0</span>
+      </div>
+    `
+      )
+      .join('');
+  }
+
+  function startHUDUpdate() {
+    setInterval(() => {
+      if (game?.getScreen() !== 'playing') return;
+
+      const tank = game.getLocalTank();
+      if (!tank) return;
+
+      const healthBar = document.getElementById('health-bar') as HTMLDivElement;
+      const healthPercent = (tank.health / tank.maxHealth) * 100;
+      healthBar.style.width = `${healthPercent}%`;
+
+      if (healthPercent > 50) {
+        healthBar.className = 'h-full bg-green-500 transition-all duration-200';
+      } else if (healthPercent > 25) {
+        healthBar.className = 'h-full bg-yellow-500 transition-all duration-200';
+      } else {
+        healthBar.className = 'h-full bg-red-500 transition-all duration-200';
+      }
+
+      document.getElementById('score-display')!.textContent = tank.score.toString();
+
+      // Update weapon HUD
+      const weaponManager = game.getWeaponManager();
+      const currentWeapon = weaponManager.getCurrentWeapon();
+      const weaponState = weaponManager.getCurrentState();
+
+      document.getElementById('weapon-icon')!.textContent = currentWeapon.icon;
+      document.getElementById('weapon-name')!.textContent = currentWeapon.name;
+      document.getElementById('weapon-ammo')!.textContent = weaponState.ammo.toString();
+      document.getElementById('weapon-max-ammo')!.textContent = currentWeapon.maxAmmo.toString();
+
+      // Update reload progress bar
+      const reloadContainer = document.getElementById('weapon-reload-container') as HTMLDivElement;
+      const reloadBar = document.getElementById('weapon-reload-bar') as HTMLDivElement;
+
+      if (weaponManager.isCurrentlyReloading()) {
+        reloadContainer.classList.remove('hidden');
+        reloadBar.style.width = `${weaponManager.getReloadProgress() * 100}%`;
+      } else {
+        reloadContainer.classList.add('hidden');
+      }
+
+      // Show/hide ping based on free play mode
+      const isFreePlay = game.isFreePlay();
+      document.getElementById('ping-container')?.classList.toggle('hidden', isFreePlay);
+      document.getElementById('free-play-label')?.classList.toggle('hidden', !isFreePlay);
+
+      if (!isFreePlay) {
+        document.getElementById('ping-display')!.textContent = game.getLatency().toString();
+      }
+    }, 50);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+
+  // Cleanup on View Transition navigation
+  document.addEventListener('astro:before-swap', () => {
+    if (game) {
+      game.destroy();
+      game = null;
+    }
+  }, { once: true });
+</script>
+
+<style>
+  #game-canvas {
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+  }
+
+  @keyframes pulse {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+
+  #countdown-number {
+    animation: pulse 1s ease-in-out infinite;
+  }
+</style>

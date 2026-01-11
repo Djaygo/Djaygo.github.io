@@ -97,14 +97,39 @@
 
 <!-- Floating Buttons -->
 <div class="fixed bottom-4 right-4 z-40 flex gap-2">
-  <!-- Snake Button -->
-  <button
-    id="play-snake-float"
-    class="w-10 h-10 rounded-full bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border border-gray-200 dark:border-slate-700 shadow-lg flex items-center justify-center hover:bg-green-500 hover:text-white hover:border-green-500 hover:scale-110 hover:shadow-xl transition-all duration-300 group"
-    title="Play Snake"
-  >
-    <span class="text-lg group-hover:animate-bounce">🐍</span>
-  </button>
+  <!-- Games Menu Container -->
+  <div class="relative">
+    <!-- Games Popup Menu -->
+    <div id="games-menu" class="absolute bottom-14 right-0 opacity-0 pointer-events-none scale-95 origin-bottom-right transition-all duration-200 ease-out">
+      <div class="bg-white/95 dark:bg-slate-800/95 backdrop-blur-md rounded-xl shadow-2xl border border-gray-200 dark:border-slate-700 p-2 min-w-[160px]">
+        <div class="text-xs text-gray-400 dark:text-gray-500 px-3 py-1 font-semibold uppercase tracking-wide">Games</div>
+        <button
+          id="play-snake-menu"
+          class="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-green-500/20 dark:hover:bg-green-500/20 transition-colors group"
+        >
+          <span class="text-xl group-hover:animate-bounce">🐍</span>
+          <span class="text-sm font-medium text-gray-700 dark:text-gray-200">Snake</span>
+        </button>
+        <button
+          id="play-tank-menu"
+          class="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-red-500/20 dark:hover:bg-red-500/20 transition-colors group"
+        >
+          <span class="text-xl group-hover:animate-bounce">💥</span>
+          <span class="text-sm font-medium text-gray-700 dark:text-gray-200">Tank Battle</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Dice/Home Button -->
+    <button
+      id="games-dice-btn"
+      class="w-10 h-10 rounded-full bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border border-gray-200 dark:border-slate-700 shadow-lg flex items-center justify-center hover:bg-primary hover:border-primary hover:scale-110 hover:shadow-xl transition-all duration-300 group"
+      title="Play Games"
+    >
+      <span id="dice-icon" class="text-lg transition-transform duration-500 group-hover:animate-dice-roll">🎲</span>
+      <span id="home-icon" class="hidden text-lg">🏠</span>
+    </button>
+  </div>
 
   <!-- Settings Button -->
   <button
@@ -709,6 +734,19 @@
       showNext();
     }
 
+    function setGameButtonHomeMode(homeMode: boolean) {
+      const diceIcon = document.getElementById('dice-icon');
+      const homeIcon = document.getElementById('home-icon');
+      const gamesDiceBtn = document.getElementById('games-dice-btn');
+      if (diceIcon && homeIcon) {
+        diceIcon.classList.toggle('hidden', homeMode);
+        homeIcon.classList.toggle('hidden', !homeMode);
+        if (gamesDiceBtn) {
+          gamesDiceBtn.title = homeMode ? 'Back to Home (ESC)' : 'Play Games';
+        }
+      }
+    }
+
     function hidePageContent() {
       // Hide main content areas
       const mainContent = document.querySelector('main');
@@ -725,13 +763,16 @@
         }
       });
 
-      // Hide floating buttons (snake + settings)
-      const floatingBtns = document.getElementById('open-network-config')?.parentElement;
-      if (floatingBtns) {
-        (floatingBtns as HTMLElement).style.transition = 'opacity 0.3s ease-out';
-        (floatingBtns as HTMLElement).style.opacity = '0';
-        (floatingBtns as HTMLElement).style.pointerEvents = 'none';
+      // Hide settings button but keep games button visible
+      const settingsBtn = document.getElementById('open-network-config');
+      if (settingsBtn) {
+        (settingsBtn as HTMLElement).style.transition = 'opacity 0.3s ease-out';
+        (settingsBtn as HTMLElement).style.opacity = '0';
+        (settingsBtn as HTMLElement).style.pointerEvents = 'none';
       }
+
+      // Switch to home icon
+      setGameButtonHomeMode(true);
     }
 
     function showPageContent() {
@@ -748,12 +789,15 @@
         }
       });
 
-      // Show floating buttons again
-      const floatingBtns = document.getElementById('open-network-config')?.parentElement;
-      if (floatingBtns) {
-        (floatingBtns as HTMLElement).style.opacity = '1';
-        (floatingBtns as HTMLElement).style.pointerEvents = '';
+      // Show settings button again
+      const settingsBtn = document.getElementById('open-network-config');
+      if (settingsBtn) {
+        (settingsBtn as HTMLElement).style.opacity = '1';
+        (settingsBtn as HTMLElement).style.pointerEvents = '';
       }
+
+      // Switch back to dice icon
+      setGameButtonHomeMode(false);
     }
 
     function launchSnakeGame() {
@@ -1396,13 +1440,81 @@
         });
       }
 
-      // Floating snake button
-      const snakeFloatBtn = document.getElementById('play-snake-float');
-      if (snakeFloatBtn) {
-        snakeFloatBtn.addEventListener('click', () => {
-          if (!snakeActive) {
-            launchSnakeGame();
+      // Games dice button and menu
+      const gamesDiceBtn = document.getElementById('games-dice-btn');
+      const gamesMenu = document.getElementById('games-menu');
+      let gamesMenuOpen = false;
+
+      // Check if we're on a game page
+      const isOnGamePage = window.location.pathname.startsWith('/games/');
+
+      // Show home icon if on game page
+      if (isOnGamePage) {
+        setGameButtonHomeMode(true);
+      }
+
+      function toggleGamesMenu(show?: boolean) {
+        gamesMenuOpen = show !== undefined ? show : !gamesMenuOpen;
+        if (gamesMenu) {
+          if (gamesMenuOpen) {
+            gamesMenu.classList.remove('opacity-0', 'pointer-events-none', 'scale-95');
+            gamesMenu.classList.add('opacity-100', 'pointer-events-auto', 'scale-100');
+          } else {
+            gamesMenu.classList.add('opacity-0', 'pointer-events-none', 'scale-95');
+            gamesMenu.classList.remove('opacity-100', 'pointer-events-auto', 'scale-100');
           }
+        }
+      }
+
+      if (gamesDiceBtn) {
+        gamesDiceBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+
+          // If snake is active or on game page, go home
+          if (snakeActive) {
+            stopSnake();
+            return;
+          }
+          if (isOnGamePage) {
+            window.location.href = '/';
+            return;
+          }
+
+          toggleGamesMenu();
+        });
+      }
+
+      // Close menu when clicking outside
+      document.addEventListener('click', (e) => {
+        if (gamesMenuOpen && gamesMenu && !gamesMenu.contains(e.target as Node) && e.target !== gamesDiceBtn) {
+          toggleGamesMenu(false);
+        }
+      });
+
+      // Snake menu item
+      const playSnakeMenu = document.getElementById('play-snake-menu');
+      if (playSnakeMenu) {
+        playSnakeMenu.addEventListener('click', () => {
+          toggleGamesMenu(false);
+          if (!snakeActive) {
+            // If we're on a game page, navigate home first with a flag to start snake
+            if (window.location.pathname.startsWith('/games/')) {
+              // Store intent to start snake and navigate home
+              sessionStorage.setItem('startSnakeOnLoad', 'true');
+              window.location.href = '/';
+            } else {
+              launchSnakeGame();
+            }
+          }
+        });
+      }
+
+      // Tank Battle menu item
+      const playTankMenu = document.getElementById('play-tank-menu');
+      if (playTankMenu) {
+        playTankMenu.addEventListener('click', () => {
+          toggleGamesMenu(false);
+          window.location.href = '/games/tank-battle';
         });
       }
 
@@ -1618,47 +1730,6 @@
       toggleConfigPanel();
     });
 
-    // Keyboard shortcut: Ctrl+Shift+G
-    document.addEventListener('keydown', (e) => {
-      if (e.ctrlKey && e.shiftKey && e.key === 'G') {
-        e.preventDefault();
-        toggleConfigPanel();
-      }
-
-      // Snake controls
-      if (snakeActive && !snakeGameOver) {
-        const key = e.key.toLowerCase();
-
-        // Prevent 180-degree turns
-        if ((key === 'arrowup' || key === 'w') && snakeDirection.y !== 1) {
-          e.preventDefault();
-          snakeNextDirection = { x: 0, y: -1 };
-        } else if ((key === 'arrowdown' || key === 's') && snakeDirection.y !== -1) {
-          e.preventDefault();
-          snakeNextDirection = { x: 0, y: 1 };
-        } else if ((key === 'arrowleft' || key === 'a') && snakeDirection.x !== 1) {
-          e.preventDefault();
-          snakeNextDirection = { x: -1, y: 0 };
-        } else if ((key === 'arrowright' || key === 'd') && snakeDirection.x !== -1) {
-          e.preventDefault();
-          snakeNextDirection = { x: 1, y: 0 };
-        }
-      }
-
-      // Escape to quit snake game or close intro
-      if (e.key === 'Escape') {
-        if (snakeActive) {
-          stopSnake();
-        } else {
-          // Close intro overlay if open
-          const intro = document.getElementById('snake-intro');
-          if (intro && !intro.classList.contains('opacity-0')) {
-            hideSnakeIntro();
-          }
-        }
-      }
-    });
-
     closeBtn?.addEventListener('click', closeConfigPanel);
 
     // Close on click outside
@@ -1686,12 +1757,66 @@
       }
     }
 
+    // Keyboard handler for snake controls and shortcuts
+    function handleGlobalKeyDown(e: KeyboardEvent) {
+      // Keyboard shortcut: Ctrl+Shift+G for config panel
+      if (e.ctrlKey && e.shiftKey && e.key === 'G') {
+        e.preventDefault();
+        const configPanel = document.getElementById('network-config');
+        if (configPanel) {
+          if (configPanel.classList.contains('opacity-0')) {
+            configPanel.classList.remove('opacity-0', 'pointer-events-none', 'translate-x-4');
+            configPanel.classList.add('opacity-100', 'pointer-events-auto', 'translate-x-0');
+          } else {
+            configPanel.classList.add('opacity-0', 'pointer-events-none', 'translate-x-4');
+            configPanel.classList.remove('opacity-100', 'pointer-events-auto', 'translate-x-0');
+          }
+        }
+      }
+
+      // Snake controls
+      if (snakeActive && !snakeGameOver) {
+        const key = e.key.toLowerCase();
+
+        // Prevent 180-degree turns
+        if ((key === 'arrowup' || key === 'w') && snakeDirection.y !== 1) {
+          e.preventDefault();
+          snakeNextDirection = { x: 0, y: -1 };
+        } else if ((key === 'arrowdown' || key === 's') && snakeDirection.y !== -1) {
+          e.preventDefault();
+          snakeNextDirection = { x: 0, y: 1 };
+        } else if ((key === 'arrowleft' || key === 'a') && snakeDirection.x !== 1) {
+          e.preventDefault();
+          snakeNextDirection = { x: -1, y: 0 };
+        } else if ((key === 'arrowright' || key === 'd') && snakeDirection.x !== -1) {
+          e.preventDefault();
+          snakeNextDirection = { x: 1, y: 0 };
+        }
+      }
+
+      // Escape to quit snake game or close intro
+      if (e.key === 'Escape') {
+        if (snakeActive) {
+          e.preventDefault();
+          stopSnake();
+        } else {
+          // Close intro overlay if open
+          const intro = document.getElementById('snake-intro');
+          if (intro && !intro.classList.contains('opacity-0')) {
+            e.preventDefault();
+            hideSnakeIntro();
+          }
+        }
+      }
+    }
+
     function cleanup() {
       cancelAnimationFrame(animationId);
       window.removeEventListener('resize', handleResize);
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('touchmove', handleTouchMove);
       window.removeEventListener('scroll', updateHeaderPosition);
+      document.removeEventListener('keydown', handleGlobalKeyDown);
     }
 
     function handleResize() {
@@ -1705,11 +1830,20 @@
     init();
     animate();
 
+    // Check if we should auto-start snake (navigated from a game page)
+    const shouldStartSnake = sessionStorage.getItem('startSnakeOnLoad');
+    if (shouldStartSnake) {
+      sessionStorage.removeItem('startSnakeOnLoad');
+      // Small delay to let the page fully render
+      setTimeout(() => launchSnakeGame(), 100);
+    }
+
     // Event listeners
     window.addEventListener('resize', handleResize);
     window.addEventListener('mousemove', handleMouseMove);
     window.addEventListener('touchmove', handleTouchMove);
     window.addEventListener('scroll', updateHeaderPosition, { passive: true });
+    document.addEventListener('keydown', handleGlobalKeyDown);
 
     // Cleanup on page navigation
     document.addEventListener('astro:before-swap', cleanup, { once: true });
@@ -1721,3 +1855,27 @@
   // Re-run after View Transitions
   document.addEventListener('astro:after-swap', initNetwork);
 </script>
+
+<style>
+  @keyframes dice-roll {
+    0% {
+      transform: rotate(0deg) scale(1);
+    }
+    25% {
+      transform: rotate(90deg) scale(1.1);
+    }
+    50% {
+      transform: rotate(180deg) scale(1);
+    }
+    75% {
+      transform: rotate(270deg) scale(1.1);
+    }
+    100% {
+      transform: rotate(360deg) scale(1);
+    }
+  }
+
+  .group:hover .animate-dice-roll {
+    animation: dice-roll 0.6s ease-in-out;
+  }
+</style>

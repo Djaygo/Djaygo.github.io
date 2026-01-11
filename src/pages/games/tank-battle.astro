@@ -1,0 +1,23 @@
+---
+import Layout from '~/layouts/Layout.astro';
+import TankBattleGame from '~/components/games/tank-battle/TankBattleGame.astro';
+
+const metadata = {
+  title: 'Tank Battle - Multiplayer',
+  description: 'Real-time multiplayer tank battle with destructible terrain and gravity physics',
+};
+---
+
+<Layout metadata={metadata}>
+  <TankBattleGame />
+</Layout>
+
+<script>
+  // Apply overflow hidden only while on this page
+  document.body.style.overflow = 'hidden';
+
+  // Clean up when navigating away (View Transitions)
+  document.addEventListener('astro:before-swap', () => {
+    document.body.style.overflow = '';
+  }, { once: true });
+</script>
