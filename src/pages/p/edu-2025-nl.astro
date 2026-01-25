@@ -1,0 +1,331 @@
+---
+import Layout from '~/layouts/Layout.astro';
+import PasswordGate from '~/components/ui/PasswordGate.astro';
+
+const metadata = {
+  title: 'Van Parasieten naar Pixels',
+  description: 'Een onderzoeksreis presentatie',
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
+
+// Password for presentation access
+const PRESENTATION_PASSWORD = 'edu2025';
+---
+
+<Layout metadata={metadata}>
+  <PasswordGate password={PRESENTATION_PASSWORD} storageKey="edu-2025-nl-access">
+    <div class="reveal-container">
+      <div class="reveal">
+        <div class="slides">
+          <!-- Slide 1: Titel -->
+          <section data-background-color="#1a1a2e">
+            <h1 class="text-5xl font-bold text-white mb-4">Van Parasieten naar Pixels</h1>
+            <h2 class="text-2xl text-gray-300">Een Onderzoeksreis</h2>
+            <p class="text-gray-400 mt-8">Diego Staphorst</p>
+          </section>
+
+          <!-- Slide 2: Hook -->
+          <section data-background-color="#1a1a2e">
+            <h2 class="text-3xl font-bold text-white mb-8">Twee Werelden, Één Vraag</h2>
+            <div class="flex justify-center gap-8">
+              <div class="text-center">
+                <div class="w-48 h-48 bg-gray-700 rounded-lg flex items-center justify-center mb-4">
+                  <span class="text-6xl">🦠</span>
+                </div>
+                <p class="text-gray-300">Malaria Parasieten</p>
+              </div>
+              <div class="text-center">
+                <div class="w-48 h-48 bg-gray-700 rounded-lg flex items-center justify-center mb-4">
+                  <span class="text-6xl">🔬</span>
+                </div>
+                <p class="text-gray-300">Kankerdetectie</p>
+              </div>
+            </div>
+          </section>
+
+          <!-- Slide 3: Waar ik begon -->
+          <section data-background-color="#1a1a2e">
+            <h2 class="text-3xl font-bold text-white mb-8">Waar Ik Begon</h2>
+            <ul class="text-xl text-gray-300 space-y-4 text-left max-w-2xl mx-auto">
+              <li class="fragment">Bio-informatica student aan Hogeschool Leiden</li>
+              <li class="fragment">Nieuwsgierig naar waar biologie code ontmoet</li>
+              <li class="fragment">Geen idee waar het zou leiden...</li>
+            </ul>
+          </section>
+
+          <!-- Slide 4: Het Malaria Probleem -->
+          <section data-background-color="#1a1a2e">
+            <h2 class="text-3xl font-bold text-white mb-8">Het Malaria Probleem</h2>
+            <p class="text-6xl font-bold text-red-400 mb-4">445.000</p>
+            <p class="text-2xl text-gray-300 mb-8">doden per jaar</p>
+            <p class="text-xl text-gray-400 fragment">Vaccins bestaan, maar zijn moeilijk te verspreiden</p>
+            <p class="text-xl text-gray-400 fragment">We moeten begrijpen hoe parasieten door de huid bewegen</p>
+          </section>
+
+          <!-- Slide 5: Mijn Uitdaging -->
+          <section data-background-color="#1a1a2e">
+            <h2 class="text-3xl font-bold text-white mb-8">Mijn Uitdaging</h2>
+            <p class="text-xl text-gray-300 mb-8">Bestaande tools konden complexe parasietbewegingen in echt weefsel niet volgen</p>
+            <div class="fragment">
+              <p class="text-gray-400">Ze konden alleen simpele patronen op glasplaatjes aan</p>
+              <p class="text-gray-400 mt-4">Maar echte huid is rommelig, complex en 3D</p>
+            </div>
+          </section>
+
+          <!-- Slide 6: Wat Ik Bouwde -->
+          <section data-background-color="#1a1a2e">
+            <h2 class="text-3xl font-bold text-white mb-4">SMOOT</h2>
+            <p class="text-xl text-gray-400 mb-8">Sporozoite Motility Orienting & Organization Tool</p>
+            <ul class="text-lg text-gray-300 space-y-4 text-left max-w-2xl mx-auto">
+              <li class="fragment">Volg parasieten in microscopievideo's</li>
+              <li class="fragment">Verwerk complexe bewegingspatronen</li>
+              <li class="fragment">Vergelijk gedrag in verschillende omgevingen</li>
+            </ul>
+          </section>
+
+          <!-- Slide 7: Het "Aha" Moment -->
+          <section data-background-color="#1a1a2e">
+            <h2 class="text-3xl font-bold text-white mb-8">Het "Aha" Moment</h2>
+            <div class="grid grid-cols-2 gap-8 max-w-3xl mx-auto">
+              <div class="fragment">
+                <p class="text-xl text-gray-300 mb-2">Glasplaatjes</p>
+                <p class="text-4xl">🔄</p>
+                <p class="text-gray-400 mt-2">Cirkelvormig, snel (1,55 μm/s)</p>
+                <p class="text-gray-400">98% draaibeweging</p>
+              </div>
+              <div class="fragment">
+                <p class="text-xl text-gray-300 mb-2">Echte Huid</p>
+                <p class="text-4xl">↗️</p>
+                <p class="text-gray-400 mt-2">Gevarieerde paden, langzamer (0,64 μm/s)</p>
+                <p class="text-gray-400">63% draaibeweging</p>
+              </div>
+            </div>
+            <p class="text-xl text-yellow-400 mt-8 fragment">Ze gedragen zich compleet anders!</p>
+          </section>
+
+          <!-- Slide 8: Waarom Het Belangrijk Is -->
+          <section data-background-color="#1a1a2e">
+            <h2 class="text-3xl font-bold text-white mb-8">Waarom Het Belangrijk Is</h2>
+            <p class="text-2xl text-red-400 mb-8 fragment">Labcondities ≠ Werkelijkheid</p>
+            <p class="text-xl text-gray-300 fragment">Als we parasieten alleen op glas bestuderen...</p>
+            <p class="text-xl text-gray-300 fragment">Missen we hoe ze zich echt gedragen in je lichaam</p>
+            <p class="text-xl text-gray-300 fragment">Echt gedrag begrijpen → betere vaccins</p>
+          </section>
+
+          <!-- Slide 9: Wat Ik Leerde -->
+          <section data-background-color="#1a1a2e">
+            <h2 class="text-3xl font-bold text-white mb-8">Wat Ik Leerde</h2>
+            <div class="text-xl text-gray-300 space-y-6">
+              <p class="fragment">Programmeren + Biologie + Doorzettingsvermogen</p>
+              <p class="fragment text-3xl">=</p>
+              <p class="fragment text-2xl text-green-400">Tools die ertoe doen</p>
+            </div>
+          </section>
+
+          <!-- Slide 10: De Sprong -->
+          <section data-background-color="#16213e">
+            <h2 class="text-3xl font-bold text-white mb-8">De Sprong</h2>
+            <p class="text-xl text-gray-300 mb-4">Van parasieten volgen...</p>
+            <p class="text-xl text-gray-300 mb-8">...naar AI-kwaliteit bevragen</p>
+            <p class="text-2xl text-blue-400 fragment">MSc Artificial Intelligence @ Universiteit Utrecht</p>
+          </section>
+
+          <!-- Slide 11: Nieuw Probleem -->
+          <section data-background-color="#16213e">
+            <h2 class="text-3xl font-bold text-white mb-8">Nieuw Probleem, Zelfde Vraag</h2>
+            <div class="space-y-4 text-xl text-gray-300">
+              <p class="fragment">Kankergevallen: 18M → 29M in 2040</p>
+              <p class="fragment">Pathologen tekort (62% ouder dan 55 in VK)</p>
+              <p class="fragment">AI kan helpen... maar hoe trainen we het?</p>
+            </div>
+          </section>
+
+          <!-- Slide 12: De Verborgen Kosten -->
+          <section data-background-color="#16213e">
+            <h2 class="text-3xl font-bold text-white mb-8">De Verborgen Kosten</h2>
+            <p class="text-5xl font-bold text-yellow-400 mb-4">€35.000</p>
+            <p class="text-xl text-gray-300 mb-8">om 200 medische afbeeldingen goed te labelen</p>
+            <p class="text-lg text-gray-400 fragment">360 uur × €99/uur</p>
+            <p class="text-xl text-gray-300 mt-8 fragment">Kunnen we goedkopere labels gebruiken?</p>
+          </section>
+
+          <!-- Slide 13: Wat Ik Testte -->
+          <section data-background-color="#16213e">
+            <h2 class="text-3xl font-bold text-white mb-8">Wat Ik Testte</h2>
+            <div class="space-y-6 max-w-2xl mx-auto">
+              <div class="fragment text-left">
+                <p class="text-green-400 font-bold">Fijne annotaties</p>
+                <p class="text-gray-400">Gedetailleerde polygoon omlijningen (duur)</p>
+              </div>
+              <div class="fragment text-left">
+                <p class="text-yellow-400 font-bold">Grove annotaties</p>
+                <p class="text-gray-400">Ruwe bounding boxes (goedkoper)</p>
+              </div>
+              <div class="fragment text-left">
+                <p class="text-red-400 font-bold">Synthetische data</p>
+                <p class="text-gray-400">Computer-gegenereerd (bijna gratis)</p>
+              </div>
+            </div>
+          </section>
+
+          <!-- Slide 14: Het Verdict -->
+          <section data-background-color="#16213e">
+            <h2 class="text-3xl font-bold text-white mb-8">Het Verdict</h2>
+            <div class="space-y-6 text-xl">
+              <p class="fragment"><span class="text-green-400 font-bold">Fijne labels:</span> <span class="text-white">93,5% nauwkeurigheid</span></p>
+              <p class="fragment"><span class="text-yellow-400 font-bold">Grove labels:</span> <span class="text-white">85% nauwkeurigheid</span></p>
+              <p class="fragment"><span class="text-red-400 font-bold">Alleen synthetisch:</span> <span class="text-white">Slechter dan gokken</span></p>
+            </div>
+            <p class="text-2xl text-red-400 mt-8 fragment">Shortcuts hebben echte consequenties</p>
+          </section>
+
+          <!-- Slide 15: Het Patroon -->
+          <section data-background-color="#0f0f23">
+            <h2 class="text-3xl font-bold text-white mb-8">Het Patroon</h2>
+            <div class="space-y-8 text-xl text-gray-300">
+              <p class="fragment">Glasplaatjes logen over parasieten</p>
+              <p class="fragment">Goedkope labels logen over kanker</p>
+              <p class="fragment text-2xl text-yellow-400 mt-8">Echte problemen hebben echte data nodig</p>
+            </div>
+          </section>
+
+          <!-- Slide 16: Onderzoek is Toegankelijk -->
+          <section data-background-color="#0f0f23">
+            <h2 class="text-3xl font-bold text-white mb-8">Onderzoek is Toegankelijk</h2>
+            <div class="space-y-6 text-xl text-gray-300">
+              <p class="fragment">Ik begon als nieuwsgierige student</p>
+              <p class="fragment">Leerde programmeren onderweg</p>
+              <p class="fragment">Geen genie nodig</p>
+              <p class="fragment text-2xl text-green-400 mt-8">Alleen vragen en doorzettingsvermogen</p>
+            </div>
+          </section>
+
+          <!-- Slide 17: Je Scriptie Kan Ertoe Doen -->
+          <section data-background-color="#0f0f23">
+            <h2 class="text-3xl font-bold text-white mb-8">Je Scriptie Kan Ertoe Doen</h2>
+            <div class="space-y-6 text-xl text-gray-300">
+              <p class="fragment">SMOOT → Nog steeds gebruikt in malaria-onderzoek</p>
+              <p class="fragment">Annotatie studie → Informeert klinische AI-ontwikkeling</p>
+              <p class="fragment text-2xl text-green-400 mt-8">Studentenwerk heeft echte impact</p>
+            </div>
+          </section>
+
+          <!-- Slide 18: Waar Ik Nu Ben -->
+          <section data-background-color="#0f0f23">
+            <h2 class="text-3xl font-bold text-white mb-8">Waar Ik Nu Ben</h2>
+            <p class="text-xl text-gray-300 mb-4">Data Engineer bij IFF</p>
+            <p class="text-lg text-gray-400 mb-8">Nog steeds de brug tussen biologie en code</p>
+            <div class="text-gray-400 space-y-2">
+              <p>Lab automatisering • Data pipelines • Cloud infrastructuur</p>
+            </div>
+          </section>
+
+          <!-- Slide 19: Laatste Gedachte -->
+          <section data-background-color="#0f0f23">
+            <h2 class="text-4xl font-bold text-white mb-12">Welk probleem maakt jou nieuwsgierig?</h2>
+            <div class="mt-12 text-gray-400">
+              <p>Diego Staphorst</p>
+              <p class="text-blue-400">djaygo.github.io</p>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+  </PasswordGate>
+</Layout>
+
+<style is:global>
+  /* Hide floating buttons and settings on presentation page */
+  #games-dice-btn,
+  #open-network-config,
+  #network-config,
+  #games-menu {
+    display: none !important;
+  }
+
+  .reveal-container {
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+  }
+
+  .reveal {
+    width: 100%;
+    height: 100%;
+  }
+
+  .reveal .slides {
+    text-align: center;
+  }
+
+  .reveal .slides section {
+    padding: 2rem;
+  }
+
+  .reveal ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .reveal ul li::before {
+    content: "→ ";
+    color: #60a5fa;
+  }
+</style>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/black.css">
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js" is:inline></script>
+
+<script is:inline>
+  let deck = null;
+
+  function initReveal() {
+    const revealElement = document.querySelector('.reveal');
+    if (!revealElement || !window.Reveal) return;
+
+    deck = new Reveal(revealElement, {
+      hash: true,
+      controls: true,
+      progress: true,
+      center: true,
+      transition: 'slide',
+      backgroundTransition: 'fade',
+      keyboard: true,
+    });
+
+    deck.initialize();
+
+    // Focus the reveal element after initialization to enable keyboard navigation
+    deck.on('ready', function() {
+      revealElement.focus();
+    });
+  }
+
+  // Initialize when content is unlocked
+  window.addEventListener('presentation-unlocked', function() {
+    // Small delay to ensure DOM is ready
+    setTimeout(initReveal, 100);
+  });
+
+  // Also check if already unlocked (page refresh)
+  document.addEventListener('DOMContentLoaded', function() {
+    const gate = document.getElementById('password-gate');
+    if (gate && gate.classList.contains('hidden')) {
+      initReveal();
+    }
+  });
+
+  // Cleanup for View Transitions
+  document.addEventListener('astro:before-swap', function() {
+    if (deck) {
+      deck.destroy();
+      deck = null;
+    }
+  }, { once: true });
+</script>

@@ -238,6 +238,14 @@ const PRESENTATION_PASSWORD = 'edu2025';
 </Layout>
 
 <style is:global>
+  /* Hide floating buttons and settings on presentation page */
+  #games-dice-btn,
+  #open-network-config,
+  #network-config,
+  #games-menu {
+    display: none !important;
+  }
+
   .reveal-container {
     width: 100vw;
     height: 100vh;
@@ -270,42 +278,51 @@ const PRESENTATION_PASSWORD = 'edu2025';
   }
 </style>
 
-<script>
-  import Reveal from 'reveal.js';
-  import 'reveal.js/dist/reveal.css';
-  import 'reveal.js/dist/theme/black.css';
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/black.css">
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js" is:inline></script>
 
-  let deck: Reveal.Api | null = null;
+<script is:inline>
+  let deck = null;
 
   function initReveal() {
     const revealElement = document.querySelector('.reveal');
-    if (!revealElement) return;
+    if (!revealElement || !window.Reveal) return;
 
-    deck = new Reveal(revealElement as HTMLElement, {
+    deck = new Reveal(revealElement, {
       hash: true,
       controls: true,
       progress: true,
       center: true,
       transition: 'slide',
       backgroundTransition: 'fade',
+      keyboard: true,
     });
 
     deck.initialize();
+
+    // Focus the reveal element after initialization to enable keyboard navigation
+    deck.on('ready', function() {
+      revealElement.focus();
+    });
   }
 
   // Initialize when content is unlocked
-  window.addEventListener('presentation-unlocked', () => {
+  window.addEventListener('presentation-unlocked', function() {
     // Small delay to ensure DOM is ready
     setTimeout(initReveal, 100);
   });
 
   // Also check if already unlocked (page refresh)
-  if (!document.getElementById('password-gate')?.classList.contains('hidden') === false) {
-    initReveal();
-  }
+  document.addEventListener('DOMContentLoaded', function() {
+    const gate = document.getElementById('password-gate');
+    if (gate && gate.classList.contains('hidden')) {
+      initReveal();
+    }
+  });
 
   // Cleanup for View Transitions
-  document.addEventListener('astro:before-swap', () => {
+  document.addEventListener('astro:before-swap', function() {
     if (deck) {
       deck.destroy();
       deck = null;
