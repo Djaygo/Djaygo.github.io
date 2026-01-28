@@ -134,7 +134,7 @@ export const WEAPONS: Record<WeaponType, WeaponConfig> = {
 
   [WeaponType.ORESHNIK]: {
     type: WeaponType.ORESHNIK,
-    name: 'Oreshnik Missile',
+    name: 'Ballistic Missile',
     description: 'High-arc ballistic with devastating explosion',
     icon: '🚀',
     speed: 600,

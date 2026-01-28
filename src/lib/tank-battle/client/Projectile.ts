@@ -87,8 +87,11 @@ export class Projectile {
 
   private updateStandardPhysics(deltaTime: number): void {
     this.vy += PHYSICS.GRAVITY * this.gravityMultiplier * deltaTime;
-    this.vx *= 1 - PHYSICS.AIR_RESISTANCE;
-    this.vy *= 1 - PHYSICS.AIR_RESISTANCE;
+
+    // Apply air resistance in a frame-rate independent way
+    const airResistanceFactor = Math.pow(1 - PHYSICS.AIR_RESISTANCE, deltaTime * 60);
+    this.vx *= airResistanceFactor;
+    this.vy *= airResistanceFactor;
 
     this.x += this.vx * deltaTime;
     this.y += this.vy * deltaTime;
@@ -133,8 +136,11 @@ export class Projectile {
     const apexFactor = Math.abs(this.vy) < 50 ? 0.3 : 1.0;
 
     this.vy += PHYSICS.GRAVITY * this.gravityMultiplier * apexFactor * deltaTime;
-    this.vx *= 1 - PHYSICS.AIR_RESISTANCE * 0.5;
-    this.vy *= 1 - PHYSICS.AIR_RESISTANCE * 0.5;
+
+    // Apply reduced air resistance in a frame-rate independent way
+    const airResistanceFactor = Math.pow(1 - PHYSICS.AIR_RESISTANCE * 0.5, deltaTime * 60);
+    this.vx *= airResistanceFactor;
+    this.vy *= airResistanceFactor;
 
     this.x += this.vx * deltaTime;
     this.y += this.vy * deltaTime;
