@@ -153,55 +153,129 @@ What I got out of it was the engineering: composing tools into a coherent stack,
 
 The tools that make up the stack:
 
-<div class="not-prose" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 0.75rem; margin: 1.5rem 0;">
-  <div style="padding: 0.75rem 1rem; border-radius: 6px; background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(100, 130, 170, 0.15);">
-    <div style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 0.2rem;">Orchestration</div>
-    <a href="https://www.prefect.io/" style="color: #cbd5e1; text-decoration: none; font-weight: 500;">Prefect</a>
+<style>{`
+  @keyframes toolReveal {
+    from { opacity: 0; transform: translateY(12px) scale(0.97); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .tool-card {
+    display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem;
+    border-radius: 6px; background: rgba(30, 41, 59, 0.5);
+    border: 1px solid rgba(100, 130, 170, 0.15);
+    text-decoration: none; transition: border-color 0.2s, background 0.2s;
+  }
+  .tool-card:hover {
+    border-color: rgba(100, 130, 170, 0.35);
+    background: rgba(30, 41, 59, 0.7);
+  }
+  .tool-card img { flex-shrink: 0; opacity: 0.85; }
+  .tool-card .tool-cat { font-size: 0.8rem; color: #94a3b8; line-height: 1.2; }
+  .tool-card .tool-name { color: #cbd5e1; font-weight: 500; }
+
+  .tools-hidden { display: none; }
+  #toolsToggle:checked ~ .tools-grid .tools-hidden {
+    display: flex;
+    animation: toolReveal 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  #toolsToggle:checked ~ .tools-grid .tools-hidden:nth-child(4)  { animation-delay: 0ms; }
+  #toolsToggle:checked ~ .tools-grid .tools-hidden:nth-child(5)  { animation-delay: 50ms; }
+  #toolsToggle:checked ~ .tools-grid .tools-hidden:nth-child(6)  { animation-delay: 100ms; }
+  #toolsToggle:checked ~ .tools-grid .tools-hidden:nth-child(7)  { animation-delay: 150ms; }
+  #toolsToggle:checked ~ .tools-grid .tools-hidden:nth-child(8)  { animation-delay: 200ms; }
+  #toolsToggle:checked ~ .tools-grid .tools-hidden:nth-child(9)  { animation-delay: 250ms; }
+  #toolsToggle:checked ~ .tools-grid .tools-hidden:nth-child(10) { animation-delay: 300ms; }
+  #toolsToggle:checked ~ .tools-grid .tools-hidden:nth-child(11) { animation-delay: 350ms; }
+  #toolsToggle:checked ~ .tools-grid .tools-hidden:nth-child(12) { animation-delay: 400ms; }
+
+  .tools-toggle-label {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    margin-top: 0.75rem; padding: 0.45rem 1rem;
+    font-size: 0.82rem; color: #94a3b8;
+    border: 1px solid rgba(100, 130, 170, 0.2);
+    border-radius: 20px; cursor: pointer;
+    background: rgba(30, 41, 59, 0.3);
+    transition: all 0.25s ease;
+    user-select: none;
+  }
+  .tools-toggle-label:hover {
+    color: #cbd5e1;
+    border-color: rgba(100, 130, 170, 0.4);
+    background: rgba(30, 41, 59, 0.5);
+  }
+  .tools-toggle-label .arrow {
+    display: inline-block;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  #toolsToggle:checked ~ .tools-toggle-label .arrow {
+    transform: rotate(180deg);
+  }
+  #toolsToggle:checked ~ .tools-toggle-label .label-text::after {
+    content: 'show less';
+  }
+  #toolsToggle:not(:checked) ~ .tools-toggle-label .label-text::after {
+    content: '+ 9 more tools';
+  }
+`}</style>
+
+<div class="not-prose" style="margin: 1.5rem 0;">
+  <input type="checkbox" id="toolsToggle" style="display: none;" />
+
+  <div class="tools-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 0.75rem;">
+    <a href="https://www.prefect.io/" target="_blank" rel="noopener" class="tool-card">
+      <img src="https://cdn.simpleicons.org/prefect/94a3b8" alt="" width="24" height="24" onerror="this.style.display='none'" />
+      <div><div class="tool-cat">Orchestration</div><div class="tool-name">Prefect</div></div>
+    </a>
+    <a href="https://github.com/9001/copyparty" target="_blank" rel="noopener" class="tool-card">
+      <img src="https://avatars.githubusercontent.com/u/1323708?s=64" alt="" width="24" height="24" style="border-radius: 4px;" onerror="this.style.display='none'" />
+      <div><div class="tool-cat">File Server</div><div class="tool-name">Copyparty</div></div>
+    </a>
+    <a href="https://www.postgresql.org/" target="_blank" rel="noopener" class="tool-card">
+      <img src="https://cdn.simpleicons.org/postgresql/94a3b8" alt="" width="24" height="24" onerror="this.style.display='none'" />
+      <div><div class="tool-cat">Database</div><div class="tool-name">PostgreSQL</div></div>
+    </a>
+
+    <a href="https://github.com/sosedoff/pgweb" target="_blank" rel="noopener" class="tool-card tools-hidden">
+      <img src="https://cdn.simpleicons.org/postgresql/94a3b8" alt="" width="24" height="24" onerror="this.style.display='none'" />
+      <div><div class="tool-cat">DB Browser</div><div class="tool-name">pgweb</div></div>
+    </a>
+    <a href="https://ollama.com/" target="_blank" rel="noopener" class="tool-card tools-hidden">
+      <img src="https://cdn.simpleicons.org/ollama/94a3b8" alt="" width="24" height="24" onerror="this.style.display='none'" />
+      <div><div class="tool-cat">Local LLM</div><div class="tool-name">Ollama</div></div>
+    </a>
+    <a href="https://openrouter.ai/" target="_blank" rel="noopener" class="tool-card tools-hidden">
+      <img src="https://cdn.simpleicons.org/openrouter/94a3b8" alt="" width="24" height="24" onerror="this.style.display='none'" />
+      <div><div class="tool-cat">Cloud LLM</div><div class="tool-name">OpenRouter</div></div>
+    </a>
+    <a href="https://github.com/PaddlePaddle/PaddleOCR" target="_blank" rel="noopener" class="tool-card tools-hidden">
+      <img src="https://avatars.githubusercontent.com/u/23093452?s=64" alt="" width="24" height="24" style="border-radius: 4px;" onerror="this.style.display='none'" />
+      <div><div class="tool-cat">OCR</div><div class="tool-name">PaddleOCR</div></div>
+    </a>
+    <a href="https://www.lighton.ai/" target="_blank" rel="noopener" class="tool-card tools-hidden">
+      <img src="https://cdn.prod.website-files.com/64c5020ba79507a22fab4e16/64c516c87b1e697da0bbe9d3_LightOn%20favicon.png" alt="" width="24" height="24" style="border-radius: 4px;" onerror="this.style.display='none'" />
+      <div><div class="tool-cat">OCR</div><div class="tool-name">LightOn OCR</div></div>
+    </a>
+    <a href="https://github.com/openai/whisper" target="_blank" rel="noopener" class="tool-card tools-hidden">
+      <img src="https://cdn.simpleicons.org/openai/94a3b8" alt="" width="24" height="24" onerror="this.style.display='none'" />
+      <div><div class="tool-cat">Speech-to-Text</div><div class="tool-name">Whisper</div></div>
+    </a>
+    <a href="https://openclaw.ai/" target="_blank" rel="noopener" class="tool-card tools-hidden">
+      <img src="https://openclaw.ai/favicon.ico" alt="" width="24" height="24" style="border-radius: 4px;" onerror="this.style.display='none'" />
+      <div><div class="tool-cat">Chat Gateway</div><div class="tool-name">OpenClaw</div></div>
+    </a>
+    <a href="https://docs.pydantic.dev/" target="_blank" rel="noopener" class="tool-card tools-hidden">
+      <img src="https://cdn.simpleicons.org/pydantic/94a3b8" alt="" width="24" height="24" onerror="this.style.display='none'" />
+      <div><div class="tool-cat">Schema Validation</div><div class="tool-name">Pydantic</div></div>
+    </a>
+    <a href="https://docs.docker.com/compose/" target="_blank" rel="noopener" class="tool-card tools-hidden">
+      <img src="https://cdn.simpleicons.org/docker/94a3b8" alt="" width="24" height="24" onerror="this.style.display='none'" />
+      <div><div class="tool-cat">Containers</div><div class="tool-name">Docker Compose</div></div>
+    </a>
   </div>
-  <div style="padding: 0.75rem 1rem; border-radius: 6px; background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(100, 130, 170, 0.15);">
-    <div style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 0.2rem;">File Server</div>
-    <a href="https://github.com/9001/copyparty" style="color: #cbd5e1; text-decoration: none; font-weight: 500;">Copyparty</a>
-  </div>
-  <div style="padding: 0.75rem 1rem; border-radius: 6px; background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(100, 130, 170, 0.15);">
-    <div style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 0.2rem;">Database</div>
-    <a href="https://www.postgresql.org/" style="color: #cbd5e1; text-decoration: none; font-weight: 500;">PostgreSQL</a>
-  </div>
-  <div style="padding: 0.75rem 1rem; border-radius: 6px; background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(100, 130, 170, 0.15);">
-    <div style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 0.2rem;">DB Browser</div>
-    <a href="https://github.com/sosedoff/pgweb" style="color: #cbd5e1; text-decoration: none; font-weight: 500;">pgweb</a>
-  </div>
-  <div style="padding: 0.75rem 1rem; border-radius: 6px; background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(100, 130, 170, 0.15);">
-    <div style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 0.2rem;">Local LLM</div>
-    <a href="https://ollama.com/" style="color: #cbd5e1; text-decoration: none; font-weight: 500;">Ollama</a>
-  </div>
-  <div style="padding: 0.75rem 1rem; border-radius: 6px; background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(100, 130, 170, 0.15);">
-    <div style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 0.2rem;">Cloud LLM</div>
-    <a href="https://openrouter.ai/" style="color: #cbd5e1; text-decoration: none; font-weight: 500;">OpenRouter</a>
-  </div>
-  <div style="padding: 0.75rem 1rem; border-radius: 6px; background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(100, 130, 170, 0.15);">
-    <div style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 0.2rem;">OCR</div>
-    <a href="https://github.com/PaddlePaddle/PaddleOCR" style="color: #cbd5e1; text-decoration: none; font-weight: 500;">PaddleOCR</a>
-  </div>
-  <div style="padding: 0.75rem 1rem; border-radius: 6px; background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(100, 130, 170, 0.15);">
-    <div style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 0.2rem;">OCR</div>
-    <a href="https://www.lighton.ai/" style="color: #cbd5e1; text-decoration: none; font-weight: 500;">LightOn OCR</a>
-  </div>
-  <div style="padding: 0.75rem 1rem; border-radius: 6px; background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(100, 130, 170, 0.15);">
-    <div style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 0.2rem;">Speech-to-Text</div>
-    <a href="https://github.com/openai/whisper" style="color: #cbd5e1; text-decoration: none; font-weight: 500;">Whisper</a>
-  </div>
-  <div style="padding: 0.75rem 1rem; border-radius: 6px; background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(100, 130, 170, 0.15);">
-    <div style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 0.2rem;">Chat Gateway</div>
-    <a href="https://openclaw.ai/" style="color: #cbd5e1; text-decoration: none; font-weight: 500;">OpenClaw</a>
-  </div>
-  <div style="padding: 0.75rem 1rem; border-radius: 6px; background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(100, 130, 170, 0.15);">
-    <div style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 0.2rem;">Schema Validation</div>
-    <a href="https://docs.pydantic.dev/" style="color: #cbd5e1; text-decoration: none; font-weight: 500;">Pydantic</a>
-  </div>
-  <div style="padding: 0.75rem 1rem; border-radius: 6px; background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(100, 130, 170, 0.15);">
-    <div style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 0.2rem;">Containers</div>
-    <a href="https://docs.docker.com/compose/" style="color: #cbd5e1; text-decoration: none; font-weight: 500;">Docker Compose</a>
-  </div>
+
+  <label for="toolsToggle" class="tools-toggle-label">
+    <span class="label-text"></span>
+    <span class="arrow">&#x25BE;</span>
+  </label>
 </div>
 
 Here's what building it actually looked like:
