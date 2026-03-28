@@ -41,15 +41,8 @@ There's a second ingestion path through OpenClaw, which lets you send documents 
 
 Here's how those layers connect:
 
-<div class="not-prose mermaid-card" id="mermaid-card">
-  <div class="mermaid-card-header">
-    <div class="mermaid-card-label">Pipeline Architecture</div>
-    <button class="mermaid-expand-btn" id="mermaid-expand" aria-label="Expand diagram" title="Click to expand">
-      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-        <path d="M2 6V2h4M10 2h4v4M14 10v4h-4M6 14H2v-4"/>
-      </svg>
-    </button>
-  </div>
+<div class="not-prose mermaid-card">
+  <div class="mermaid-card-label">Pipeline Architecture</div>
   <div class="mermaid-card-body">
     <pre class="mermaid">
     {`sequenceDiagram
@@ -126,14 +119,14 @@ Here's how those layers connect:
             labelTextColor: 'rgba(148, 163, 184, 0.7)'
           },
           sequence: {
-            actorMargin: 80,
+            actorMargin: 50,
             boxMargin: 8,
             boxTextMargin: 6,
-            messageMargin: 40,
+            messageMargin: 35,
             mirrorActors: false,
             bottomMarginAdj: 2,
-            useMaxWidth: false,
-            width: 160,
+            useMaxWidth: true,
+            width: 150,
             actorFontSize: 14,
             messageFontSize: 13,
             noteFontSize: 13
@@ -143,148 +136,6 @@ Here's how those layers connect:
       };
       document.head.appendChild(s);
     }
-
-    // Fullscreen zoom viewer
-    (function() {
-      const expandBtn = document.getElementById('mermaid-expand');
-      const card = document.getElementById('mermaid-card');
-      if (!expandBtn || !card) return;
-
-      function openViewer() {
-        const svg = card.querySelector('svg');
-        if (!svg) return;
-
-        const overlay = document.createElement('div');
-        overlay.className = 'mermaid-overlay';
-
-        const toolbar = document.createElement('div');
-        toolbar.className = 'mermaid-overlay-toolbar';
-        toolbar.innerHTML =
-          '<span class="mermaid-overlay-title">Pipeline Architecture</span>' +
-          '<div class="mermaid-overlay-controls">' +
-            '<button class="mermaid-zoom-btn" data-action="out" aria-label="Zoom out">&minus;</button>' +
-            '<span class="mermaid-zoom-level">100%</span>' +
-            '<button class="mermaid-zoom-btn" data-action="in" aria-label="Zoom in">+</button>' +
-            '<button class="mermaid-zoom-btn" data-action="fit" aria-label="Fit to screen">Fit</button>' +
-            '<button class="mermaid-zoom-btn mermaid-close-btn" data-action="close" aria-label="Close">&times;</button>' +
-          '</div>';
-
-        const viewport = document.createElement('div');
-        viewport.className = 'mermaid-overlay-viewport';
-
-        const content = document.createElement('div');
-        content.className = 'mermaid-overlay-content';
-
-        // Clone SVG and extract its native dimensions
-        const cloned = svg.cloneNode(true);
-        const nativeW = parseFloat(svg.getAttribute('width')) || svg.getBoundingClientRect().width || 800;
-        const nativeH = parseFloat(svg.getAttribute('height')) || svg.getBoundingClientRect().height || 600;
-
-        // Remove fixed dimensions so it fills its container, add viewBox if missing
-        cloned.removeAttribute('width');
-        cloned.removeAttribute('height');
-        cloned.style.width = nativeW + 'px';
-        cloned.style.height = nativeH + 'px';
-        if (!cloned.getAttribute('viewBox')) {
-          cloned.setAttribute('viewBox', '0 0 ' + nativeW + ' ' + nativeH);
-        }
-
-        content.appendChild(cloned);
-        viewport.appendChild(content);
-        overlay.appendChild(toolbar);
-        overlay.appendChild(viewport);
-        document.body.appendChild(overlay);
-        document.body.style.overflow = 'hidden';
-
-        requestAnimationFrame(() => overlay.classList.add('active'));
-
-        let scale = 1;
-        let tx = 0, ty = 0;
-        let isDragging = false;
-        let startX, startY, startTx, startTy;
-        const zoomLabel = overlay.querySelector('.mermaid-zoom-level');
-
-        function applyTransform() {
-          content.style.transform = 'translate(' + tx + 'px, ' + ty + 'px) scale(' + scale + ')';
-          zoomLabel.textContent = Math.round(scale * 100) + '%';
-        }
-
-        function fitToScreen() {
-          const vw = viewport.clientWidth - 60;
-          const vh = viewport.clientHeight - 60;
-          scale = Math.min(vw / nativeW, vh / nativeH, 2);
-          tx = 0; ty = 0;
-          applyTransform();
-        }
-
-        // Defer fitToScreen to next frame so viewport has layout dimensions
-        requestAnimationFrame(() => requestAnimationFrame(fitToScreen));
-
-        toolbar.addEventListener('click', function(e) {
-          const btn = e.target.closest('[data-action]');
-          if (!btn) return;
-          const action = btn.dataset.action;
-          if (action === 'in') { scale = Math.min(scale * 1.25, 5); }
-          else if (action === 'out') { scale = Math.max(scale / 1.25, 0.2); }
-          else if (action === 'fit') { fitToScreen(); return; }
-          else if (action === 'close') { close(); return; }
-          applyTransform();
-        });
-
-        viewport.addEventListener('wheel', function(e) {
-          e.preventDefault();
-          const delta = e.deltaY > 0 ? 0.9 : 1.1;
-          const rect = viewport.getBoundingClientRect();
-          const mx = e.clientX - rect.left - rect.width / 2;
-          const my = e.clientY - rect.top - rect.height / 2;
-          const newScale = Math.min(Math.max(scale * delta, 0.2), 5);
-          tx = mx - (mx - tx) * (newScale / scale);
-          ty = my - (my - ty) * (newScale / scale);
-          scale = newScale;
-          applyTransform();
-        }, { passive: false });
-
-        viewport.addEventListener('pointerdown', function(e) {
-          isDragging = true;
-          startX = e.clientX; startY = e.clientY;
-          startTx = tx; startTy = ty;
-          viewport.setPointerCapture(e.pointerId);
-          viewport.style.cursor = 'grabbing';
-        });
-        viewport.addEventListener('pointermove', function(e) {
-          if (!isDragging) return;
-          tx = startTx + (e.clientX - startX);
-          ty = startTy + (e.clientY - startY);
-          applyTransform();
-        });
-        viewport.addEventListener('pointerup', function() {
-          isDragging = false;
-          viewport.style.cursor = 'grab';
-        });
-
-        function close() {
-          overlay.classList.remove('active');
-          setTimeout(function() {
-            overlay.remove();
-            document.body.style.overflow = '';
-          }, 200);
-        }
-
-        overlay.addEventListener('click', function(e) {
-          if (e.target === overlay || e.target === viewport) close();
-        });
-
-        document.addEventListener('keydown', function handler(e) {
-          if (e.key === 'Escape') {
-            close();
-            document.removeEventListener('keydown', handler);
-          }
-        });
-      }
-
-      expandBtn.addEventListener('click', openViewer);
-      card.querySelector('.mermaid-card-body').addEventListener('dblclick', openViewer);
-    })();
   `}
 </script>
 
