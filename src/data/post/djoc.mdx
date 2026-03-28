@@ -45,19 +45,31 @@ Here's how those layers connect:
   <pre class="mermaid">
   {`sequenceDiagram
       actor User
-      participant Copyparty as Copyparty (Web UI)
-      participant OpenClaw as OpenClaw (WhatsApp)
-      participant Prefect as Prefect (Orchestrator)
-      participant Router as Processor Router
-      participant OCR as OCR / Whisper
-      participant LLM as LLM Provider
-      participant DB as PostgreSQL
+
+      box rgb(200, 230, 255) Ingestion
+          participant Copyparty as Copyparty (Web UI)
+          participant OpenClaw as OpenClaw (WhatsApp Gateway)
+      end
+
+      box rgb(230, 220, 255) Orchestration
+          participant Prefect as Prefect (Orchestrator)
+          participant Router as Processor Router
+      end
+
+      box rgb(255, 230, 200) Processing
+          participant OCR as OCR / Whisper
+          participant LLM as LLM Provider
+      end
+
+      box rgb(200, 240, 200) Storage
+          participant DB as PostgreSQL
+      end
 
       User->>Copyparty: Upload file via browser
-      Copyparty->>Prefect: Webhook triggers flow
-
       User->>OpenClaw: Send photo/doc via WhatsApp
-      OpenClaw->>Prefect: Routes file to inbox
+      OpenClaw->>Copyparty: Upload to inbox
+
+      Copyparty->>Prefect: Webhook triggers flow
 
       Prefect->>Router: Match path + filetype to processor
       Router-->>Prefect: Processor config + schema
