@@ -1,6 +1,6 @@
 ---
 publishDate: 2026-03-28
-title: The Schema Is the Contract
+title: Raw File In, Baked Data Out
 excerpt: Building a document pipeline where defining the shape of your data is the only code you write.
 tags:
   - architecture
@@ -11,9 +11,9 @@ category: notes
 
 ## What If the Schema Was the Whole Thing?
 
-Most document processing code is glue. You write a parser for this format, a normalizer for that one, custom extraction logic for every new document type. I wanted to flip that: what if you just described the shape of the data you wanted, and the pipeline figured out the rest?
+Most document processing code is glue. You write a parser for this format, a normalizer for that one, custom extraction logic for every new document type. I wanted to flip that: what if you just defined a schema and a prompt, and the pipeline handled routing your document through OCR and an LLM to fill it in?
 
-That's djoc. It's a document intelligence pipeline that turns unstructured files — scanned receipts, PDFs, photos of handwritten notes, voice memos — into structured JSON. The interesting part isn't that it uses OCR and language models. It's the abstraction that ties them together.
+That's djoc. It's a document intelligence pipeline that turns unstructured files — scanned receipts, PDFs, photos of handwritten notes, voice memos — into structured JSON. OCR and language models do the heavy lifting. The interesting part is the abstraction: a schema and a prompt are all you write. The pipeline handles everything between the raw file and the validated output.
 
 ## The Processor Model
 
@@ -49,42 +49,34 @@ Here's how those layers connect:
         actor User
 
         box rgba(59,106,140,0.15) Ingestion
-            participant Copyparty as Copyparty (Web UI)
-            participant OpenClaw as OpenClaw (WhatsApp)
+            participant Inbox as File Inbox
         end
 
         box rgba(90,74,110,0.15) Orchestration
-            participant Prefect as Prefect (Orchestrator)
-            participant Router as Processor Router
+            participant Router as Router
         end
 
         box rgba(107,68,35,0.15) Processing
-            participant OCR as OCR / Whisper
-            participant LLM as LLM Provider
+            participant OCR as Text Extraction
+            participant LLM as LLM
         end
 
         box rgba(45,90,62,0.15) Storage
-            participant DB as PostgreSQL
+            participant DB as Database
         end
 
-        User->>Copyparty: Upload file via browser
-        User->>OpenClaw: Send photo/doc via WhatsApp
-        OpenClaw->>Copyparty: Upload to inbox
+        User->>Inbox: Raw file
+        Inbox->>Router: Match to processor
 
-        Copyparty->>Prefect: Webhook triggers flow
+        Router->>OCR: Extract text
+        OCR-->>Router: Raw text
 
-        Prefect->>Router: Match path + filetype to processor
-        Router-->>Prefect: Processor config + schema
+        Router->>LLM: Text + prompt + schema
+        LLM-->>Router: Structured JSON
 
-        Prefect->>OCR: Extract text (OCR / Whisper / parser)
-        OCR-->>Prefect: Extracted text
+        Router->>Router: Validate against schema
 
-        Prefect->>LLM: Text + prompt + Pydantic schema
-        LLM-->>Prefect: Structured JSON
-
-        Prefect->>Prefect: Validate against schema
-
-        Prefect->>DB: Store validated data`}
+        Router->>DB: Store`}
     </pre>
   </div>
 </div>
