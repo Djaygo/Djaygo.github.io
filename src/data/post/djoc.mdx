@@ -29,15 +29,15 @@ Adding a new document type is one file and one registration call. There's a scaf
 
 Every layer in the pipeline exists because of a specific design decision, not because it was in a template.
 
-**File routing** is convention-based. Copyparty watches inbox folders, and the directory name maps directly to a processor. Drop a file into `/vault/+.inbox/receipts/` and the receipt processor picks it up. No routing config, no dispatch table — just directory names. I chose Copyparty because it gives you a web UI, WebDAV, and file watching without writing any of that yourself.
+**File routing** is convention-based. A file server watches inbox folders, and the directory name maps directly to a processor. Drop a file into `/vault/+.inbox/receipts/` and the receipt processor picks it up. No routing config, no dispatch table — just directory names.
 
-**Text extraction** sits behind a common interface. PaddleOCR, LightOn for images and PDFs. Whisper for voice memos. The processor config declares which engine to use; the pipeline doesn't care which one it is.
+**Text extraction** sits behind a common interface. OCR for images and PDFs. Speech-to-text for voice memos. The processor config declares which engine to use; the pipeline doesn't care which one it is.
 
-**LLM extraction** works the same way. The extracted text, your prompt, and your Pydantic schema go to whichever provider is configured — Ollama for local inference, OpenRouter for cloud models. Same interface, completely swappable.
+**LLM extraction** works the same way. The extracted text, your prompt, and your Pydantic schema go to whichever provider is configured — local or cloud. Same interface, completely swappable.
 
-**Storage** is PostgreSQL, one table per processor. The schema defines the columns.
+**Storage** is one table per processor. The schema defines the columns.
 
-There's a second ingestion path through OpenClaw, which lets you send documents via WhatsApp. Snap a photo, send it, and it lands in the same inbox that Copyparty watches. The pipeline doesn't care where files come from — that's the point.
+There's a second ingestion path through a chat gateway, which lets you send documents via WhatsApp or Telegram. Snap a photo, send it, and it lands in the same inbox. The pipeline doesn't care where files come from — that's the point.
 
 Here's how those layers connect:
 
@@ -133,11 +133,9 @@ Here's how those layers connect:
 
 ## The Self-Hosted Stack
 
-The pipeline layers above all run as Docker Compose services.
+Everything runs via Docker Compose — one command starts the full pipeline. File uploads, workflow orchestration, storage, a database browser, and optionally local LLM inference.
 
-Everything runs via Docker Compose. One command starts the full pipeline: Copyparty for file uploads, Prefect for workflow orchestration, PostgreSQL for storage, pgweb for browsing results, and optionally Ollama for local LLM inference.
-
-Running Ollama locally means sensitive documents never leave my machine. OpenRouter is there as a fallback when I need a larger model. Prefect gives me observability — every flow run, every failure, every retry is visible in the UI. If something breaks, I can see exactly where.
+Running inference locally means sensitive documents never leave my machine. A cloud provider is there as a fallback when I need a larger model. The orchestrator gives me observability — every flow run, every failure, every retry is visible in a UI. If something breaks, I can see exactly where.
 
 One small thing I'm proud of: the project uses git worktrees for parallel development, and all worktrees share one Docker Compose stack via a fixed project name. Switching between branches doesn't mean spinning up parallel infrastructure. The database persists, but the running code always reflects whichever worktree last started the stack.
 
@@ -150,6 +148,61 @@ I don't receive enough documents to justify any of this automation. Djoc isn't s
 The repo is private — it's not mature enough to share publicly, and finding the use case that would push it there is part of what makes the problem interesting.
 
 What I got out of it was the engineering: composing tools into a coherent stack, designing an abstraction that stays out of the way, and making the pipeline disappear behind a schema definition. Sometimes the project is the point.
+
+## References
+
+The tools that make up the stack:
+
+<div class="not-prose" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 0.75rem; margin: 1.5rem 0;">
+  <div style="padding: 0.75rem 1rem; border-radius: 6px; background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(100, 130, 170, 0.15);">
+    <div style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 0.2rem;">Orchestration</div>
+    <a href="https://www.prefect.io/" style="color: #cbd5e1; text-decoration: none; font-weight: 500;">Prefect</a>
+  </div>
+  <div style="padding: 0.75rem 1rem; border-radius: 6px; background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(100, 130, 170, 0.15);">
+    <div style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 0.2rem;">File Server</div>
+    <a href="https://github.com/9001/copyparty" style="color: #cbd5e1; text-decoration: none; font-weight: 500;">Copyparty</a>
+  </div>
+  <div style="padding: 0.75rem 1rem; border-radius: 6px; background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(100, 130, 170, 0.15);">
+    <div style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 0.2rem;">Database</div>
+    <a href="https://www.postgresql.org/" style="color: #cbd5e1; text-decoration: none; font-weight: 500;">PostgreSQL</a>
+  </div>
+  <div style="padding: 0.75rem 1rem; border-radius: 6px; background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(100, 130, 170, 0.15);">
+    <div style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 0.2rem;">DB Browser</div>
+    <a href="https://github.com/sosedoff/pgweb" style="color: #cbd5e1; text-decoration: none; font-weight: 500;">pgweb</a>
+  </div>
+  <div style="padding: 0.75rem 1rem; border-radius: 6px; background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(100, 130, 170, 0.15);">
+    <div style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 0.2rem;">Local LLM</div>
+    <a href="https://ollama.com/" style="color: #cbd5e1; text-decoration: none; font-weight: 500;">Ollama</a>
+  </div>
+  <div style="padding: 0.75rem 1rem; border-radius: 6px; background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(100, 130, 170, 0.15);">
+    <div style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 0.2rem;">Cloud LLM</div>
+    <a href="https://openrouter.ai/" style="color: #cbd5e1; text-decoration: none; font-weight: 500;">OpenRouter</a>
+  </div>
+  <div style="padding: 0.75rem 1rem; border-radius: 6px; background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(100, 130, 170, 0.15);">
+    <div style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 0.2rem;">OCR</div>
+    <a href="https://github.com/PaddlePaddle/PaddleOCR" style="color: #cbd5e1; text-decoration: none; font-weight: 500;">PaddleOCR</a>
+  </div>
+  <div style="padding: 0.75rem 1rem; border-radius: 6px; background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(100, 130, 170, 0.15);">
+    <div style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 0.2rem;">OCR</div>
+    <a href="https://www.lighton.ai/" style="color: #cbd5e1; text-decoration: none; font-weight: 500;">LightOn OCR</a>
+  </div>
+  <div style="padding: 0.75rem 1rem; border-radius: 6px; background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(100, 130, 170, 0.15);">
+    <div style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 0.2rem;">Speech-to-Text</div>
+    <a href="https://github.com/openai/whisper" style="color: #cbd5e1; text-decoration: none; font-weight: 500;">Whisper</a>
+  </div>
+  <div style="padding: 0.75rem 1rem; border-radius: 6px; background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(100, 130, 170, 0.15);">
+    <div style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 0.2rem;">Chat Gateway</div>
+    <a href="https://openclaw.ai/" style="color: #cbd5e1; text-decoration: none; font-weight: 500;">OpenClaw</a>
+  </div>
+  <div style="padding: 0.75rem 1rem; border-radius: 6px; background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(100, 130, 170, 0.15);">
+    <div style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 0.2rem;">Schema Validation</div>
+    <a href="https://docs.pydantic.dev/" style="color: #cbd5e1; text-decoration: none; font-weight: 500;">Pydantic</a>
+  </div>
+  <div style="padding: 0.75rem 1rem; border-radius: 6px; background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(100, 130, 170, 0.15);">
+    <div style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 0.2rem;">Containers</div>
+    <a href="https://docs.docker.com/compose/" style="color: #cbd5e1; text-decoration: none; font-weight: 500;">Docker Compose</a>
+  </div>
+</div>
 
 Here's what building it actually looked like:
 
