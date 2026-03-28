@@ -21,20 +21,13 @@ The core of djoc is the processor. A processor is a Pydantic schema paired with 
 
 You don't write extraction logic. You don't write file parsers. You don't call the LLM yourself. The pipeline reads your schema, pulls text out of the document, hands the text and your prompt to whichever language model is configured, and validates the response against your types.
 
-This separation — what you want vs. how to get it — is the whole design. The schema is the contract between you and the pipeline. Pydantic gives you typed output and validation for free. The LLM provider isn't baked into the processor config; it's injected at registration time, so processors stay provider-agnostic. Want to swap from a local model to a cloud one? Change an environment variable, not your processor.
+This separation — what you want vs. how to get it — is the whole design. It's a declarative pattern: you describe intent, the system handles execution. The schema is the contract between you and the pipeline. Pydantic gives you typed output and validation for free. The LLM provider isn't baked into the processor config; it's injected at registration time, so processors stay provider-agnostic. Want to swap from a local model to a cloud one? Change an environment variable, not your processor.
 
-Adding a new document type is one file and one registration call. There's a scaffolder script, but the point isn't the tooling — it's that the abstraction is simple enough to make scaffolding trivial.
+Adding a new document type is one file and one registration call. There's a scaffolder script, but the point isn't the tooling — it's that the abstraction is simple enough to make scaffolding trivial. That moment when a new processor just works — schema in, structured data out, no glue code — is what made this project satisfying to build.
 
 ## The Pipeline
 
 Every layer in the pipeline exists because of a specific design decision, not because it was in a template.
-
-<img src="/images/djoc-architecture.svg" alt="djoc architecture diagram showing two ingestion paths converging into a unified processing pipeline" style="max-width: 100%; margin: 2rem auto; display: block;" />
-
-<video controls width="100%" style="max-width: 800px; margin: 2rem auto; display: block; border-radius: 8px;">
-  <source src="/djoc-gource.mp4" type="video/mp4" />
-  Your browser does not support video playback.
-</video>
 
 **File routing** is convention-based. Copyparty watches inbox folders, and the directory name maps directly to a processor. Drop a file into `/vault/+.inbox/receipts/` and the receipt processor picks it up. No routing config, no dispatch table — just directory names. I chose Copyparty because it gives you a web UI, WebDAV, and file watching without writing any of that yourself.
 
@@ -46,7 +39,13 @@ Every layer in the pipeline exists because of a specific design decision, not be
 
 There's a second ingestion path through OpenClaw, which lets you send documents via WhatsApp. Snap a photo, send it, and it lands in the same inbox that Copyparty watches. The pipeline doesn't care where files come from — that's the point.
 
+Here's how those layers connect:
+
+<img src="/images/djoc-architecture.svg" alt="djoc architecture diagram showing two ingestion paths converging into a unified processing pipeline" style="max-width: 100%; margin: 2rem auto; display: block;" />
+
 ## The Self-Hosted Stack
+
+The pipeline layers above all run as Docker Compose services.
 
 Everything runs via Docker Compose. One command starts the full pipeline: Copyparty for file uploads, Prefect for workflow orchestration, PostgreSQL for storage, pgweb for browsing results, and optionally Ollama for local LLM inference.
 
@@ -60,6 +59,13 @@ The philosophy is pragmatic: I wanted full control over my documents and my data
 
 I don't receive enough documents to justify any of this automation. Djoc isn't solving a burning problem I have — I built it because the design challenge was interesting. How simple can you make the interface between a messy document and structured data?
 
-The repo is private. It's not mature enough to share publicly, and I haven't found the real-world use case that would push it there.
+The repo is private — it's not mature enough to share publicly, and finding the use case that would push it there is part of what makes the problem interesting.
 
 What I got out of it was the engineering: composing tools into a coherent stack, designing an abstraction that stays out of the way, and making the pipeline disappear behind a schema definition. Sometimes the project is the point.
+
+Here's what building it actually looked like:
+
+<video controls width="100%" style="max-width: 800px; margin: 2rem auto; display: block; border-radius: 8px;">
+  <source src="/djoc-gource.mp4" type="video/mp4" />
+  Your browser does not support video playback.
+</video>
