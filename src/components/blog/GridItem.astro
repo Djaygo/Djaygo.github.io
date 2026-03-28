@@ -29,7 +29,7 @@ const link = APP_BLOG?.post?.isEnabled ? getPermalink(post.permalink, 'post') : 
       ))}
     </div>
   )}
-  <div class="relative md:h-64 rounded mb-6 overflow-hidden">
+  <div class="relative md:h-64 rounded mb-6 overflow-hidden hidden md:block">
     {
       image &&
         (link ? (
@@ -76,7 +76,7 @@ const link = APP_BLOG?.post?.isEnabled ? getPermalink(post.permalink, 'post') : 
     }
   </h3>
 
-  <p class="text-muted dark:text-slate-400 text-lg">{post.excerpt}</p>
+  <p class="text-muted dark:text-slate-400 text-lg hidden md:block">{post.excerpt}</p>
 </article>
 
 <style>

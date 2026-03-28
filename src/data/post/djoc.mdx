@@ -41,7 +41,49 @@ There's a second ingestion path through OpenClaw, which lets you send documents 
 
 Here's how those layers connect:
 
-<img src="/images/djoc-architecture.svg" alt="djoc architecture diagram showing two ingestion paths converging into a unified processing pipeline" style="max-width: 100%; margin: 2rem auto; display: block;" />
+<div class="mermaid-wrapper" style="max-width: 100%; margin: 2rem auto; overflow-x: auto;">
+  <pre class="mermaid">
+  {`sequenceDiagram
+      actor User
+      participant Copyparty as Copyparty (Web UI)
+      participant OpenClaw as OpenClaw (WhatsApp)
+      participant Prefect as Prefect (Orchestrator)
+      participant Router as Processor Router
+      participant OCR as OCR / Whisper
+      participant LLM as LLM Provider
+      participant DB as PostgreSQL
+
+      User->>Copyparty: Upload file via browser
+      Copyparty->>Prefect: Webhook triggers flow
+
+      User->>OpenClaw: Send photo/doc via WhatsApp
+      OpenClaw->>Prefect: Routes file to inbox
+
+      Prefect->>Router: Match path + filetype to processor
+      Router-->>Prefect: Processor config + schema
+
+      Prefect->>OCR: Extract text (OCR / Whisper / parser)
+      OCR-->>Prefect: Extracted text
+
+      Prefect->>LLM: Text + prompt + Pydantic schema
+      LLM-->>Prefect: Structured JSON
+
+      Prefect->>Prefect: Validate against schema
+
+      Prefect->>DB: Store validated data`}
+  </pre>
+</div>
+
+<script>
+  {`
+    if (!document.querySelector('script[src*="mermaid"]')) {
+      const s = document.createElement('script');
+      s.src = 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js';
+      s.onload = () => mermaid.initialize({ startOnLoad: true, theme: 'dark' });
+      document.head.appendChild(s);
+    }
+  `}
+</script>
 
 ## The Self-Hosted Stack
 
