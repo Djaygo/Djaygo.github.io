@@ -190,19 +190,23 @@ export class Terrain {
         const distSq = dx * dx + dy * dy;
 
         if (distSq < radiusSq) {
-          // Sample color from center of granule
-          const sampleIndex = Math.min(gy, this.height - 1) * this.width + Math.min(gx, this.width - 1);
-          const samplePixelIndex = sampleIndex * 4;
-
-          // Check if this granule area has any solid pixels
+          // Check if this granule area has any solid pixels and sample color BEFORE clearing
           let hasSolid = false;
+          let sampledR = 139, sampledG = 90, sampledB = 43; // Default dirt color
+
           for (let py = y; py < Math.min(y + SAND_GRANULE_SIZE, this.height); py++) {
             for (let px = x; px < Math.min(x + SAND_GRANULE_SIZE, this.width); px++) {
               const idx = py * this.width + px;
               if (this.collisionMask![idx] === 1) {
+                const pixIdx = idx * 4;
+                // Sample color from first solid pixel we find
+                if (!hasSolid) {
+                  sampledR = data[pixIdx];
+                  sampledG = data[pixIdx + 1];
+                  sampledB = data[pixIdx + 2];
+                }
                 hasSolid = true;
                 // Add to debris for visual effect
-                const pixIdx = idx * 4;
                 this.pendingDebris.push({
                   x: px,
                   y: py,
@@ -235,9 +239,9 @@ export class Terrain {
                   this.sandParticles.push({
                     x,
                     y,
-                    r: data[samplePixelIndex],
-                    g: data[samplePixelIndex + 1],
-                    b: data[samplePixelIndex + 2],
+                    r: sampledR,
+                    g: sampledG,
+                    b: sampledB,
                     settled: false,
                     stuckFrames: 0,
                     velocity: 0,
