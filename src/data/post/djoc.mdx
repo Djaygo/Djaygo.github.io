@@ -155,7 +155,7 @@ The tools that make up the stack:
 
 <style>{`
   @keyframes toolReveal {
-    from { opacity: 0; transform: translateY(12px) scale(0.97); }
+    from { opacity: 0; transform: translateY(8px) scale(0.98); }
     to { opacity: 1; transform: translateY(0) scale(1); }
   }
   .tool-card {
@@ -169,23 +169,49 @@ The tools that make up the stack:
     background: rgba(30, 41, 59, 0.7);
   }
   .tool-card img { flex-shrink: 0; opacity: 0.85; }
-  .tool-card .tool-cat { font-size: 0.8rem; color: #94a3b8; line-height: 1.2; }
-  .tool-card .tool-name { color: #cbd5e1; font-weight: 500; }
+  .tool-card .tool-cat { font-size: 0.75rem; color: #94a3b8; line-height: 1.2; }
+  .tool-card .tool-name { color: #cbd5e1; font-weight: 500; font-size: 0.88rem; }
+  @media (max-width: 768px) {
+    .tools-grid { grid-template-columns: repeat(2, 1fr) !important; }
+  }
+  @media (max-width: 400px) {
+    .tools-grid { grid-template-columns: 1fr !important; }
+    .tool-card { padding: 0.6rem 0.75rem; gap: 0.5rem; }
+    .tool-card .tool-name { font-size: 0.82rem; }
+  }
 
-  .tools-hidden { display: none; }
-  #toolsToggle:checked ~ .tools-grid .tools-hidden {
-    display: flex;
+  .tools-extra {
+    grid-column: 1 / -1;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem;
+    max-height: 0; overflow: hidden; opacity: 0;
+    transition: max-height 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+                opacity 0.4s ease,
+                margin-top 0.4s ease;
+    margin-top: 0;
+  }
+  @media (max-width: 768px) {
+    .tools-extra { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 400px) {
+    .tools-extra { grid-template-columns: 1fr; }
+  }
+  #toolsToggle:checked ~ .tools-grid .tools-extra {
+    max-height: 800px;
+    opacity: 1;
+    margin-top: 0.75rem;
+  }
+  #toolsToggle:checked ~ .tools-grid .tools-extra .tool-card {
     animation: toolReveal 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
   }
-  #toolsToggle:checked ~ .tools-grid .tools-hidden:nth-child(4)  { animation-delay: 0ms; }
-  #toolsToggle:checked ~ .tools-grid .tools-hidden:nth-child(5)  { animation-delay: 50ms; }
-  #toolsToggle:checked ~ .tools-grid .tools-hidden:nth-child(6)  { animation-delay: 100ms; }
-  #toolsToggle:checked ~ .tools-grid .tools-hidden:nth-child(7)  { animation-delay: 150ms; }
-  #toolsToggle:checked ~ .tools-grid .tools-hidden:nth-child(8)  { animation-delay: 200ms; }
-  #toolsToggle:checked ~ .tools-grid .tools-hidden:nth-child(9)  { animation-delay: 250ms; }
-  #toolsToggle:checked ~ .tools-grid .tools-hidden:nth-child(10) { animation-delay: 300ms; }
-  #toolsToggle:checked ~ .tools-grid .tools-hidden:nth-child(11) { animation-delay: 350ms; }
-  #toolsToggle:checked ~ .tools-grid .tools-hidden:nth-child(12) { animation-delay: 400ms; }
+  #toolsToggle:checked ~ .tools-grid .tools-extra .tool-card:nth-child(1) { animation-delay: 0ms; }
+  #toolsToggle:checked ~ .tools-grid .tools-extra .tool-card:nth-child(2) { animation-delay: 50ms; }
+  #toolsToggle:checked ~ .tools-grid .tools-extra .tool-card:nth-child(3) { animation-delay: 100ms; }
+  #toolsToggle:checked ~ .tools-grid .tools-extra .tool-card:nth-child(4) { animation-delay: 150ms; }
+  #toolsToggle:checked ~ .tools-grid .tools-extra .tool-card:nth-child(5) { animation-delay: 200ms; }
+  #toolsToggle:checked ~ .tools-grid .tools-extra .tool-card:nth-child(6) { animation-delay: 250ms; }
+  #toolsToggle:checked ~ .tools-grid .tools-extra .tool-card:nth-child(7) { animation-delay: 300ms; }
+  #toolsToggle:checked ~ .tools-grid .tools-extra .tool-card:nth-child(8) { animation-delay: 350ms; }
+  #toolsToggle:checked ~ .tools-grid .tools-extra .tool-card:nth-child(9) { animation-delay: 400ms; }
 
   .tools-toggle-label {
     display: inline-flex; align-items: center; gap: 0.4rem;
@@ -220,7 +246,7 @@ The tools that make up the stack:
 <div class="not-prose" style="margin: 1.5rem 0;">
   <input type="checkbox" id="toolsToggle" style="display: none;" />
 
-  <div class="tools-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 0.75rem;">
+  <div class="tools-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem;">
     <a href="https://www.prefect.io/" target="_blank" rel="noopener" class="tool-card">
       <img src="https://cdn.simpleicons.org/prefect/94a3b8" alt="" width="24" height="24" onerror="this.style.display='none'" />
       <div><div class="tool-cat">Orchestration</div><div class="tool-name">Prefect</div></div>
@@ -234,42 +260,44 @@ The tools that make up the stack:
       <div><div class="tool-cat">Database</div><div class="tool-name">PostgreSQL</div></div>
     </a>
 
-    <a href="https://github.com/sosedoff/pgweb" target="_blank" rel="noopener" class="tool-card tools-hidden">
-      <img src="https://cdn.simpleicons.org/postgresql/94a3b8" alt="" width="24" height="24" onerror="this.style.display='none'" />
-      <div><div class="tool-cat">DB Browser</div><div class="tool-name">pgweb</div></div>
-    </a>
-    <a href="https://ollama.com/" target="_blank" rel="noopener" class="tool-card tools-hidden">
-      <img src="https://cdn.simpleicons.org/ollama/94a3b8" alt="" width="24" height="24" onerror="this.style.display='none'" />
-      <div><div class="tool-cat">Local LLM</div><div class="tool-name">Ollama</div></div>
-    </a>
-    <a href="https://openrouter.ai/" target="_blank" rel="noopener" class="tool-card tools-hidden">
-      <img src="https://cdn.simpleicons.org/openrouter/94a3b8" alt="" width="24" height="24" onerror="this.style.display='none'" />
-      <div><div class="tool-cat">Cloud LLM</div><div class="tool-name">OpenRouter</div></div>
-    </a>
-    <a href="https://github.com/PaddlePaddle/PaddleOCR" target="_blank" rel="noopener" class="tool-card tools-hidden">
-      <img src="https://avatars.githubusercontent.com/u/23093452?s=64" alt="" width="24" height="24" style="border-radius: 4px;" onerror="this.style.display='none'" />
-      <div><div class="tool-cat">OCR</div><div class="tool-name">PaddleOCR</div></div>
-    </a>
-    <a href="https://www.lighton.ai/" target="_blank" rel="noopener" class="tool-card tools-hidden">
-      <img src="https://cdn.prod.website-files.com/64c5020ba79507a22fab4e16/64c516c87b1e697da0bbe9d3_LightOn%20favicon.png" alt="" width="24" height="24" style="border-radius: 4px;" onerror="this.style.display='none'" />
-      <div><div class="tool-cat">OCR</div><div class="tool-name">LightOn OCR</div></div>
-    </a>
-    <a href="https://github.com/openai/whisper" target="_blank" rel="noopener" class="tool-card tools-hidden">
-      <img src="https://cdn.simpleicons.org/openai/94a3b8" alt="" width="24" height="24" onerror="this.style.display='none'" />
-      <div><div class="tool-cat">Speech-to-Text</div><div class="tool-name">Whisper</div></div>
-    </a>
-    <a href="https://openclaw.ai/" target="_blank" rel="noopener" class="tool-card tools-hidden">
-      <img src="https://openclaw.ai/favicon.ico" alt="" width="24" height="24" style="border-radius: 4px;" onerror="this.style.display='none'" />
-      <div><div class="tool-cat">Chat Gateway</div><div class="tool-name">OpenClaw</div></div>
-    </a>
-    <a href="https://docs.pydantic.dev/" target="_blank" rel="noopener" class="tool-card tools-hidden">
-      <img src="https://cdn.simpleicons.org/pydantic/94a3b8" alt="" width="24" height="24" onerror="this.style.display='none'" />
-      <div><div class="tool-cat">Schema Validation</div><div class="tool-name">Pydantic</div></div>
-    </a>
-    <a href="https://docs.docker.com/compose/" target="_blank" rel="noopener" class="tool-card tools-hidden">
-      <img src="https://cdn.simpleicons.org/docker/94a3b8" alt="" width="24" height="24" onerror="this.style.display='none'" />
-      <div><div class="tool-cat">Containers</div><div class="tool-name">Docker Compose</div></div>
-    </a>
+    <div class="tools-extra">
+      <a href="https://github.com/sosedoff/pgweb" target="_blank" rel="noopener" class="tool-card">
+        <img src="https://cdn.simpleicons.org/postgresql/94a3b8" alt="" width="24" height="24" onerror="this.style.display='none'" />
+        <div><div class="tool-cat">DB Browser</div><div class="tool-name">pgweb</div></div>
+      </a>
+      <a href="https://ollama.com/" target="_blank" rel="noopener" class="tool-card">
+        <img src="https://cdn.simpleicons.org/ollama/94a3b8" alt="" width="24" height="24" onerror="this.style.display='none'" />
+        <div><div class="tool-cat">Local LLM</div><div class="tool-name">Ollama</div></div>
+      </a>
+      <a href="https://openrouter.ai/" target="_blank" rel="noopener" class="tool-card">
+        <img src="https://cdn.simpleicons.org/openrouter/94a3b8" alt="" width="24" height="24" onerror="this.style.display='none'" />
+        <div><div class="tool-cat">Cloud LLM</div><div class="tool-name">OpenRouter</div></div>
+      </a>
+      <a href="https://github.com/PaddlePaddle/PaddleOCR" target="_blank" rel="noopener" class="tool-card">
+        <img src="https://avatars.githubusercontent.com/u/23093452?s=64" alt="" width="24" height="24" style="border-radius: 4px;" onerror="this.style.display='none'" />
+        <div><div class="tool-cat">OCR</div><div class="tool-name">PaddleOCR</div></div>
+      </a>
+      <a href="https://www.lighton.ai/" target="_blank" rel="noopener" class="tool-card">
+        <img src="https://cdn.prod.website-files.com/64c5020ba79507a22fab4e16/64c516c87b1e697da0bbe9d3_LightOn%20favicon.png" alt="" width="24" height="24" style="border-radius: 4px;" onerror="this.style.display='none'" />
+        <div><div class="tool-cat">OCR</div><div class="tool-name">LightOn OCR</div></div>
+      </a>
+      <a href="https://github.com/openai/whisper" target="_blank" rel="noopener" class="tool-card">
+        <img src="https://cdn.simpleicons.org/openai/94a3b8" alt="" width="24" height="24" onerror="this.style.display='none'" />
+        <div><div class="tool-cat">Speech-to-Text</div><div class="tool-name">Whisper</div></div>
+      </a>
+      <a href="https://openclaw.ai/" target="_blank" rel="noopener" class="tool-card">
+        <img src="https://openclaw.ai/favicon.ico" alt="" width="24" height="24" style="border-radius: 4px;" onerror="this.style.display='none'" />
+        <div><div class="tool-cat">Chat Gateway</div><div class="tool-name">OpenClaw</div></div>
+      </a>
+      <a href="https://docs.pydantic.dev/" target="_blank" rel="noopener" class="tool-card">
+        <img src="https://cdn.simpleicons.org/pydantic/94a3b8" alt="" width="24" height="24" onerror="this.style.display='none'" />
+        <div><div class="tool-cat">Schema Validation</div><div class="tool-name">Pydantic</div></div>
+      </a>
+      <a href="https://docs.docker.com/compose/" target="_blank" rel="noopener" class="tool-card">
+        <img src="https://cdn.simpleicons.org/docker/94a3b8" alt="" width="24" height="24" onerror="this.style.display='none'" />
+        <div><div class="tool-cat">Containers</div><div class="tool-name">Docker</div></div>
+      </a>
+    </div>
   </div>
 
   <label for="toolsToggle" class="tools-toggle-label">
