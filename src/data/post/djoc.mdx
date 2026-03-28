@@ -41,49 +41,59 @@ There's a second ingestion path through OpenClaw, which lets you send documents 
 
 Here's how those layers connect:
 
-<div class="mermaid-wrapper" style="max-width: 100%; margin: 2rem auto; overflow-x: auto;">
-  <pre class="mermaid">
-  {`sequenceDiagram
-      actor User
+<div class="not-prose mermaid-card" id="mermaid-card">
+  <div class="mermaid-card-header">
+    <div class="mermaid-card-label">Pipeline Architecture</div>
+    <button class="mermaid-expand-btn" id="mermaid-expand" aria-label="Expand diagram" title="Click to expand">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M2 6V2h4M10 2h4v4M14 10v4h-4M6 14H2v-4"/>
+      </svg>
+    </button>
+  </div>
+  <div class="mermaid-card-body">
+    <pre class="mermaid">
+    {`sequenceDiagram
+        actor User
 
-      box rgb(200, 230, 255) Ingestion
-          participant Copyparty as Copyparty (Web UI)
-          participant OpenClaw as OpenClaw (WhatsApp Gateway)
-      end
+        box rgba(59,106,140,0.15) Ingestion
+            participant Copyparty as Copyparty (Web UI)
+            participant OpenClaw as OpenClaw (WhatsApp)
+        end
 
-      box rgb(230, 220, 255) Orchestration
-          participant Prefect as Prefect (Orchestrator)
-          participant Router as Processor Router
-      end
+        box rgba(90,74,110,0.15) Orchestration
+            participant Prefect as Prefect (Orchestrator)
+            participant Router as Processor Router
+        end
 
-      box rgb(255, 230, 200) Processing
-          participant OCR as OCR / Whisper
-          participant LLM as LLM Provider
-      end
+        box rgba(107,68,35,0.15) Processing
+            participant OCR as OCR / Whisper
+            participant LLM as LLM Provider
+        end
 
-      box rgb(200, 240, 200) Storage
-          participant DB as PostgreSQL
-      end
+        box rgba(45,90,62,0.15) Storage
+            participant DB as PostgreSQL
+        end
 
-      User->>Copyparty: Upload file via browser
-      User->>OpenClaw: Send photo/doc via WhatsApp
-      OpenClaw->>Copyparty: Upload to inbox
+        User->>Copyparty: Upload file via browser
+        User->>OpenClaw: Send photo/doc via WhatsApp
+        OpenClaw->>Copyparty: Upload to inbox
 
-      Copyparty->>Prefect: Webhook triggers flow
+        Copyparty->>Prefect: Webhook triggers flow
 
-      Prefect->>Router: Match path + filetype to processor
-      Router-->>Prefect: Processor config + schema
+        Prefect->>Router: Match path + filetype to processor
+        Router-->>Prefect: Processor config + schema
 
-      Prefect->>OCR: Extract text (OCR / Whisper / parser)
-      OCR-->>Prefect: Extracted text
+        Prefect->>OCR: Extract text (OCR / Whisper / parser)
+        OCR-->>Prefect: Extracted text
 
-      Prefect->>LLM: Text + prompt + Pydantic schema
-      LLM-->>Prefect: Structured JSON
+        Prefect->>LLM: Text + prompt + Pydantic schema
+        LLM-->>Prefect: Structured JSON
 
-      Prefect->>Prefect: Validate against schema
+        Prefect->>Prefect: Validate against schema
 
-      Prefect->>DB: Store validated data`}
-  </pre>
+        Prefect->>DB: Store validated data`}
+    </pre>
+  </div>
 </div>
 
 <script>
@@ -91,9 +101,190 @@ Here's how those layers connect:
     if (!document.querySelector('script[src*="mermaid"]')) {
       const s = document.createElement('script');
       s.src = 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js';
-      s.onload = () => mermaid.initialize({ startOnLoad: true, theme: 'dark' });
+      s.onload = () => {
+        mermaid.initialize({
+          startOnLoad: false,
+          theme: 'dark',
+          themeVariables: {
+            background: 'transparent',
+            mainBkg: 'rgba(30, 41, 59, 0.8)',
+            lineColor: 'rgba(148, 163, 184, 0.4)',
+            textColor: '#cbd5e1',
+            actorBorder: 'rgba(100, 130, 170, 0.4)',
+            actorBkg: 'rgba(30, 41, 59, 0.8)',
+            actorTextColor: '#cbd5e1',
+            signalColor: 'rgba(148, 163, 184, 0.4)',
+            signalTextColor: '#94a3b8',
+            noteBkgColor: 'rgba(30, 41, 59, 0.5)',
+            noteBorderColor: 'rgba(100, 130, 170, 0.3)',
+            noteTextColor: '#94a3b8',
+            activationBorderColor: 'rgba(100, 130, 170, 0.3)',
+            activationBkgColor: 'rgba(59, 106, 140, 0.15)',
+            sequenceNumberColor: '#94a3b8',
+            labelBoxBkgColor: 'rgba(15, 23, 42, 0.7)',
+            labelBoxBorderColor: 'rgba(100, 130, 170, 0.25)',
+            labelTextColor: 'rgba(148, 163, 184, 0.7)'
+          },
+          sequence: {
+            actorMargin: 80,
+            boxMargin: 8,
+            boxTextMargin: 6,
+            messageMargin: 40,
+            mirrorActors: false,
+            bottomMarginAdj: 2,
+            useMaxWidth: false,
+            width: 160,
+            actorFontSize: 14,
+            messageFontSize: 13,
+            noteFontSize: 13
+          }
+        });
+        mermaid.run({ nodes: document.querySelectorAll('.mermaid') });
+      };
       document.head.appendChild(s);
     }
+
+    // Fullscreen zoom viewer
+    (function() {
+      const expandBtn = document.getElementById('mermaid-expand');
+      const card = document.getElementById('mermaid-card');
+      if (!expandBtn || !card) return;
+
+      function openViewer() {
+        const svg = card.querySelector('svg');
+        if (!svg) return;
+
+        const overlay = document.createElement('div');
+        overlay.className = 'mermaid-overlay';
+
+        const toolbar = document.createElement('div');
+        toolbar.className = 'mermaid-overlay-toolbar';
+        toolbar.innerHTML =
+          '<span class="mermaid-overlay-title">Pipeline Architecture</span>' +
+          '<div class="mermaid-overlay-controls">' +
+            '<button class="mermaid-zoom-btn" data-action="out" aria-label="Zoom out">&minus;</button>' +
+            '<span class="mermaid-zoom-level">100%</span>' +
+            '<button class="mermaid-zoom-btn" data-action="in" aria-label="Zoom in">+</button>' +
+            '<button class="mermaid-zoom-btn" data-action="fit" aria-label="Fit to screen">Fit</button>' +
+            '<button class="mermaid-zoom-btn mermaid-close-btn" data-action="close" aria-label="Close">&times;</button>' +
+          '</div>';
+
+        const viewport = document.createElement('div');
+        viewport.className = 'mermaid-overlay-viewport';
+
+        const content = document.createElement('div');
+        content.className = 'mermaid-overlay-content';
+
+        // Clone SVG and extract its native dimensions
+        const cloned = svg.cloneNode(true);
+        const nativeW = parseFloat(svg.getAttribute('width')) || svg.getBoundingClientRect().width || 800;
+        const nativeH = parseFloat(svg.getAttribute('height')) || svg.getBoundingClientRect().height || 600;
+
+        // Remove fixed dimensions so it fills its container, add viewBox if missing
+        cloned.removeAttribute('width');
+        cloned.removeAttribute('height');
+        cloned.style.width = nativeW + 'px';
+        cloned.style.height = nativeH + 'px';
+        if (!cloned.getAttribute('viewBox')) {
+          cloned.setAttribute('viewBox', '0 0 ' + nativeW + ' ' + nativeH);
+        }
+
+        content.appendChild(cloned);
+        viewport.appendChild(content);
+        overlay.appendChild(toolbar);
+        overlay.appendChild(viewport);
+        document.body.appendChild(overlay);
+        document.body.style.overflow = 'hidden';
+
+        requestAnimationFrame(() => overlay.classList.add('active'));
+
+        let scale = 1;
+        let tx = 0, ty = 0;
+        let isDragging = false;
+        let startX, startY, startTx, startTy;
+        const zoomLabel = overlay.querySelector('.mermaid-zoom-level');
+
+        function applyTransform() {
+          content.style.transform = 'translate(' + tx + 'px, ' + ty + 'px) scale(' + scale + ')';
+          zoomLabel.textContent = Math.round(scale * 100) + '%';
+        }
+
+        function fitToScreen() {
+          const vw = viewport.clientWidth - 60;
+          const vh = viewport.clientHeight - 60;
+          scale = Math.min(vw / nativeW, vh / nativeH, 2);
+          tx = 0; ty = 0;
+          applyTransform();
+        }
+
+        // Defer fitToScreen to next frame so viewport has layout dimensions
+        requestAnimationFrame(() => requestAnimationFrame(fitToScreen));
+
+        toolbar.addEventListener('click', function(e) {
+          const btn = e.target.closest('[data-action]');
+          if (!btn) return;
+          const action = btn.dataset.action;
+          if (action === 'in') { scale = Math.min(scale * 1.25, 5); }
+          else if (action === 'out') { scale = Math.max(scale / 1.25, 0.2); }
+          else if (action === 'fit') { fitToScreen(); return; }
+          else if (action === 'close') { close(); return; }
+          applyTransform();
+        });
+
+        viewport.addEventListener('wheel', function(e) {
+          e.preventDefault();
+          const delta = e.deltaY > 0 ? 0.9 : 1.1;
+          const rect = viewport.getBoundingClientRect();
+          const mx = e.clientX - rect.left - rect.width / 2;
+          const my = e.clientY - rect.top - rect.height / 2;
+          const newScale = Math.min(Math.max(scale * delta, 0.2), 5);
+          tx = mx - (mx - tx) * (newScale / scale);
+          ty = my - (my - ty) * (newScale / scale);
+          scale = newScale;
+          applyTransform();
+        }, { passive: false });
+
+        viewport.addEventListener('pointerdown', function(e) {
+          isDragging = true;
+          startX = e.clientX; startY = e.clientY;
+          startTx = tx; startTy = ty;
+          viewport.setPointerCapture(e.pointerId);
+          viewport.style.cursor = 'grabbing';
+        });
+        viewport.addEventListener('pointermove', function(e) {
+          if (!isDragging) return;
+          tx = startTx + (e.clientX - startX);
+          ty = startTy + (e.clientY - startY);
+          applyTransform();
+        });
+        viewport.addEventListener('pointerup', function() {
+          isDragging = false;
+          viewport.style.cursor = 'grab';
+        });
+
+        function close() {
+          overlay.classList.remove('active');
+          setTimeout(function() {
+            overlay.remove();
+            document.body.style.overflow = '';
+          }, 200);
+        }
+
+        overlay.addEventListener('click', function(e) {
+          if (e.target === overlay || e.target === viewport) close();
+        });
+
+        document.addEventListener('keydown', function handler(e) {
+          if (e.key === 'Escape') {
+            close();
+            document.removeEventListener('keydown', handler);
+          }
+        });
+      }
+
+      expandBtn.addEventListener('click', openViewer);
+      card.querySelector('.mermaid-card-body').addEventListener('dblclick', openViewer);
+    })();
   `}
 </script>
 
