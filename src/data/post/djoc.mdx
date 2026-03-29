@@ -1,7 +1,7 @@
 ---
 publishDate: 2026-03-28
 title: Raw File In, Baked Data Out
-excerpt: Building a document pipeline where defining the shape of your data is the only code you write.
+excerpt: Building a document pipeline where a Pydantic schema and a prompt replace extraction logic.
 tags:
   - architecture
   - python
@@ -11,33 +11,29 @@ category: notes
 
 ## What If the Schema Was the Whole Thing?
 
-Most document processing code is glue. You write a parser for this format, a normalizer for that one, custom extraction logic for every new document type. I wanted to flip that: what if you just defined a schema and a prompt, and the pipeline handled routing your document through OCR and an LLM to fill it in?
+Most document processing code is glue. You write a parser for this format, a normalizer for that one, custom extraction logic for every new document type. Djoc flips that: you define a Pydantic schema, a prompt, and a small config (file types, OCR engine), and the pipeline routes your document through text extraction and an LLM to fill in the schema.
 
-That's djoc. It's a document intelligence pipeline that turns unstructured files — scanned receipts, PDFs, photos of handwritten notes, voice memos — into structured JSON. OCR and language models do the heavy lifting. The interesting part is the abstraction: a schema and a prompt are all you write. The pipeline handles everything between the raw file and the validated output.
+It turns unstructured files — scanned receipts, PDFs, voice memos — into structured JSON. OCR and language models do the extraction. You write the schema and the prompt; the pipeline handles everything between the raw file and the validated output.
 
 ## The Processor Model
 
-The core of djoc is the processor. A processor is a Pydantic schema paired with a configuration. You define what data you want to extract (the schema), which file types to accept, which OCR engine to use, and a prompt that tells the language model what to look for. That's it.
+A processor is a Pydantic schema paired with a config dict. The schema defines what to extract. The config declares accepted file types, which OCR engine to use, and a prompt for the LLM. The pipeline reads your schema, pulls text out of the document, hands the text and your prompt to the configured language model, and validates the response against your types.
 
-You don't write extraction logic. You don't write file parsers. You don't call the LLM yourself. The pipeline reads your schema, pulls text out of the document, hands the text and your prompt to whichever language model is configured, and validates the response against your types.
+You don't write extraction logic, file parsers, or LLM calls. The LLM provider is injected at startup from environment variables, so processors stay provider-agnostic. Swap from a local model to a cloud one by changing an env var.
 
-This separation — what you want vs. how to get it — is the whole design. It's a declarative pattern: you describe intent, the system handles execution. The schema is the contract between you and the pipeline. Pydantic gives you typed output and validation for free. The LLM provider isn't baked into the processor config; it's injected at registration time, so processors stay provider-agnostic. Want to swap from a local model to a cloud one? Change an environment variable, not your processor.
-
-Adding a new document type is one file and one registration call. There's a scaffolder script, but the point isn't the tooling — it's that the abstraction is simple enough to make scaffolding trivial. That moment when a new processor just works — schema in, structured data out, no glue code — is what made this project satisfying to build.
+Adding a new document type is one Python file in `processors/`. Auto-discovery picks it up on restart.
 
 ## The Pipeline
 
-Every layer in the pipeline exists because of a specific design decision, not because it was in a template.
+**File routing** is convention-based. A file server watches inbox folders, and the directory name maps to a processor's `tool` field. Drop a file into `/vault/+.inbox/receipts/` and the receipt processor picks it up.
 
-**File routing** is convention-based. A file server watches inbox folders, and the directory name maps directly to a processor. Drop a file into `/vault/+.inbox/receipts/` and the receipt processor picks it up. No routing config, no dispatch table — just directory names.
+**Text extraction** sits behind a common interface. OCR for images and PDFs, speech-to-text for voice memos, direct parsing for text formats. The processor config declares which engine to use.
 
-**Text extraction** sits behind a common interface. OCR for images and PDFs. Speech-to-text for voice memos. The processor config declares which engine to use; the pipeline doesn't care which one it is.
-
-**LLM extraction** works the same way. The extracted text, your prompt, and your Pydantic schema go to whichever provider is configured — local or cloud. Same interface, completely swappable.
+**LLM extraction** works the same way. The extracted text, your prompt, and your Pydantic schema go to whichever provider is configured — local or cloud.
 
 **Storage** is one table per processor. The schema defines the columns.
 
-There's a second ingestion path through a chat gateway, which lets you send documents via WhatsApp or Telegram. Snap a photo, send it, and it lands in the same inbox. The pipeline doesn't care where files come from — that's the point.
+There's a second ingestion path through a chat gateway (WhatsApp/Telegram). Send a photo and it lands in the same inbox.
 
 Here's how those layers connect:
 
@@ -133,21 +129,138 @@ Here's how those layers connect:
 
 ## The Self-Hosted Stack
 
-Everything runs via Docker Compose — one command starts the full pipeline. File uploads, workflow orchestration, storage, a database browser, and optionally local LLM inference.
+Everything runs via Docker Compose. Local inference means sensitive documents never leave my machine; a cloud provider is there when I need a larger model. The orchestrator (Prefect) gives observability — every flow run, failure, and retry is visible in a UI.
 
-Running inference locally means sensitive documents never leave my machine. A cloud provider is there as a fallback when I need a larger model. The orchestrator gives me observability — every flow run, every failure, every retry is visible in a UI. If something breaks, I can see exactly where.
+The project uses git worktrees for parallel development. All worktrees share one Docker Compose stack via a fixed project name. The database persists across worktree switches, but the running code always reflects whichever worktree last started the stack.
 
-One small thing I'm proud of: the project uses git worktrees for parallel development, and all worktrees share one Docker Compose stack via a fixed project name. Switching between branches doesn't mean spinning up parallel infrastructure. The database persists, but the running code always reflects whichever worktree last started the stack.
+<style>{`
+  .update-section {
+    max-height: 0; overflow: hidden; opacity: 0;
+    transition: max-height 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+                opacity 0.4s ease,
+                margin 0.4s ease;
+    margin: 0;
+  }
+  #updateToggle:checked ~ .update-section {
+    max-height: 2000px;
+    opacity: 1;
+    margin: 1rem 0 1.5rem;
+  }
+  .update-toggle-label {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    margin: 1.5rem 0 0.5rem; padding: 0.45rem 1rem;
+    font-size: 0.82rem; color: #94a3b8;
+    border: 1px solid rgba(100, 130, 170, 0.2);
+    border-radius: 20px; cursor: pointer;
+    background: rgba(30, 41, 59, 0.3);
+    transition: all 0.25s ease;
+    user-select: none;
+  }
+  .update-toggle-label:hover {
+    color: #cbd5e1;
+    border-color: rgba(100, 130, 170, 0.4);
+    background: rgba(30, 41, 59, 0.5);
+  }
+  .update-toggle-label .arrow {
+    display: inline-block;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  #updateToggle:checked ~ .update-toggle-label .arrow {
+    transform: rotate(180deg);
+  }
+  #updateToggle:checked ~ .update-toggle-label .update-label-text::after {
+    content: 'hide update';
+  }
+  #updateToggle:not(:checked) ~ .update-toggle-label .update-label-text::after {
+    content: 'March 2026: routing refactor';
+  }
+`}</style>
 
-The philosophy is pragmatic: I wanted full control over my documents and my data, and composing existing tools was cheaper than building everything from scratch.
+<div class="not-prose" style="margin: 1rem 0;">
+  <input type="checkbox" id="updateToggle" style="display: none;" />
+
+  <label for="updateToggle" class="update-toggle-label">
+    <span class="update-label-text"></span>
+    <span class="arrow">&#x25BE;</span>
+  </label>
+
+  <div class="update-section">
+
+The pipeline described above used a custom Python router — a function that matched directory names and file extensions to processors. It worked, but routing decisions were invisible. No event trail, no per-processor concurrency control, and adding observability meant building it myself.
+
+The refactor replaced that with Prefect's native event system. Copyparty fires an HTTP webhook that posts to the Prefect events API — no SDK needed in the file server container. Prefect automations match those events to per-processor deployments. The custom routing code is gone.
+
+<div class="not-prose mermaid-card" style="margin: 1.5rem 0;">
+  <div class="mermaid-card-label">Before / After</div>
+  <div class="mermaid-card-body">
+    <pre class="mermaid">
+    {`sequenceDiagram
+        participant Inbox as File Inbox
+        participant WH as Webhook
+
+        box rgba(90,74,110,0.15) Before: Custom Router
+            participant R1 as Python Router
+            participant F1 as Single Flow
+        end
+
+        Inbox->>WH: File uploaded
+
+        Note over WH,F1: Webhook looked up deployment by name,<br/>created flow run via raw HTTP
+
+        WH->>F1: create_flow_run(filepath)
+        F1->>R1: route(filepath)
+        Note over R1: Path matching + extension check<br/>in custom Python code
+        R1-->>F1: ProcessorConfig
+        F1->>F1: extract + LLM + store
+
+        Note over Inbox,F1: One deployment, one queue.<br/>No per-processor concurrency.<br/>Routing invisible in Prefect UI.`}
+    </pre>
+  </div>
+</div>
+
+<div class="not-prose mermaid-card" style="margin: 1.5rem 0;">
+  <div class="mermaid-card-body">
+    <pre class="mermaid">
+    {`sequenceDiagram
+        participant Inbox as File Inbox
+        participant WH as Webhook
+
+        box rgba(59,106,140,0.15) After: Prefect Events
+            participant EV as Event Bus
+            participant AU as Automation
+            participant PF as Per-Processor Flow
+        end
+
+        Inbox->>WH: File uploaded
+
+        Note over WH,EV: Copyparty fires an HTTP webhook.<br/>Receiver posts to Prefect events API<br/>with doc_type extracted from path.
+
+        WH->>EV: POST /events<br/>djoc.file.uploaded (doc_type=receipts)
+
+        Note over EV,AU: Prefect matches event to automation.<br/>Each processor has its own automation +<br/>deployment, created at startup from processors/.<br/>No SDK needed in Copyparty — plain HTTP.
+
+        EV->>AU: match doc_type=receipts
+        AU->>PF: RunDeployment(process-receipts)
+
+        Note over PF: Per-processor deployment with<br/>independent concurrency + retry config
+
+        PF->>PF: extract + LLM + store
+
+        Note over Inbox,PF: Every routing decision is a Prefect event.<br/>Per-processor deployments with own concurrency.<br/>Add a processor file, restart = new deployment + automation.`}
+    </pre>
+  </div>
+</div>
+
+The developer experience didn't change — adding a processor is still one file in `processors/`. At startup, `sync_prefect_routing()` reads the discovered processors and ensures matching deployments and automations exist in Prefect.
+
+  </div>
+</div>
 
 ## Honestly
 
-I don't receive enough documents to justify any of this automation. Djoc isn't solving a burning problem I have — I built it because the design challenge was interesting. How simple can you make the interface between a messy document and structured data?
+I don't receive enough documents to justify this automation. I built it because the design challenge was interesting: how simple can you make the interface between a messy document and structured data?
 
-The repo is private — it's not mature enough to share publicly, and finding the use case that would push it there is part of what makes the problem interesting.
-
-What I got out of it was the engineering: composing tools into a coherent stack, designing an abstraction that stays out of the way, and making the pipeline disappear behind a schema definition. Sometimes the project is the point.
+The repo is private. What I got out of it was composing tools into a coherent stack and designing an abstraction that stays out of the way.
 
 ## References
 
