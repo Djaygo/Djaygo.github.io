@@ -326,15 +326,60 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.8);
 }
 
+:root:not(.dark) .mermaid-card::before {
+  background: linear-gradient(90deg, #6b9ec4 0%, #5a9bac 50%, #7a9a6a 100%);
+  opacity: 0.4;
+}
+
 :root:not(.dark) .mermaid-card-label {
   color: rgba(71, 85, 105, 0.5);
+}
+
+:root:not(.dark) .mermaid-card .actor {
+  fill: rgba(241, 245, 249, 0.9) !important;
+  stroke: rgba(71, 85, 105, 0.3) !important;
+}
+
+:root:not(.dark) .mermaid-card .actor-line {
+  stroke: rgba(71, 85, 105, 0.2) !important;
+}
+
+:root:not(.dark) .mermaid-card text.actor {
+  fill: #1e293b !important;
+}
+
+:root:not(.dark) .mermaid-card .messageLine0,
+:root:not(.dark) .mermaid-card .messageLine1 {
+  stroke: rgba(71, 85, 105, 0.35) !important;
 }
 
 :root:not(.dark) .mermaid-card .messageText {
   fill: #475569 !important;
 }
 
-:root:not(.dark) .mermaid-card text.actor {
-  fill: #1e293b !important;
+:root:not(.dark) .mermaid-card .labelBox {
+  fill: rgba(248, 250, 252, 0.9) !important;
+  stroke: rgba(71, 85, 105, 0.2) !important;
+}
+
+:root:not(.dark) .mermaid-card .labelText,
+:root:not(.dark) .mermaid-card .labelText > tspan {
+  fill: rgba(71, 85, 105, 0.7) !important;
+}
+
+:root:not(.dark) .mermaid-card .activation0,
+:root:not(.dark) .mermaid-card .activation1,
+:root:not(.dark) .mermaid-card .activation2 {
+  fill: rgba(59, 130, 180, 0.08) !important;
+  stroke: rgba(71, 85, 105, 0.25) !important;
+}
+
+:root:not(.dark) .mermaid-card rect.note {
+  fill: rgba(241, 245, 249, 0.8) !important;
+  stroke: rgba(71, 85, 105, 0.25) !important;
+}
+
+:root:not(.dark) .mermaid-card .noteText {
+  fill: #475569 !important;
 }
 

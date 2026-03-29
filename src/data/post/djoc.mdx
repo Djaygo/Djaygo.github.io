@@ -1,6 +1,6 @@
 ---
 publishDate: 2026-03-28
-title: Raw File In, Baked Data Out
+title: Raw In, Baked Out
 excerpt: Building a document pipeline where a Pydantic schema and a prompt replace extraction logic.
 tags:
   - architecture
@@ -83,29 +83,51 @@ Here's how those layers connect:
       const s = document.createElement('script');
       s.src = 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js';
       s.onload = () => {
+        const isDark = document.documentElement.classList.contains('dark');
+        const darkVars = {
+          background: 'transparent',
+          mainBkg: 'rgba(30, 41, 59, 0.8)',
+          lineColor: 'rgba(148, 163, 184, 0.4)',
+          textColor: '#cbd5e1',
+          actorBorder: 'rgba(100, 130, 170, 0.4)',
+          actorBkg: 'rgba(30, 41, 59, 0.8)',
+          actorTextColor: '#cbd5e1',
+          signalColor: 'rgba(148, 163, 184, 0.4)',
+          signalTextColor: '#94a3b8',
+          noteBkgColor: 'rgba(30, 41, 59, 0.5)',
+          noteBorderColor: 'rgba(100, 130, 170, 0.3)',
+          noteTextColor: '#94a3b8',
+          activationBorderColor: 'rgba(100, 130, 170, 0.3)',
+          activationBkgColor: 'rgba(59, 106, 140, 0.15)',
+          sequenceNumberColor: '#94a3b8',
+          labelBoxBkgColor: 'rgba(15, 23, 42, 0.7)',
+          labelBoxBorderColor: 'rgba(100, 130, 170, 0.25)',
+          labelTextColor: 'rgba(148, 163, 184, 0.7)'
+        };
+        const lightVars = {
+          background: 'transparent',
+          mainBkg: 'rgba(241, 245, 249, 0.9)',
+          lineColor: 'rgba(71, 85, 105, 0.35)',
+          textColor: '#1e293b',
+          actorBorder: 'rgba(71, 85, 105, 0.3)',
+          actorBkg: 'rgba(241, 245, 249, 0.9)',
+          actorTextColor: '#1e293b',
+          signalColor: 'rgba(71, 85, 105, 0.35)',
+          signalTextColor: '#475569',
+          noteBkgColor: 'rgba(241, 245, 249, 0.8)',
+          noteBorderColor: 'rgba(71, 85, 105, 0.25)',
+          noteTextColor: '#475569',
+          activationBorderColor: 'rgba(71, 85, 105, 0.25)',
+          activationBkgColor: 'rgba(59, 130, 180, 0.08)',
+          sequenceNumberColor: '#475569',
+          labelBoxBkgColor: 'rgba(248, 250, 252, 0.9)',
+          labelBoxBorderColor: 'rgba(71, 85, 105, 0.2)',
+          labelTextColor: 'rgba(71, 85, 105, 0.7)'
+        };
         mermaid.initialize({
           startOnLoad: false,
-          theme: 'dark',
-          themeVariables: {
-            background: 'transparent',
-            mainBkg: 'rgba(30, 41, 59, 0.8)',
-            lineColor: 'rgba(148, 163, 184, 0.4)',
-            textColor: '#cbd5e1',
-            actorBorder: 'rgba(100, 130, 170, 0.4)',
-            actorBkg: 'rgba(30, 41, 59, 0.8)',
-            actorTextColor: '#cbd5e1',
-            signalColor: 'rgba(148, 163, 184, 0.4)',
-            signalTextColor: '#94a3b8',
-            noteBkgColor: 'rgba(30, 41, 59, 0.5)',
-            noteBorderColor: 'rgba(100, 130, 170, 0.3)',
-            noteTextColor: '#94a3b8',
-            activationBorderColor: 'rgba(100, 130, 170, 0.3)',
-            activationBkgColor: 'rgba(59, 106, 140, 0.15)',
-            sequenceNumberColor: '#94a3b8',
-            labelBoxBkgColor: 'rgba(15, 23, 42, 0.7)',
-            labelBoxBorderColor: 'rgba(100, 130, 170, 0.25)',
-            labelTextColor: 'rgba(148, 163, 184, 0.7)'
-          },
+          theme: isDark ? 'dark' : 'default',
+          themeVariables: isDark ? darkVars : lightVars,
           sequence: {
             actorMargin: 50,
             boxMargin: 8,
