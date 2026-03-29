@@ -106,23 +106,23 @@ Here's how those layers connect:
         };
         const lightVars = {
           background: 'transparent',
-          mainBkg: 'rgba(241, 245, 249, 0.9)',
-          lineColor: 'rgba(71, 85, 105, 0.35)',
+          mainBkg: 'rgba(203, 213, 225, 0.5)',
+          lineColor: 'rgba(51, 65, 85, 0.45)',
           textColor: '#1e293b',
-          actorBorder: 'rgba(71, 85, 105, 0.3)',
-          actorBkg: 'rgba(241, 245, 249, 0.9)',
+          actorBorder: 'rgba(51, 65, 85, 0.4)',
+          actorBkg: 'rgba(203, 213, 225, 0.5)',
           actorTextColor: '#1e293b',
-          signalColor: 'rgba(71, 85, 105, 0.35)',
-          signalTextColor: '#475569',
-          noteBkgColor: 'rgba(241, 245, 249, 0.8)',
-          noteBorderColor: 'rgba(71, 85, 105, 0.25)',
-          noteTextColor: '#475569',
-          activationBorderColor: 'rgba(71, 85, 105, 0.25)',
-          activationBkgColor: 'rgba(59, 130, 180, 0.08)',
-          sequenceNumberColor: '#475569',
-          labelBoxBkgColor: 'rgba(248, 250, 252, 0.9)',
-          labelBoxBorderColor: 'rgba(71, 85, 105, 0.2)',
-          labelTextColor: 'rgba(71, 85, 105, 0.7)'
+          signalColor: 'rgba(51, 65, 85, 0.45)',
+          signalTextColor: '#334155',
+          noteBkgColor: 'rgba(203, 213, 225, 0.45)',
+          noteBorderColor: 'rgba(51, 65, 85, 0.3)',
+          noteTextColor: '#334155',
+          activationBorderColor: 'rgba(51, 65, 85, 0.3)',
+          activationBkgColor: 'rgba(59, 130, 180, 0.12)',
+          sequenceNumberColor: '#334155',
+          labelBoxBkgColor: 'rgba(203, 213, 225, 0.4)',
+          labelBoxBorderColor: 'rgba(51, 65, 85, 0.3)',
+          labelTextColor: '#334155'
         };
         mermaid.initialize({
           startOnLoad: false,
@@ -195,6 +195,18 @@ The project uses git worktrees for parallel development. All worktrees share one
   }
   #updateToggle:not(:checked) ~ .update-toggle-label .update-label-text::after {
     content: 'March 2026: routing refactor';
+  }
+
+  /* light mode */
+  :root:not(.dark) .update-toggle-label {
+    color: #64748b;
+    border-color: rgba(51, 65, 85, 0.2);
+    background: rgba(203, 213, 225, 0.25);
+  }
+  :root:not(.dark) .update-toggle-label:hover {
+    color: #1e293b;
+    border-color: rgba(51, 65, 85, 0.35);
+    background: rgba(203, 213, 225, 0.45);
   }
 `}</style>
 
@@ -375,6 +387,28 @@ The tools that make up the stack:
   }
   #toolsToggle:not(:checked) ~ .tools-toggle-label .label-text::after {
     content: '+ 9 more tools';
+  }
+
+  /* light mode */
+  :root:not(.dark) .tool-card {
+    background: rgba(203, 213, 225, 0.35);
+    border-color: rgba(51, 65, 85, 0.15);
+  }
+  :root:not(.dark) .tool-card:hover {
+    background: rgba(203, 213, 225, 0.55);
+    border-color: rgba(51, 65, 85, 0.3);
+  }
+  :root:not(.dark) .tool-card .tool-cat { color: #64748b; }
+  :root:not(.dark) .tool-card .tool-name { color: #1e293b; }
+  :root:not(.dark) .tools-toggle-label {
+    color: #64748b;
+    border-color: rgba(51, 65, 85, 0.2);
+    background: rgba(203, 213, 225, 0.25);
+  }
+  :root:not(.dark) .tools-toggle-label:hover {
+    color: #1e293b;
+    border-color: rgba(51, 65, 85, 0.35);
+    background: rgba(203, 213, 225, 0.45);
   }
 `}</style>
 

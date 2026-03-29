@@ -61,6 +61,29 @@
 .tag-stripe.tag-writing { background: linear-gradient(135deg, #3a4a5a 0%, #5a6a7c 100%); }
 .tag-pill.tag-writing { background: rgba(58, 74, 90, 0.3); color: #98a8b8; }
 
+/* Light mode tag pills */
+:root:not(.dark) .tag-pill.tag-obsidian { background: rgba(90, 74, 110, 0.12); color: #5a4a6e; }
+:root:not(.dark) .tag-pill.tag-pkm { background: rgba(29, 74, 92, 0.12); color: #1d4a5c; }
+:root:not(.dark) .tag-pill.tag-tools { background: rgba(107, 68, 35, 0.12); color: #6b4423; }
+:root:not(.dark) .tag-pill.tag-productivity { background: rgba(74, 90, 58, 0.12); color: #4a5a3a; }
+:root:not(.dark) .tag-pill.tag-astro { background: rgba(139, 58, 26, 0.12); color: #8b3a1a; }
+:root:not(.dark) .tag-pill.tag-webdev { background: rgba(42, 74, 107, 0.12); color: #2a4a6b; }
+:root:not(.dark) .tag-pill.tag-digital-garden { background: rgba(45, 90, 62, 0.12); color: #2d5a3e; }
+:root:not(.dark) .tag-pill.tag-learning { background: rgba(90, 58, 90, 0.12); color: #5a3a5a; }
+:root:not(.dark) .tag-pill.tag-writing { background: rgba(58, 74, 90, 0.12); color: #3a4a5a; }
+
+/* Architecture - same family as webdev/blue */
+:root:not(.dark) .tag-pill.tag-architecture { background: rgba(42, 74, 107, 0.12); color: #2a4a6b; }
+
+/* Python - same family as tools/amber */
+:root:not(.dark) .tag-pill.tag-python { background: rgba(107, 68, 35, 0.12); color: #6b4423; }
+
+/* Storytelling - same family as writing */
+:root:not(.dark) .tag-pill.tag-storytelling { background: rgba(58, 74, 90, 0.12); color: #3a4a5a; }
+
+/* Devex - same family as productivity */
+:root:not(.dark) .tag-pill.tag-devex { background: rgba(74, 90, 58, 0.12); color: #4a5a3a; }
+
 /* Default fallback for unknown tags */
 .tag-stripe:not([class*="tag-obsidian"]):not([class*="tag-pkm"]):not([class*="tag-tools"]):not([class*="tag-productivity"]):not([class*="tag-astro"]):not([class*="tag-webdev"]):not([class*="tag-digital-garden"]):not([class*="tag-learning"]):not([class*="tag-writing"]) {
   background: linear-gradient(135deg, #4a4a5a 0%, #6a6a7c 100%);
@@ -68,4 +91,8 @@
 .tag-pill:not([class*="tag-obsidian"]):not([class*="tag-pkm"]):not([class*="tag-tools"]):not([class*="tag-productivity"]):not([class*="tag-astro"]):not([class*="tag-webdev"]):not([class*="tag-digital-garden"]):not([class*="tag-learning"]):not([class*="tag-writing"]) {
   background: rgba(74, 74, 90, 0.3);
   color: #a8a8b8;
+}
+:root:not(.dark) .tag-pill:not([class*="tag-obsidian"]):not([class*="tag-pkm"]):not([class*="tag-tools"]):not([class*="tag-productivity"]):not([class*="tag-astro"]):not([class*="tag-webdev"]):not([class*="tag-digital-garden"]):not([class*="tag-learning"]):not([class*="tag-writing"]) {
+  background: rgba(74, 74, 90, 0.1);
+  color: #4a4a5a;
 }
