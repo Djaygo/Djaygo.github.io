@@ -28,10 +28,10 @@ import { Icon } from 'astro-icon/components';
       <Icon name="tabler:brand-github" class="w-4 h-4" />
       GitHub
     </a>
-    <button id="open-network-config-header" class="nav-link inline-flex items-center gap-2 text-sm text-muted hover:text-primary transition-all duration-300 hover:scale-105">
-      <Icon name="tabler:palette" class="w-4 h-4" />
-      Theme
-    </button>
+    <div id="theme-pill" class="inline-flex items-center bg-gray-100 dark:bg-slate-800 rounded-full p-0.5 gap-0.5">
+      <button id="theme-toggle-light" class="px-2 py-1 rounded-full text-sm transition-all duration-200" title="Light mode" aria-label="Light mode">☀️</button>
+      <button id="theme-toggle-dark" class="px-2 py-1 rounded-full text-sm transition-all duration-200" title="Dark mode" aria-label="Dark mode">🌙</button>
+    </div>
   </nav>
 </div>
 
@@ -103,4 +103,45 @@ import { Icon } from 'astro-icon/components';
   // Run on load and after view transitions
   initHeaderLink();
   document.addEventListener('astro:after-swap', initHeaderLink);
+</script>
+
+<script>
+  function initThemePill() {
+    const lightBtn = document.getElementById('theme-toggle-light');
+    const darkBtn = document.getElementById('theme-toggle-dark');
+    if (!lightBtn || !darkBtn) return;
+
+    const activeClasses = ['bg-white', 'shadow-sm'];
+    const activeDarkClasses = ['bg-slate-600', 'shadow-sm'];
+
+    function updatePill() {
+      const isDark = document.documentElement.classList.contains('dark');
+
+      // Remove active state from both buttons
+      lightBtn.classList.remove(...activeClasses, ...activeDarkClasses);
+      darkBtn.classList.remove(...activeClasses, ...activeDarkClasses);
+
+      // Add active state to current theme
+      if (isDark) {
+        darkBtn.classList.add(...activeDarkClasses);
+      } else {
+        lightBtn.classList.add(...activeClasses);
+      }
+    }
+
+    function setTheme(theme: 'light' | 'dark') {
+      const isDark = theme === 'dark';
+      document.documentElement.classList.toggle('dark', isDark);
+      try { localStorage.setItem('theme', theme); } catch (e) {}
+      updatePill();
+    }
+
+    lightBtn.addEventListener('click', () => setTheme('light'));
+    darkBtn.addEventListener('click', () => setTheme('dark'));
+
+    updatePill();
+  }
+
+  initThemePill();
+  document.addEventListener('astro:after-swap', initThemePill);
 </script>
