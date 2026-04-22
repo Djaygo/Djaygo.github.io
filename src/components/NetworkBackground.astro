@@ -367,7 +367,6 @@
     const canvas = document.getElementById('network-canvas') as HTMLCanvasElement;
     const configPanel = document.getElementById('network-config');
     const openBtnFloat = document.getElementById('open-network-config');
-    const openBtnHeader = document.getElementById('open-network-config-header');
     const closeBtn = document.getElementById('close-config');
 
     if (!canvas || !configPanel) return;
@@ -1725,10 +1724,6 @@
       e.stopPropagation();
       toggleConfigPanel();
     });
-    openBtnHeader?.addEventListener('click', (e) => {
-      e.stopPropagation();
-      toggleConfigPanel();
-    });
 
     closeBtn?.addEventListener('click', closeConfigPanel);
 
@@ -1737,9 +1732,7 @@
       const target = e.target as HTMLElement;
       if (!configPanel.contains(target) &&
           target !== openBtnFloat &&
-          target !== openBtnHeader &&
           !openBtnFloat?.contains(target) &&
-          !openBtnHeader?.contains(target) &&
           !configPanel.classList.contains('opacity-0')) {
         closeConfigPanel();
       }
