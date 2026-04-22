@@ -1694,6 +1694,11 @@
     themeDarkBtn?.addEventListener('click', () => applyTheme('dark'));
     themeSystemBtn?.addEventListener('click', () => applyTheme('system'));
 
+    document.addEventListener('site-theme-request', (e: Event) => {
+      const theme = (e as CustomEvent<{ theme: 'light' | 'dark' }>).detail.theme;
+      applyTheme(theme);
+    });
+
     // Listen for system theme changes when in system mode
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
       if (getThemePreference() === 'system') {
