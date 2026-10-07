@@ -1,6 +1,8 @@
 ---
 import '~/assets/styles/tailwind.css';
 
+import { Icon } from 'astro-icon/components';
+
 import { I18N } from 'astrowind:config';
 
 import CommonMeta from '~/components/common/CommonMeta.astro';
@@ -20,9 +22,11 @@ import type { MetaData as MetaDataType } from '~/types';
 
 export interface Props {
   metadata?: MetaDataType;
+  /** Pages without SiteHeader show a floating link back to the homepage. */
+  homeLink?: boolean;
 }
 
-const { metadata = {} } = Astro.props;
+const { metadata = {}, homeLink = false } = Astro.props;
 const { language, textDirection } = I18N;
 ---
 
@@ -47,6 +51,17 @@ const { language, textDirection } = I18N;
       class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[60] focus:px-4 focus:py-2 focus:rounded-md focus:bg-white focus:text-slate-900 focus:shadow-lg"
       >Skip to content</a
     >
+    {
+      homeLink && (
+        <a
+          href="/"
+          class="fixed top-3 left-3 z-50 inline-flex items-center gap-2 px-4 py-3 rounded-full text-sm bg-white/90 dark:bg-slate-800/90 text-slate-700 dark:text-slate-200 border border-gray-200 dark:border-slate-700 shadow-lg backdrop-blur-sm hover:text-primary transition-colors"
+        >
+          <Icon name="tabler:home" class="w-4 h-4" aria-hidden="true" />
+          Home
+        </a>
+      )
+    }
     <NetworkBackground />
     <div id="main-content" class="relative z-10 pb-20">
       <slot />
