@@ -1,5 +1,7 @@
 ---
 import { Icon } from 'astro-icon/components';
+
+const isHome = Astro.url.pathname === '/';
 ---
 
 <div class="text-center mb-8 sm:mb-12 animate-fade-in">
@@ -12,6 +14,10 @@ import { Icon } from 'astro-icon/components';
     A space for thoughts, notes, and ideas to grow.
   </p>
   <nav aria-label="Main" class="flex justify-center items-center gap-x-2 gap-y-1 mt-4 flex-wrap">
+    <a href="/" aria-current={isHome ? 'page' : undefined} class:list={['nav-link inline-flex items-center gap-2 px-3 py-3 text-sm hover:text-primary transition-all duration-300 hover:scale-105', isHome ? 'text-primary font-medium' : 'text-muted']}>
+      <Icon name="tabler:home" class="w-4 h-4" aria-hidden="true" />
+      Home
+    </a>
     <a href="/about" class="nav-link inline-flex items-center gap-2 px-3 py-3 text-sm text-muted hover:text-primary transition-all duration-300 hover:scale-105">
       <Icon name="tabler:user" class="w-4 h-4" aria-hidden="true" />
       About
