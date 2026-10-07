@@ -1,0 +1,71 @@
+---
+publishDate: 2026-10-07
+title: A Conference You Can Search, Talk To and Argue With
+excerpt: Orgestra turns the talks and slides of a conference into a search box, a cast of speaker personas and a three.js plaza where they talk to each other.
+tags:
+  - python
+  - htmx
+  - tools
+category: notes
+---
+
+## Conference Talks Are Hard to Revisit
+
+A conference leaves behind hundreds of talks, a pile of slide decks and a vague memory that someone said something smart about agents. The schedule page is organised by day and room, which is how you attended, not how you remember. Orgestra is organised by question.
+
+It starts with GOTO Copenhagen. Every edition, talk and speaker lives in a small JSON dataset, and everything else is derived from it.
+
+<video controls width="100%" style="max-width: 800px; margin: 2rem auto; display: block; border-radius: 8px;">
+  <source src="/orgestra-demo.mp4" type="video/mp4" />
+  Your browser does not support video playback.
+</video>
+
+The tour above is recorded by the app's own demo script: home, a search with a typo, People also ask, a talk, its discussion, a speaker and the bug report form.
+
+## Search That Forgives You
+
+There is one search bar, laid out like the page you already know how to use. Type `llm agnts` and you still get talks about large language model agents. Two things make that work, and neither is a vector database:
+
+- **A thesaurus.** Synonym groups in a TOML file expand the query, so "LLM" also finds "large language model".
+- **Typo correction.** rapidfuzz repairs misspelled words against the vocabulary of the dataset before the query runs.
+
+Fields are weighted, so a title match outranks a mention in an abstract. Questions are extracted from every talk, which feeds a People also ask box under the results.
+
+Small, boring and fast beats clever here: the whole catalog sits in memory, loaded once through pydantic models at the edge.
+
+## Speakers as Personas
+
+Each speaker has a page with role, links and contact details when they are public. A sidebar indexes every edition, talk and speaker, so you can browse the same data you search.
+
+## The Stage
+
+The part I enjoyed most is the stage, a fixed, transparent strip along the bottom of the page. Speakers walk around a three.js plaza and talk to each other about their talks. The server decides who says what and streams the turns over server-sent events; the stage only renders them.
+
+Search results talk to the stage as well. When you search, the speakers behind the matching talks hop and show their names.
+
+Server and stage share nothing but DOM events:
+
+- `character:spotlight` carries the speaker ids of a search result, sent in an `HX-Trigger` header.
+- `character:say` carries speaker, listener and text, and makes one character walk up to another with a speech bubble.
+
+That contract is small enough to define on both sides, in `events.py` and `events.ts`. The stage itself is 2 kB; three.js loads as a separate chunk only once the stage is on screen, and `hx-preserve` keeps its WebGL context alive across navigation.
+
+## HTMX Plus One Island
+
+Everything except the stage is HTMX: full pages for navigation, fragments for swaps. The results update while you type through a debounced `hx-get` with `hx-push-url`, so the address bar always holds a link you can share. The result is a site with almost no client-side state and one three.js island.
+
+## The Latest Update: Discussion and Bug Reports
+
+The newest additions turn it from a reader into a place.
+
+**Talk discussion.** Visitors can comment and ask questions on a talk, reply in a tree and correct any post. Nothing is overwritten: every edit appends a revision, and earlier versions open as line diffs and can be restored. There are no accounts and no moderation. A name in a cookie, open editing and restorable history stand in for both. Search results borrow the look of a forum topic list, with posts and activity shown per talk.
+
+**Report a bug.** A button in the top bar opens a short form that files an issue in the project repository through a small tracker adapter. It stays hidden unless a repository and a token are configured, so a plain local run never offers a button that cannot work.
+
+Both features follow the same rule as the rest of the project: a boring store (SQLite through alchemical), a narrow interface (an issue tracker protocol with a GitHub adapter) and tests around the edge.
+
+## What I Would Do Next
+
+Questions come from abstracts today; once the slide decks are downloaded, their text can feed the question extraction. More conferences means more datasets, and the loader already keys everything by organisation.
+
+The source is at [github.com/Djaygo/orgestra](https://github.com/Djaygo/orgestra).
