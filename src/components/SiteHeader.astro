@@ -2,7 +2,7 @@
 import { Icon } from 'astro-icon/components';
 ---
 
-<div class="text-center mb-12 animate-fade-in">
+<div class="text-center mb-8 sm:mb-12 animate-fade-in">
   <a href="/" id="site-header-link" class="inline-block group">
     <h1 class="text-4xl md:text-5xl font-bold leading-tighter tracking-tighter mb-4 transition-all duration-300 group-hover:tracking-tight">
       <span class="text-accent dark:text-white bg-gradient-to-r from-accent to-primary bg-clip-text group-hover:text-transparent transition-all duration-500">Djaygo</span>'s Digital Garden
@@ -11,26 +11,26 @@ import { Icon } from 'astro-icon/components';
   <p class="text-xl text-muted max-w-xl mx-auto w-fit">
     A space for thoughts, notes, and ideas to grow.
   </p>
-  <nav class="flex justify-center gap-4 mt-6 flex-wrap">
-    <a href="/about" class="nav-link inline-flex items-center gap-2 text-sm text-muted hover:text-primary transition-all duration-300 hover:scale-105">
-      <Icon name="tabler:user" class="w-4 h-4" />
+  <nav aria-label="Main" class="flex justify-center items-center gap-x-2 gap-y-1 mt-4 flex-wrap">
+    <a href="/about" class="nav-link inline-flex items-center gap-2 px-3 py-3 text-sm text-muted hover:text-primary transition-all duration-300 hover:scale-105">
+      <Icon name="tabler:user" class="w-4 h-4" aria-hidden="true" />
       About
     </a>
-    <a href="/tags" class="nav-link inline-flex items-center gap-2 text-sm text-muted hover:text-primary transition-all duration-300 hover:scale-105">
-      <Icon name="tabler:hash" class="w-4 h-4" />
+    <a href="/tags" class="nav-link inline-flex items-center gap-2 px-3 py-3 text-sm text-muted hover:text-primary transition-all duration-300 hover:scale-105">
+      <Icon name="tabler:hash" class="w-4 h-4" aria-hidden="true" />
       Tags
     </a>
-    <a href="/search" class="nav-link inline-flex items-center gap-2 text-sm text-muted hover:text-primary transition-all duration-300 hover:scale-105">
-      <Icon name="tabler:search" class="w-4 h-4" />
+    <a href="/search" class="nav-link inline-flex items-center gap-2 px-3 py-3 text-sm text-muted hover:text-primary transition-all duration-300 hover:scale-105">
+      <Icon name="tabler:search" class="w-4 h-4" aria-hidden="true" />
       Search
     </a>
-    <a href="https://github.com/Djaygo" target="_blank" class="nav-link inline-flex items-center gap-2 text-sm text-muted hover:text-primary transition-all duration-300 hover:scale-105">
-      <Icon name="tabler:brand-github" class="w-4 h-4" />
+    <a href="https://github.com/Djaygo" target="_blank" rel="noopener noreferrer" class="nav-link inline-flex items-center gap-2 px-3 py-3 text-sm text-muted hover:text-primary transition-all duration-300 hover:scale-105">
+      <Icon name="tabler:brand-github" class="w-4 h-4" aria-hidden="true" />
       GitHub
     </a>
     <div id="theme-pill" class="inline-flex items-center bg-gray-100 dark:bg-slate-800 rounded-full p-0.5 gap-0.5">
-      <button type="button" id="theme-toggle-light" class="px-2 py-1 rounded-full text-sm transition-all duration-200 cursor-pointer" title="Light mode" aria-label="Light mode">☀️</button>
-      <button type="button" id="theme-toggle-dark" class="px-2 py-1 rounded-full text-sm transition-all duration-200 cursor-pointer" title="Dark mode" aria-label="Dark mode">🌙</button>
+      <button type="button" id="theme-toggle-light" class="inline-flex items-center justify-center w-10 h-10 rounded-full text-muted transition-all duration-200 cursor-pointer" title="Light mode" aria-label="Light mode" aria-pressed="false"><Icon name="tabler:sun" class="w-5 h-5" aria-hidden="true" /></button>
+      <button type="button" id="theme-toggle-dark" class="inline-flex items-center justify-center w-10 h-10 rounded-full text-muted transition-all duration-200 cursor-pointer" title="Dark mode" aria-label="Dark mode" aria-pressed="false"><Icon name="tabler:moon" class="w-5 h-5" aria-hidden="true" /></button>
     </div>
   </nav>
 </div>
@@ -58,7 +58,7 @@ import { Icon } from 'astro-icon/components';
   .nav-link::after {
     content: '';
     position: absolute;
-    bottom: -2px;
+    bottom: 6px;
     left: 50%;
     width: 0;
     height: 2px;
@@ -120,6 +120,9 @@ import { Icon } from 'astro-icon/components';
       // Remove active state from both buttons
       lightBtn.classList.remove(...activeClasses, ...activeDarkClasses);
       darkBtn.classList.remove(...activeClasses, ...activeDarkClasses);
+
+      lightBtn.setAttribute('aria-pressed', String(!isDark));
+      darkBtn.setAttribute('aria-pressed', String(isDark));
 
       // Add active state to current theme
       if (isDark) {

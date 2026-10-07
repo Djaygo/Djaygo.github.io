@@ -42,8 +42,13 @@ const { language, textDirection } = I18N;
   </head>
 
   <body class="antialiased text-default bg-page tracking-tight">
+    <a
+      href="#main-content"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[60] focus:px-4 focus:py-2 focus:rounded-md focus:bg-white focus:text-slate-900 focus:shadow-lg"
+      >Skip to content</a
+    >
     <NetworkBackground />
-    <div class="relative z-10">
+    <div id="main-content" class="relative z-10 pb-20">
       <slot />
     </div>
 
